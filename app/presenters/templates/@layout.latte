@@ -33,11 +33,11 @@
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
-					<a class="nav-link" href="#">Aktuality <span class="sr-only">(current)</span></a>
+				<li class="nav-item {ifCurrent News:default}active{/ifCurrent}">
+					<a class="nav-link" n:href="News:default">Aktuality <span class="sr-only">(current)</span></a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#">Koncerty</a>
+				<li class="nav-item {ifCurrent Concerts:default}active{/ifCurrent}">
+					<a class="nav-link" n:href="Concerts:default">Koncerty</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="#">Festivaly</a>
