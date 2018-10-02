@@ -6,23 +6,92 @@
 <html>
 <head>
 	<meta charset="utf-8">
-
-	<title>{ifset title}{include title|stripHtml} | {/ifset}Nette Sandbox</title>
-
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<link rel="stylesheet" href="{$basePath}/css/style.css">
+	<link rel="stylesheet" href="{$basePath}/css/images.css">
+	<link rel="stylesheet" href="{$basePath}/css/navbar.css">
+	<link rel="stylesheet" href="{$basePath}/css/footer.css">
+	<link rel="stylesheet" href="{$basePath}/css/banners.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+	<title>{ifset title}{include title|stripHtml} | {/ifset}Tickets online</title>
+
 	{block head}{/block}
 </head>
 
 <body>
 	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
 
+	<nav class="navbar fixed-top navbar-expand-xl navbar-dark bg-dark">
+		<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarsExample06" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<a class="navbar-brand" href="#">Tickets Online</a>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Aktuality <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Koncerty</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Festivaly</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Interpreti</a>
+				</li>
+			</ul>
+
+			<ul class="navbar-nav my-2 my-lg-0">
+				<li class="nav-item">
+					<a class="nav-link" href="#">
+						<i class="fas fa-shopping-cart"></i>
+						<span class="shopping-cart-text">Košík</span>
+					</a>
+				</li>
+
+				<li class="nav-item dropdown navbarDropdownAccountLi">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAccountLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Účet
+					</a>
+					<div id="navbarDropdownAccountBubble" class="dropdown-menu" aria-labelledby="navbarDropdownAccountLink">
+						<a class="dropdown-item" href="#">Přihlášení</a>
+						<a class="dropdown-item" href="#">Registrace</a>
+					</div>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="#">
+						<img class="nav-language-icon" src="{$basePath}/images/icons/icon-cz.svg">
+					</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+
 	{include content}
 
+
+	<footer class="page-footer font-small navbar-dark bg-dark">
+		<div class="footer-copyright text-center py-3">© 2018 Copyright:
+			Tomáš Odehnal, Roman Bártl
+		</div>
+	</footer>
+
 	{block scripts}
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script src="https://nette.github.io/resources/js/netteForms.min.js"></script>
-	<script src="{$basePath}/js/main.js"></script>
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+		<script src="https://nette.github.io/resources/js/netteForms.min.js"></script>
+		<script src="{$basePath}/js/main.js"></script>
+
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 	{/block}
 </body>
 </html>

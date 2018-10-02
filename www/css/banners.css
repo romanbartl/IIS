@@ -1,0 +1,17 @@
+.slide {
+    margin: 0 150px 0 150px;
+}
+
+.news-images-banner .news-images-banner-item {
+    max-height: 500px;
+    object-fit: none; /* Do not scale the image */
+    object-position: center; /* Center the image within the element */
+}
+
+.news-images-banner .news-images-banner-item-caption {
+    text-shadow: 2px 2px #000000;
+}
+
+.news-images-banner .news-images-banner-item-div {
+    background: url('http://api.thumbr.it/whitenoise-361x370.png?background=737373ff&noise=575757&density=37&opacity=71');
+}

@@ -2,7 +2,7 @@ body {
 	font-size: 15px;
 	line-height: 1.6;
 	color: #333;
-	background: white;
+	background-color: #484b49;
 }
 
 h1 {
@@ -47,4 +47,16 @@ form .required label {
 form .error {
 	color: #D00;
 	font-weight: bold;
+}
+
+.first-div {
+	padding-top: 100px;
+}
+
+.carousel-control-prev {
+	padding-top: 100px;
+}
+
+.carousel-control-next{
+	padding-top: 100px;
 }
