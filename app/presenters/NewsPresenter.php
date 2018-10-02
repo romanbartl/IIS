@@ -3,7 +3,7 @@
 namespace App\Presenters;
 
 
-class HomepagePresenter extends BasePresenter
+class NewsPresenter extends BasePresenter
 {
     public function renderDefault()
     {
