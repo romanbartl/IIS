@@ -11,8 +11,20 @@ namespace App\Presenters;
 
 class ConcertsPresenter extends BasePresenter
 {
+    private $concertId;
+
     public function renderDefault()
     {
 
+    }
+
+    public function renderDetail()
+    {
+        $this->template->concertId = $this->concertId;
+    }
+
+    public function actionDetail($id)
+    {
+        $this->concertId = $id;
     }
 }
