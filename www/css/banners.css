@@ -1,9 +1,9 @@
 .slide {
-    margin: 0 150px 0 150px;
+    /*margin: 0 100px 0 100px;*/
 }
 
 .news-images-banner .news-images-banner-item {
-    max-height: 500px;
+    max-height: 550px;
     object-fit: none; /* Do not scale the image */
     object-position: center; /* Center the image within the element */
 }
@@ -14,4 +14,25 @@
 
 .news-images-banner .news-images-banner-item-div {
     background: url('http://api.thumbr.it/whitenoise-361x370.png?background=737373ff&noise=575757&density=37&opacity=71');
+}
+
+.header-of-page {
+    margin-top: 50px;
+    background-image: url("https://www.daysinn-downtownedmonton.com/wp-content/uploads/2014/11/rock_concert.jpg");
+    height: 410px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.header-of-page .header {
+    text-align: center;
+    margin-top: 220px;
+    color: white;
+    font-weight: bold;
+}
+
+#ticketsHeader {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("https://scontent.fprg2-1.fna.fbcdn.net/v/t1.0-9/42901872_10156722507384594_7038113584550772736_o.jpg?_nc_cat=101&oh=ea4cacddd9a7f63c88174be6af4d92e9&oe=5C4B78B0");
+    background-position: 10% -250px;
 }
