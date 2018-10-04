@@ -34,5 +34,7 @@
 
 #ticketsHeader {
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("https://scontent.fprg2-1.fna.fbcdn.net/v/t1.0-9/42901872_10156722507384594_7038113584550772736_o.jpg?_nc_cat=101&oh=ea4cacddd9a7f63c88174be6af4d92e9&oe=5C4B78B0");
-    background-position: 10% -250px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
