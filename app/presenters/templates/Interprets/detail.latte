@@ -1,0 +1,21 @@
+{block content}
+    <div class="first-div"></div>
+    {$interpretId}
+
+    <div>
+        <ul>
+            <li>Album 1</li>
+            <li>Album 2</li>
+        </ul>
+    </div>
+
+{/block}
+
+{block scripts}
+    {include parent}
+
+{/block}
+
+{block head}
+    <title n:block=title>AC/DC</title>
+{/block}

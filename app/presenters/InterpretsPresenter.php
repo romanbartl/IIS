@@ -11,8 +11,20 @@ namespace App\Presenters;
 
 class InterpretsPresenter extends BasePresenter
 {
+    private $interpretId;
+
     public function renderDefault()
     {
 
+    }
+
+    public function renderDetail()
+    {
+        $this->template->interpretId = $this->interpretId;
+    }
+
+    public function actionDetail($id)
+    {
+        $this->interpretId = $id;
     }
 }
