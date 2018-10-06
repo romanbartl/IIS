@@ -11,18 +11,18 @@ use Nette\Security\Passwords;
  */
 class UserManager implements Nette\Security\IAuthenticator
 {
-	use Nette\SmartObject;
+    use Nette\SmartObject;
 
-	const
-		TABLE_NAME = 'users',
-		COLUMN_ID = 'id',
-		COLUMN_NAME = 'username',
-		COLUMN_PASSWORD_HASH = 'password',
-		COLUMN_EMAIL = 'email',
-		COLUMN_ROLE = 'role';
+    const
+        TABLE_NAME = 'User',
+        COLUMN_ID = 'idUser',
+        COLUMN_EMAIL = 'email',
+        COLUMN_PASSWORD_HASH = 'password',
+        COLUMN_CITY = 'idCity',
+        COLUMN_ADMIN = 'admin';
 
 
-	/** @var Nette\Database\Context */
+    /** @var Nette\Database\Context */
 	private $database;
 
 
@@ -39,10 +39,10 @@ class UserManager implements Nette\Security\IAuthenticator
 	 */
 	public function authenticate(array $credentials)
 	{
-		list($username, $password) = $credentials;
+		list($email, $password) = $credentials;
 
 		$row = $this->database->table(self::TABLE_NAME)
-			->where(self::COLUMN_NAME, $username)
+			->where(self::COLUMN_EMAIL, $email)
 			->fetch();
 
 		if (!$row) {
@@ -59,7 +59,13 @@ class UserManager implements Nette\Security\IAuthenticator
 
 		$arr = $row->toArray();
 		unset($arr[self::COLUMN_PASSWORD_HASH]);
-		return new Nette\Security\Identity($row[self::COLUMN_ID], $row[self::COLUMN_ROLE], $arr);
+		if ($row[self::COLUMN_ADMIN] == 1) {
+		    $role = "admin";
+        }
+        else {
+            $role = "user";
+        }
+		return new Nette\Security\Identity($row[self::COLUMN_ID], $role, $arr);
 	}
 
 
@@ -71,13 +77,13 @@ class UserManager implements Nette\Security\IAuthenticator
 	 * @return void
 	 * @throws DuplicateNameException
 	 */
-	public function add($username, $email, $password)
+	public function add($email, $password)
 	{
 		try {
 			$this->database->table(self::TABLE_NAME)->insert([
-				self::COLUMN_NAME => $username,
-				self::COLUMN_PASSWORD_HASH => Passwords::hash($password),
 				self::COLUMN_EMAIL => $email,
+				self::COLUMN_PASSWORD_HASH => Passwords::hash($password),
+                self::COLUMN_CITY => 1
 			]);
 		} catch (Nette\Database\UniqueConstraintViolationException $e) {
 			throw new DuplicateNameException;
