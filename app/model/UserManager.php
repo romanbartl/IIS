@@ -16,10 +16,14 @@ class UserManager implements Nette\Security\IAuthenticator
     const
         TABLE_NAME = 'User',
         COLUMN_ID = 'idUser',
+        COLUMN_NAME = 'name',
+        COLUMN_SURNAME = 'surname',
+        COLUMN_BIRTH = 'birth',
+        COLUMN_ADDRESS = 'address',
         COLUMN_EMAIL = 'email',
         COLUMN_PASSWORD_HASH = 'password',
-        COLUMN_CITY = 'idCity',
-        COLUMN_ADMIN = 'admin';
+        COLUMN_ADMIN = 'admin',
+        COLUMN_CITY = 'idCity';
 
 
     /** @var Nette\Database\Context */
@@ -89,6 +93,40 @@ class UserManager implements Nette\Security\IAuthenticator
 			throw new DuplicateNameException;
 		}
 	}
+
+
+    /**
+     * @param array $settings
+     * @throws DuplicateNameException
+     */
+	public function saveUserSettings($settings)
+    {
+        $this->database->table(self::TABLE_NAME)->where(self::COLUMN_EMAIL, $settings->email)
+            ->update([
+            self::COLUMN_NAME => $settings->name,
+            self::COLUMN_SURNAME => $settings['surname'],
+            self::COLUMN_BIRTH => $settings['birth'],
+            self::COLUMN_ADDRESS => $settings['address'],
+            self::COLUMN_EMAIL => $settings['email'] // TODO: Email doesn't change
+        ]);
+    }
+
+
+    public function updateUserSettings($userId) {
+        $row = $this->database->table(self::TABLE_NAME)
+            ->where(self::COLUMN_ID, $userId)
+            ->fetch();
+
+        $arr = $row->toArray();
+        unset($arr[self::COLUMN_PASSWORD_HASH]);
+        if ($row[self::COLUMN_ADMIN] == 1) {
+            $role = "admin";
+        }
+        else {
+            $role = "user";
+        }
+        return $arr;
+    }
 }
 
 
