@@ -25,6 +25,20 @@ class SignPresenter extends BasePresenter
 	}
 
 
+	public function actionIn() {
+	    if ($this->user->isLoggedIn()) {
+	        $this->redirect('News:');
+        }
+    }
+
+
+    public function actionUp() {
+	    if ($this->user->isLoggedIn()) {
+	        $this->redirect('News:');
+        }
+    }
+
+
 	/**
 	 * Sign-in form factory.
 	 * @return Form
@@ -53,5 +67,6 @@ class SignPresenter extends BasePresenter
 	public function actionOut()
 	{
 		$this->getUser()->logout();
+        $this->redirect('News:');
 	}
 }
