@@ -5,6 +5,7 @@ namespace App\Forms;
 use App\Model;
 use Nette;
 use Nette\Application\UI\Form;
+use Nette\Forms\Controls;
 
 
 class SignUpFormFactory
@@ -33,17 +34,27 @@ class SignUpFormFactory
 	public function create(callable $onSuccess)
 	{
 		$form = $this->factory->create();
-		$form->addText('email', 'Email:')
+		$form->addEmail('email')
+            ->setHtmlAttribute('placeholder', 'Email')
 			->setRequired('Vložte prosím svoji emailovou adresu.');
 
-		$form->addPassword('password', 'Zvolte své heslo:')
-			->setOption('description', sprintf('alespoň %d znaků', self::PASSWORD_MIN_LENGTH))
+		$form->addPassword('password')
+            ->setHtmlAttribute('placeholder', 'Zvolte své heslo')
 			->setRequired('Musíte zvolit své heslo.')
 			->addRule($form::MIN_LENGTH, null, self::PASSWORD_MIN_LENGTH);
+
+        $form->addPassword('password_again')
+            ->setHtmlAttribute('placeholder', 'Zvolte své heslo')
+            ->setRequired('Musíte zvolit své heslo.')
+            ->addRule($form::MIN_LENGTH, null, self::PASSWORD_MIN_LENGTH);
 
 		$form->addSubmit('send', 'Registrovat');
 
 		$form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
+		    if ($form['password'] !== $form['password_again']) {
+		        $form['password_again']->addError('Hesla se musí shodovat!');
+		        return;
+            }
 			try {
 				$this->userManager->add($values->email, $values->password);
 			} catch (Model\DuplicateNameException $e) {
@@ -52,6 +63,21 @@ class SignUpFormFactory
 			}
 			$onSuccess();
 		};
+
+        $renderer = $form->getRenderer();
+        $renderer->wrappers['controls']['container'] = NULL;
+
+        $form->getElementPrototype()->class('dd');
+        foreach ($form->getControls() as $control) {
+            if ($control instanceof Controls\Button) {
+                $control->getControlPrototype()->addClass(empty($usedPrimary) ? 'btn btn-lg btn-primary btn-block' : 'btn btn-default');
+                $usedPrimary = TRUE;
+            } elseif ($control instanceof Controls\TextBase || $control instanceof Controls\SelectBox || $control instanceof Controls\MultiSelectBox) {
+                $control->getControlPrototype()->addClass('form-control');
+            } elseif ($control instanceof Controls\Checkbox || $control instanceof Controls\CheckboxList || $control instanceof Controls\RadioList) {
+                $control->getSeparatorPrototype()->setName('div')->addClass('checkbox mb-3');
+            }
+        }
 
 		return $form;
 	}
