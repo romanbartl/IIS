@@ -63,8 +63,12 @@
 						Účet
 					</a>
 					<div id="navbarDropdownAccountBubble" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownAccountLink">
-						<a class="dropdown-item" n:href="Sign:in">Přihlášení</a>
-						<a class="dropdown-item" n:href="Sign:up">Registrace</a>
+						{if !$user->loggedIn}
+							<a class="dropdown-item" n:href="Sign:in">Přihlášení</a>
+							<a class="dropdown-item" n:href="Sign:up">Registrace</a>
+						{else}
+							<a class="dropdown-item" n:href="Sign:out">Odhlášení</a>
+						{/if}
 					</div>
 				</li>
 			</ul>

@@ -1,13 +1,28 @@
 {block content}
 <div class="first-div"></div>
+<div class='text-center'>
+    <div class="form-signin">
+    <h1 n:block=title>Přihlášení</h1>
 
-<h1 n:block=title>Přihlášení</h1>
+    {control signInForm}
+    {*{form signInForm}*}
+        {*{label email}*}
+        {*{input email}*}
 
-{control signInForm}
+        {*{label password}*}
+        {*{input password}*}
 
-{* OR
-{import '../components/form.latte'}
-{include form signInForm}
-*}
+        {*{label remember}*}
+        {*{input remember}*}
 
-<p><a n:href="up">Ještě nemáte účet? Zaregistrujte se.</a></p>
+        {*{input send}*}
+    {*{/form}*}
+
+    {* OR
+    {import '../components/form.latte'}
+    {include form signInForm}
+    *}
+
+    <p><a n:href="up">Ještě nemáte účet? Zaregistrujte se.</a></p>
+    </div>
+</div>
