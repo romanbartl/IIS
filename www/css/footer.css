@@ -1,3 +1,6 @@
 footer {
+    position: absolute;
+    bottom: 0;
     color: white;
+    width: 100%;
 }
