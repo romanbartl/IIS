@@ -1,8 +1,13 @@
+html {
+	position: relative;
+	min-height: 100%;
+}
 body {
 	font-size: 15px;
 	line-height: 1.6;
 	color: #333;
 	background-color: #484b49;
+	margin-bottom: 60px;
 }
 
 h1 {
