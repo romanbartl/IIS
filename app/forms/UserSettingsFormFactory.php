@@ -69,7 +69,12 @@ class UserSettingsFormFactory
         $form->addSubmit('send', 'Uložit změny');
 
         $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
-            $this->userManager->saveUserSettings($values);
+            try {
+                $this->userManager->saveUserSettings($this->user->getId(), $values);
+            } catch (Model\DuplicateNameException $e) {
+                $form['email']->addError('Zadaný email je již obsazen.');
+                return;
+            }
             $onSuccess();
         };
 
