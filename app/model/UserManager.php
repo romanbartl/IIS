@@ -99,16 +99,20 @@ class UserManager implements Nette\Security\IAuthenticator
      * @param array $settings
      * @throws DuplicateNameException
      */
-	public function saveUserSettings($settings)
+	public function saveUserSettings($idUser, $settings)
     {
-        $this->database->table(self::TABLE_NAME)->where(self::COLUMN_EMAIL, $settings->email)
-            ->update([
-            self::COLUMN_NAME => $settings->name,
-            self::COLUMN_SURNAME => $settings['surname'],
-            self::COLUMN_BIRTH => $settings['birth'],
-            self::COLUMN_ADDRESS => $settings['address'],
-            self::COLUMN_EMAIL => $settings['email'] // TODO: Email doesn't change
-        ]);
+        try {
+            $this->database->table(self::TABLE_NAME)->where(self::COLUMN_ID, $idUser)
+                ->update([
+                    self::COLUMN_NAME => $settings['name'],
+                    self::COLUMN_SURNAME => $settings['surname'],
+                    self::COLUMN_BIRTH => $settings['birth'],
+                    self::COLUMN_ADDRESS => $settings['address'],
+                    self::COLUMN_EMAIL => $settings['email'] // TODO: Email doesn't change
+                ]);
+        } catch (Nette\Database\UniqueConstraintViolationException $e) {
+            throw new DuplicateNameException;
+        }
     }
 
 
