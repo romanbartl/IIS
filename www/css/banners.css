@@ -45,3 +45,18 @@
     background-repeat: no-repeat;
     background-position: center;
 }
+
+.interpret-banner-image-div {
+    height: 200px;
+    padding: 20px;
+}
+
+.interpret-banner {
+
+}
+
+.interpret-banner-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-position: center; /* Center the image within the element */
+}

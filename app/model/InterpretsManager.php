@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Roxem Wincle
- * Date: 14.10.2018
- * Time: 11:19
- */
 
 namespace App\Model;
 
 use Nette;
 
-class InterpretsManager
+class InterpretsManager extends BaseManager
 {
     /**
      * @var Nette\Database\Context
@@ -28,4 +22,11 @@ class InterpretsManager
     }
 
 
+    /**
+     * @return Nette\Database\Table\Selection - Returns all interprets from database
+     */
+    public function getAllInterprets()
+    {
+        return $this->database->table(self::TABLE_INTERPRET);
+    }
 }
