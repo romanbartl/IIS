@@ -16,6 +16,7 @@ session:
 
 services:
 	- App\Model\UserManager
+	- App\Model\InterpretsManager
 	- App\Forms\FormFactory
 	- App\Forms\SignInFormFactory
 	- App\Forms\SignUpFormFactory
