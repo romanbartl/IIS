@@ -4,6 +4,8 @@ namespace App\Presenters;
 
 use App\Model\AlbumsManager;
 use App\Model\InterpretsManager;
+use App\Model\MembersManager;
+
 
 class InterpretsPresenter extends BasePresenter
 {
@@ -17,6 +19,13 @@ class InterpretsPresenter extends BasePresenter
      */
     public $albumsManager;
 
+
+    /**
+     * @var MembersManager
+     */
+    public $membersManager;
+
+
     /**
      * @var
      */
@@ -27,12 +36,13 @@ class InterpretsPresenter extends BasePresenter
      * InterpretsPresenter constructor.
      * @param InterpretsManager $interpretsManager
      * @param AlbumsManager $albumsManager
+     * @param MembersManager $membersManager
      */
-    public function __construct(InterpretsManager $interpretsManager, AlbumsManager $albumsManager)
+    public function __construct(InterpretsManager $interpretsManager, AlbumsManager $albumsManager, MembersManager $membersManager)
     {
         $this->interpretsManager = $interpretsManager;
         $this->albumsManager = $albumsManager;
-
+        $this->membersManager = $membersManager;
     }
 
     public function renderDefault()
@@ -49,5 +59,6 @@ class InterpretsPresenter extends BasePresenter
     {
         $this->template->interpret = $this->interpretsManager->getInterpretById($this->interpretId);
         $this->template->albums = $this->albumsManager->getAlbumsByInterpretId($this->interpretId);
+        $this->template->members = $this->membersManager->getMembersByInterpretId($this->interpretId);
     }
 }

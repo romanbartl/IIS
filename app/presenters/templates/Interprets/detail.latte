@@ -69,12 +69,9 @@
                     <h4 class="mb-3">Aktuální členové</h4>
                     <div class="container">
                         <ul class="list-group">
-                            <li class="list-group-item">First item</li>
-                            <li class="list-group-item">Second item</li>
-                            <li class="list-group-item">Third item</li>
-                            <li class="list-group-item">First item</li>
-                            <li class="list-group-item">Second item</li>
-                            <li class="list-group-item">Third item</li>
+                            {foreach $members as $member}
+                                <li class="list-group-item">{$member->name} {$member->surname} ({$member->birth|date:'%d. %m. %Y'})</li>
+                            {/foreach}
                         </ul>
                     </div>
                 </div>
