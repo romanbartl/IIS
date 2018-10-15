@@ -20,6 +20,7 @@ services:
 	- App\Model\AlbumsManager
 	- App\Model\GenreManager
 	- App\Model\MembersManager
+	- App\Model\ConcertsManager
 	- App\Forms\FormFactory
 	- App\Forms\SignInFormFactory
 	- App\Forms\SignUpFormFactory
