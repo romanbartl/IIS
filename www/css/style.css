@@ -100,3 +100,7 @@ form .error {
 	margin-top: 60px;
 	margin-bottom: 100px;
 }
+
+.default-container {
+	margin-bottom: 100px;
+}
