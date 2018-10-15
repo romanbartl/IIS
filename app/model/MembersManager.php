@@ -28,7 +28,10 @@ class MembersManager extends BaseManager
     }
 
 
-    //TODO
+    /**
+     * @param $interpretId
+     * @return Nette\Database\ResultSet
+     */
     public function getMembersByInterpretId($interpretId)
     {
         return $this->database->query('SELECT m.* FROM Member AS m LEFT JOIN Interpret_has_Member AS ihm ON ihm.idMember = m.idMember WHERE ihm.idInterpret = ?', $interpretId);
