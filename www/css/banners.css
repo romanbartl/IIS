@@ -27,9 +27,10 @@
 
 .header-of-page .header {
     text-align: center;
-    margin-top: 220px;
+    margin-top: 250px;
     color: white;
     font-weight: bold;
+    text-shadow: 2px 2px #000000;
 }
 
 #ticketsHeader {
