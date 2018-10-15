@@ -18,5 +18,20 @@ class BaseManager
         USER_COLUMN_ADMIN = 'admin',
         USER_COLUMN_CITY = 'idCity';
 
-    const TABLE_INTERPRET = 'Interpret';
+    const
+        TABLE_INTERPRET = 'Interpret',
+        INTERPRET_ID = 'idInterpret';
+
+    const
+        TABLE_ALBUM = 'Album',
+        ALBUM_COLUMN_INTERPRET_ID = 'idInterpret',
+        ALBUM_COLUMN_RELEASE = 'release';
+
+    const
+        TABLE_GENRE = 'Genre';
+
+    const
+        TABLE_ALBUM_GENRE = 'Album_has_Genre',
+        ALBUM_GENRE_ALBUM_ID = 'idAlbum',
+        ALBUM_GENRE_GENRE_ID = 'idGenre';
 }

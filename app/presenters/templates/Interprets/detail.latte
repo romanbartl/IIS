@@ -1,14 +1,122 @@
 {block content}
-    <div class="first-div"></div>
-    {$interpretId}
-
-    <div>
-        <ul>
-            <li>Album 1</li>
-            <li>Album 2</li>
-        </ul>
+    <div id="carouselExampleIndicators" class="carousel slide first-div" data-ride="carousel">
+        <div class="carousel-inner interpret-main-image-banner">
+            <div class="carousel-item interpret-main-image-banner-item-div active">
+                <img align="middle" class="d-block w-100 interpret-main-image-banner-item" src="{$interpret->label}" alt="{$interpret->name} banner">
+                <div class="carousel-caption d-none d-md-block interpret-main-image-banner-item-caption">
+                    <h1>{$interpret->name}</h1>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <div class="container interpret-container">
+        <div class="row">
+            <div class="col-md-4 order-md-2 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Your cart</span>
+                <span class="badge badge-secondary badge-pill">3</span>
+            </h4>
+            <ul class="list-group mb-3">
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <div>
+                        <h6 class="my-0">Product name</h6>
+                        <small class="text-muted">Brief description</small>
+                    </div>
+                    <span class="text-muted">$12</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <div>
+                        <h6 class="my-0">Second product</h6>
+                        <small class="text-muted">Brief description</small>
+                    </div>
+                    <span class="text-muted">$8</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <div>
+                        <h6 class="my-0">Third item</h6>
+                        <small class="text-muted">Brief description</small>
+                    </div>
+                    <span class="text-muted">$5</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between bg-light">
+                    <div class="text-success">
+                        <h6 class="my-0">Promo code</h6>
+                        <small>EXAMPLECODE</small>
+                    </div>
+                    <span class="text-success">-$5</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (USD)</span>
+                    <strong>$20</strong>
+                </li>
+            </ul>
+
+            <form class="card p-2">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Promo code">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-secondary">Redeem</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+            <div class="col-md-8 order-md-1">
+
+
+                <div class="row">
+                    <h4 class="mb-3">Aktuální členové</h4>
+                    <div class="container">
+                        <ul class="list-group">
+                            <li class="list-group-item">First item</li>
+                            <li class="list-group-item">Second item</li>
+                            <li class="list-group-item">Third item</li>
+                            <li class="list-group-item">First item</li>
+                            <li class="list-group-item">Second item</li>
+                            <li class="list-group-item">Third item</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr class="mb-4">
+
+                <div class="row">
+                    <div>
+                        <h4 class="mb-3">Alba</h4>
+                    </div>
+
+                    <div class="album py-5 bg-white">
+                        <div class="container">
+                            <div class="row">
+                                {foreach $albums as $album}
+                                    <div class="col-md-4">
+                                        <div class="card mb-4 shadow-sm interpret-banner">
+                                            <div class="interpret-banner-image-div">
+                                                <img class="card-img-top interpret-banner-image" src="{$album->label}">
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="card-text"><h5>{$album->name}</h5></p>
+                                                <p class="card-text">{$album->release|date:'%d. %m. %Y'}</p>
+
+                                                <p class="card-text">
+                                                {foreach $album->genres as $genre}
+                                                    {$genre->name}<br>
+                                                {/foreach}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {/foreach}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 {/block}
 
 {block scripts}
@@ -17,5 +125,5 @@
 {/block}
 
 {block head}
-    <title n:block=title>AC/DC</title>
+    <title n:block=title>{$interpret->name}</title>
 {/block}

@@ -18,6 +18,7 @@ services:
 	- App\Model\UserManager
 	- App\Model\InterpretsManager
 	- App\Model\AlbumsManager
+	- App\Model\GenreManager
 	- App\Forms\FormFactory
 	- App\Forms\SignInFormFactory
 	- App\Forms\SignUpFormFactory

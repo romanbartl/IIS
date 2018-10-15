@@ -29,4 +29,15 @@ class InterpretsManager extends BaseManager
     {
         return $this->database->table(self::TABLE_INTERPRET);
     }
+
+
+    /**
+     * Returns interpret by given ID
+     * @param $id - ID of interpret
+     * @return false|Nette\Database\Table\ActiveRow - interpret info
+     */
+    public function getInterpretById($id)
+    {
+        return $this->database->table(self::TABLE_INTERPRET)->where(self::INTERPRET_ID, $id)->fetch();
+    }
 }
