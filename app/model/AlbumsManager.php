@@ -36,6 +36,10 @@ class AlbumsManager extends BaseManager
     }
 
 
+    /**
+     * @param $interpretId
+     * @return array
+     */
     public function getAlbumsByInterpretId($interpretId)
     {
         $returnAlbums = array();
