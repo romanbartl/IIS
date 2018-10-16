@@ -23,12 +23,14 @@
                 </h6>
                 <ul class="list-group mb-3">
                     {foreach $upcomingConcerts as $concert}
-                        <li class="list-group-item d-flex justify-content-between lh-condensed">
-                            <div>
-                                <h6 class="my-0">{$concert->name}</h6>
-                                <small class="text-muted">{$concert->date|date:'%d. %m. %Y'}</small>
-                            </div>
-                        </li>
+                        <a n:href="Concerts:detail $concert->idConcert">
+                            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                                <div>
+                                    <h6 class="my-0">{$concert->name}</h6>
+                                    <small class="text-muted">{$concert->date|date:'%d. %m. %Y'}</small>
+                                </div>
+                            </li>
+                        </a>
                     {/foreach}
                 </ul>
 
