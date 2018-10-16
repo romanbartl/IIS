@@ -104,3 +104,15 @@ form .error {
 .default-container {
 	margin-bottom: 100px;
 }
+
+.actions-buttons {
+	width: 100%;
+}
+
+.my-btn {
+	width: 50%;
+}
+
+.concert-card {
+
+}
