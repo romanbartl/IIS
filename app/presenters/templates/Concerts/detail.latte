@@ -1,13 +1,21 @@
 {block content}
-    <div class="first-div"></div>
-{$concertId}
+    <div id="carouselExampleIndicators" class="carousel slide first-div" data-ride="carousel">
+        <div class="carousel-inner interpret-main-image-banner">
+            <div class="carousel-item interpret-main-image-banner-item-div active">
+                <img align="middle" class="d-block w-100 interpret-main-image-banner-item" src="{$concert['info']->label}"
+                     alt="{$concert['info']->name} banner">
+                <div class="carousel-caption d-none d-md-block interpret-main-image-banner-item-caption">
+                    <h1 n:block=title>{$concert['info']->name} ({$concert['info']->date|date:'%d. %m. %Y'})</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 {/block}
 
 {block scripts}
     {include parent}
 
-{/block}
-
-{block head}
-    <title n:block=title>Slipknot koncert</title>
 {/block}

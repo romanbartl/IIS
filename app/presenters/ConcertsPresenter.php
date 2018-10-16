@@ -50,5 +50,6 @@ class ConcertsPresenter extends BasePresenter
     public function actionDetail($id)
     {
         $this->concertId = $id;
+        $this->template->concert = $this->concertsManager->getConcertById($id);
     }
 }

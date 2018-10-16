@@ -71,4 +71,32 @@ class ConcertsManager
                                         WHERE t.bought = 0 AND chi.headliner = 1 
                                         GROUP BY c.idConcert ORDER BY c.date DESC');
     }
+
+
+    /**
+     * @param $concertId
+     * @return mixed
+     */
+    public function getConcertById($concertId)
+    {
+        $concert['info'] = $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date, 
+                                                  c.capacity AS capacity, c.info AS info, p.name AS place, 
+                                                  p.address AS address, p.zipCode AS zipCode, ci.name AS city, i.label AS label
+                                                  FROM Concert AS c 
+                                                  LEFT JOIN Place AS p ON p.idPlace = c.idPlace
+                                                  LEFT JOIN City AS ci ON ci.idCity = p.idCity 
+                                                  LEFT JOIN Concert_has_Interpret AS chi ON chi.idConcert = c.idConcert
+                                                  LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret
+                                                  WHERE chi.headliner = 1 AND c.idConcert = ? LIMIT 1', $concertId)->fetch();
+
+        $concert['interprets'] = $this->database->query('SELECT i.idInterpret AS idINterpret, i.name AS name 
+                                                            FROM Interpret AS i 
+                                                            LEFT JOIN Concert_has_Interpret AS chi ON chi.idInterpret = i.idInterpret 
+                                                            WHERE chi.idConcert = ?', $concertId);
+
+        $concert['tickets'] = $this->database->query('SELECT price, type, COUNT(type) AS count 
+                                                          FROM Ticket WHERE bought = 0 AND idConcert = 1 GROUP BY type');
+
+        return $concert;
+    }
 }
