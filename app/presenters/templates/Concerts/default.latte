@@ -19,7 +19,7 @@
                                 <div class="d-flex justify-content-between align-items-center ">
                                     <div class="btn-group actions-buttons">
                                         <button type="button" class="btn btn-sm btn-primary btn-outline-secondary my-btn">Více info</button>
-                                        <button type="button" class="btn btn-sm btn-primary btn-outline-secondary my-btn" {if $concert->tickets == 0 || $concert->date < new DateTime()}style="text-decoration: line-through;"{/if}>{if $concert->tickets == 0 || $concert->date < new DateTime()}Nelze zakoupit{else}Koupit vstupenku{/if}</button>
+                                        <button type="button" class="btn btn-sm btn-primary btn-outline-secondary my-btn" {if $concert->tickets == 0 || $concert->date < new DateTime()}style="text-decoration: line-through;" disabled{/if}>{if $concert->tickets == 0 || $concert->date < new DateTime()}Nelze zakoupit{else}Koupit vstupenku{/if}</button>
                                     </div>
                                 </div>
                             </div>
