@@ -51,5 +51,10 @@ class ConcertsPresenter extends BasePresenter
     {
         $this->concertId = $id;
         $this->template->concert = $this->concertsManager->getConcertById($id);
+
+        foreach ($this->template->concert['tickets'] as $ticket) {
+            $this->template->firstAmount = $ticket->count;
+            break;
+        }
     }
 }

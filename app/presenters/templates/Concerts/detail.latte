@@ -2,7 +2,8 @@
     <div id="carouselExampleIndicators" class="carousel slide first-div" data-ride="carousel">
         <div class="carousel-inner interpret-main-image-banner">
             <div class="carousel-item interpret-main-image-banner-item-div active">
-                <img align="middle" class="d-block w-100 interpret-main-image-banner-item" src="{$concert['info']->label}"
+                <img align="middle" class="d-block w-100 interpret-main-image-banner-item"
+                     src="{$concert['info']->label}"
                      alt="{$concert['info']->name} banner">
                 <div class="carousel-caption d-none d-md-block interpret-main-image-banner-item-caption">
                     <h1 n:block=title>{$concert['info']->name} ({$concert['info']->date|date:'%d. %m. %Y'})</h1>
@@ -11,11 +12,111 @@
         </div>
     </div>
 
+    <div class="container interpret-container">
+        <div class="row">
+            <div class="col-md-4 order-md-2 mb-4" style="padding: 0 30px 0 30px;">
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
+                        <div class="container">
+                            <h4>Nákup vstupenek</h4>
+                            {if $concert['info']->date < new DateTime()}
+                                <p class="lead">Akce již proběhla.</p>
+                            {elseif $concert['tickets'] == null}
+                                <p>Vyprodáno.</p>
+                            {else}
+                                <div style="padding: 30px 10px 0 10px">
+                                    {foreach $concert['tickets'] as $key => $ticket}
+                                        <div class="custom-control custom-radio" style="padding-bottom: 10px;">
+                                            <input type="radio" class="custom-control-input" id="ticket{$key}"
+                                                   name="ticketsRadio" {if $key == 0}checked{/if}
+                                                   onclick="changeMaxAmount({$ticket->count});">
+                                            <label class="custom-control-label" for="ticket{$key}">
+                                                Vstupenka {if $ticket->type == "SIT"}na sezení{elseif $ticket->type == "STAND"}na stání{elseif $ticket->type == "VIP"}VIP{/if}
+                                                <br><span class="text-secondary">{$ticket->price} Kč s DPH</span>
+                                            </label>
+                                        </div>
+                                    {/foreach}
+                                    <div style="margin-top: 10px;">
+                                        <label class="custom-control-label" for="inputAmount">Množství</label>
+                                        <input id="inputAmount" min="1" type="number" class="form-control" name="amount" value="1">
+                                    </div>
+                                    <div style="margin-top: 30px;">
+                                        <button type="button" class="btn btn-danger" style="width: 100%">
+                                            Do košíku s tím
+                                        </button>
+                                    </div>
+                                    <script>
+                                        var amount = {$firstAmount};
+                                        $("#inputAmount").attr("max", amount);
+                                    </script>
+                                </div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
+                        <div class="container">
+                            <h4>Místo a čas konání</h4>
 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 order-md-1" style="padding: 0 30px 0 30px;">
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
+                        <div class="container">
+                            <h4>Detail akce</h4>
+                            <p class="lead">{$concert['info']->info}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="mb-4">
+
+                <div class="row">
+                    <h4 class="mb-3">Vystoupí</h4>
+                    <div class="container">
+                        <ul class="list-group">
+                            {foreach $concert['interprets'] as $interpret}
+                                <a n:href="Interprets:detail $interpret->idInterpret">
+                                    <li class="list-group-item">
+                                        {$interpret->name} {if $interpret->headliner == 1}(Headliner){/if}
+                                    </li>
+                                </a>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {/block}
 
 {block scripts}
     {include parent}
+
+    <script>
+        function changeMaxAmount(newAmount)
+        {
+            amount = newAmount;
+            $("#inputAmount").attr("max", newAmount);
+            $("#inputAmount").val(1);
+        }
+
+        $("#inputAmount").bind('keyup mouseup', function () {
+            if ($("#inputAmount").val() > amount)
+                $("#inputAmount").val(amount);
+        });
+
+
+        $("#inputAmount").keypress(function() {
+            if ($("#inputAmount").val() > amount)
+                $("#inputAmount").val(amount);
+        });
+
+    </script>
 
 {/block}

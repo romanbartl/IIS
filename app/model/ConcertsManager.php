@@ -89,13 +89,13 @@ class ConcertsManager
                                                   LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret
                                                   WHERE chi.headliner = 1 AND c.idConcert = ? LIMIT 1', $concertId)->fetch();
 
-        $concert['interprets'] = $this->database->query('SELECT i.idInterpret AS idINterpret, i.name AS name 
+        $concert['interprets'] = $this->database->query('SELECT i.idInterpret AS idInterpret, i.name AS name, chi.headliner AS headliner
                                                             FROM Interpret AS i 
                                                             LEFT JOIN Concert_has_Interpret AS chi ON chi.idInterpret = i.idInterpret 
-                                                            WHERE chi.idConcert = ?', $concertId);
+                                                            WHERE chi.idConcert = ? ORDER BY chi.headliner DESC', $concertId);
 
         $concert['tickets'] = $this->database->query('SELECT price, type, COUNT(type) AS count 
-                                                          FROM Ticket WHERE bought = 0 AND idConcert = 1 GROUP BY type');
+                                                          FROM Ticket WHERE bought = 0 AND idConcert = ? GROUP BY type ORDER BY type ASC', $concertId);
 
         return $concert;
     }
