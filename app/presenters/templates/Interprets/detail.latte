@@ -90,7 +90,7 @@
                         <ul class="list-group">
                             {foreach $members as $member}
                                 <li class="list-group-item">{$member->name} {$member->surname}
-                                    (* {$member->birth|date:'%d. %m. %Y'})
+                                    {if $member->birth != ""}(* {$member->birth|date:'%d. %m. %Y'}){/if}
                                 </li>
                             {/foreach}
                         </ul>
@@ -107,6 +107,9 @@
                     <div class="album py-5 bg-white">
                         <div class="container">
                             <div class="row">
+                                {if $albums == null}
+                                    Intepret nevydal žádná alba, nebo nejsou doposud v naší databázi.
+                                {/if}
                                 {foreach $albums as $album}
                                     <div class="col-md-4">
                                         <div class="card mb-4 shadow-sm interpret-banner">
