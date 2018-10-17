@@ -59,7 +59,10 @@
                     <div class="jumbotron jumbotron-fluid" style="width: 100%">
                         <div class="container">
                             <h4>Místo a čas konání</h4>
-
+                            <p><strong>{$concert['info']->place}</strong><br>{$concert['info']->address}<br>
+                                {$concert['info']->city}, {$concert['info']->zipCode}<br>
+                                <strong>Zahájení: </strong>{$concert['info']->date|date:'%d. %m. %Y v %H:%M'}
+                            </p>
                         </div>
                     </div>
                 </div>
