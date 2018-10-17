@@ -80,7 +80,7 @@ class ConcertsManager
     public function getConcertById($concertId)
     {
         $concert['info'] = $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date, 
-                                                  c.capacity AS capacity, c.info AS info, p.name AS place, 
+                                                  c.capacity AS capacity, c.info AS info, p.name AS place, p.gpsLat AS lat, p.gpsLng AS lng,
                                                   p.address AS address, p.zipCode AS zipCode, ci.name AS city, i.label AS label
                                                   FROM Concert AS c 
                                                   LEFT JOIN Place AS p ON p.idPlace = c.idPlace
