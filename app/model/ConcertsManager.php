@@ -94,6 +94,7 @@ class ConcertsManager
                                                             LEFT JOIN Concert_has_Interpret AS chi ON chi.idInterpret = i.idInterpret 
                                                             WHERE chi.idConcert = ? ORDER BY chi.headliner DESC', $concertId);
 
+        // TODO should be request from TicketsManager!!!!
         $concert['tickets'] = $this->database->query('SELECT price, type, COUNT(type) AS count 
                                                           FROM Ticket WHERE bought = 0 AND idConcert = ? GROUP BY type ORDER BY type ASC', $concertId);
 

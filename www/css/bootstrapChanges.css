@@ -1,3 +1,19 @@
 .jumbotron {
     padding: 30px 10px 20px 10px;
 }
+
+.bs-popover-bottom .arrow:after {
+    border-bottom-color: #2adf31;
+}
+
+.bs-popover-right .arrow:after {
+    border-bottom-color: #2adf31;
+}
+
+.popover .popover-header {
+    background-color: #2adf31;
+}
+
+.popover .popover-body {
+    background-color: #61f76e;
+}
