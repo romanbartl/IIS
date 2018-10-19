@@ -52,26 +52,6 @@ class ConcertsPresenter extends BasePresenter
         if($this->isAjax()) {
             $this->cart = $this->getSession('cart');
 
-            //TODO change getConcertById by some method from TicketsManager after it's working
-            //TODO change max of the amount input number if is in cart
-
-            $concert = $this->concertsManager->getConcertById($this->concertId);
-
-            /*$help = false;
-
-            foreach ($concert['tickets'] as $ticket) {
-               if (isset($this->cart->list[$concertId][$ticket->type]) &&
-                    $this->cart->list[$concertId][$ticket->type] == $ticket->count) {
-
-                   $help = true;
-                   continue;
-               }
-
-                $this->template->firstAmount = $ticket->count;
-                $this->template->firstType = $ticket->type;
-                break;
-            }*/
-
             if (isset($this->cart->list[$concertId])) {
                 if (isset($this->cart->list[$concertId][$ticketType])) {
 
@@ -89,32 +69,6 @@ class ConcertsPresenter extends BasePresenter
                 $this->cart->list[$concertId][$ticketType] = $amount;
                 $this->cart->count += $amount;
             }
-
-            $this->template->cart = $this->cart;
-            $this->template->concert = $concert;
-
-
-            /*$this->template->firstAmount = 0;
-            $this->template->firstType = "";
-
-            foreach ($concert['tickets'] as $ticket) {
-                if ((isset($this->cart->list[$this->concertId][$ticket->type]) &&
-                    $this->cart->list[$this->concertId][$ticket->type] == $ticket->count) || (
-                    isset($this->cart->list[$this->concertId][$ticketType]) &&
-                    $this->cart->list[$this->concertId][$ticketType] + $amount == $ticket->count))
-
-                    continue;
-
-                $this->template->firstAmount = $ticket->count;
-
-                if (isset($this->cart->list[$this->concertId][$ticket->type]))
-                    $this->template->firstAmount -= $this->cart->list[$this->concertId][$ticket->type];
-
-                $this->template->firstType = $ticket->type;
-                break;
-            }*/
-
-            //TODO - set first amount to 0 if all tickets are in cart
 
             $this->redrawControl('cart');
             $this->redrawControl('ticketsSnippet');
@@ -139,27 +93,38 @@ class ConcertsPresenter extends BasePresenter
         $this->template->concertId = $this->concertId;
 
         //TODO change getConcertById by some method from TicketsManager after it's working
-        $this->template->concert = $this->concertsManager->getConcertById($this->concertId);
+        $concert = $this->concertsManager->getConcertById($this->concertId);
 
-        $this->template->firstAmount = 0;
-        $this->template->firstType = "";
+        $ticketsMaxAmounts = array();
+        $firstType = "";
+        $firstAmount = 0;
 
-        //if (!isset($this->template->firstAmount)) {
-            foreach ($this->template->concert['tickets'] as $ticket) {
-                if (isset($this->cart->list[$this->concertId][$ticket->type]) &&
-                    $this->cart->list[$this->concertId][$ticket->type] == $ticket->count)
-                    continue;
+        foreach ($concert['tickets'] as $key => $ticket) {
+            if (isset($this->cart->list[$this->concertId][$ticket->type])) {
+                //is in cart
+                $count = $ticket->count - $this->cart->list[$this->concertId][$ticket->type];
+                $ticketsMaxAmounts[] = $count;
 
-                $this->template->firstAmount = $ticket->count;
+                if (($count != 0 && $key == 0 && $firstType != "") || ($count != 0 && $key != 0 && $firstType == "")
+                    || ($count != 0 && $key == 0 && $firstType == "")) {
+                    $firstType = $ticket->type;
+                    $firstAmount = $count;
+                }
 
-                if (isset($this->cart->list[$this->concertId][$ticket->type]))
-                    $this->template->firstAmount -= $this->cart->list[$this->concertId][$ticket->type];
+            } else {
+                //not in cart
+                $ticketsMaxAmounts[] = $ticket->count;
 
-                $this->template->firstType = $ticket->type;
-                break;
+                if ($firstType == "") {
+                    $firstType = $ticket->type;
+                    $firstAmount = $ticket->count;
+                }
             }
-        //}
+        }
 
         $this->template->concert = $this->concertsManager->getConcertById($this->concertId);
+        $this->template->ticketsMaxAmounts = $ticketsMaxAmounts;
+        $this->template->firstType = $firstType;
+        $this->template->firstAmount = $firstAmount;
     }
 }

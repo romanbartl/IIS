@@ -141,7 +141,15 @@
                         setTimeout(function() {
                             $('[data-toggle="popover"]').popover('hide');
                         }, 3000);
-                    }
+
+
+						{if isset($firstAmount) && $firstAmount == 0} var amount = 0;{/if}
+
+                        if (amount === 0) {
+                            document.getElementById('addToCartButton').setAttribute('disabled', 'disabled');
+                            document.getElementById('inputAmount').value = '0';
+                        }
+					}
                 }, {
                     /*createSpinner: function () {
                         var spinner = $('<div>', {
