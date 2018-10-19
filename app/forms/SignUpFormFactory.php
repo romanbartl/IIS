@@ -51,7 +51,7 @@ class SignUpFormFactory
 		$form->addSubmit('send', 'Registrovat');
 
 		$form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
-		    if ($form['password'] !== $form['password_again']) {
+            if ($values['password'] !== $values['password_again']) {
 		        $form['password_again']->addError('Hesla se musí shodovat!');
 		        return;
             }
