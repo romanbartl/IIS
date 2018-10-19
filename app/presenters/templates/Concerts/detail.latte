@@ -30,7 +30,7 @@
                                             <div class="custom-control custom-radio" style="padding-bottom: 10px;">
                                                 <input type="radio" class="custom-control-input" id="ticket{$key}"
                                                        name="ticketsRadio" {if $ticket->type == $firstType}checked{/if} {if isset($cart->list[$concertId][$ticket->type]) && $cart->list[$concertId][$ticket->type] == $ticket->count}disabled{/if}
-                                                       onclick="changeMaxAmount({$ticket->count} - {$cart->link[$concertId][$ticket->type]}); changeHandleType({$ticket->type})" >
+                                                       onclick="changeMaxAmount({$ticket->count} - {$cart->link[$concertId][$ticket->type]}); changeHandleType({$ticket->type});" >
                                                 <label class="custom-control-label" for="ticket{$key}">
                                                     Vstupenka {if $ticket->type == "SIT"}na sezení{elseif $ticket->type == "STAND"}na stání{elseif $ticket->type == "VIP"}VIP{/if}
                                                     <br><span class="text-secondary">{$ticket->price} Kč s DPH</span>
@@ -56,6 +56,9 @@
                                             $("#inputAmount").bind('keyup mouseup', function () {
                                                 if ($("#inputAmount").val() > amount) {
                                                     $("#inputAmount").val(amount);
+                                                } else if ($("#inputAmount").val() <= 0 ||
+                                                    isNaN($("#inputAmount").val())) {
+                                                    $("#inputAmount").val(1)
                                                 }
 
                                                 changeHandleURL();
@@ -64,6 +67,9 @@
                                             $("#inputAmount").keypress(function() {
                                                 if ($("#inputAmount").val() > amount) {
                                                     $("#inputAmount").val(amount);
+                                                } else if ($("#inputAmount").val() <= 0 ||
+                                                    isNaN($("#inputAmount").val())) {
+                                                    $("#inputAmount").val(1)
                                                 }
 
                                                 changeHandleURL();
@@ -158,6 +164,9 @@
         $("#inputAmount").bind('keyup mouseup', function () {
             if ($("#inputAmount").val() > amount) {
                 $("#inputAmount").val(amount);
+            } else if ($("#inputAmount").val() <= 0 ||
+                isNaN($("#inputAmount").val())) {
+                $("#inputAmount").val(1)
             }
 
             changeHandleURL();
@@ -166,10 +175,14 @@
         $("#inputAmount").keypress(function() {
             if ($("#inputAmount").val() > amount) {
                 $("#inputAmount").val(amount);
+            } else if ($("#inputAmount").val() <= 0 ||
+                isNaN($("#inputAmount").val())) {
+                $("#inputAmount").val(1)
             }
 
             changeHandleURL();
         });
+
     </script>
 
     <script>
