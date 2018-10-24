@@ -1,0 +1,31 @@
+{block content}
+<div class="first-div"></div>
+	<div class="container">
+		<h1 class="text-center">Seznam uživatelů</h1>
+		<table class="table table-hover">
+			<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Email</th>
+				<th scope="col">Admin</th>
+			</tr>
+			</thead>
+			<tbody>
+			{foreach $users as $usr}
+					<tr>
+						<th>{$iterator->getCounter()}</th>
+						<th>{$usr->email}</th>
+						<a href="">
+						<th>
+							{if $usr->admin}
+								ANO
+							{else}
+								NE
+							{/if}
+						</th>
+						</a>
+					</tr>
+			{/foreach}
+			</tbody>
+		</table>
+	</div>

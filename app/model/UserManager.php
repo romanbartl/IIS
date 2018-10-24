@@ -119,6 +119,11 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
         }
         return $arr;
     }
+
+    public function getUsers() {
+	    $row = $this->database->table(self::TABLE_USER);
+	    return $row;
+    }
 }
 
 
