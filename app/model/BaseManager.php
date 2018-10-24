@@ -34,4 +34,9 @@ class BaseManager
         TABLE_ALBUM_GENRE = 'Album_has_Genre',
         ALBUM_GENRE_ALBUM_ID = 'idAlbum',
         ALBUM_GENRE_GENRE_ID = 'idGenre';
+
+    const
+        TABLE_USER_INTERPRET = 'User_has_Interpret',
+        USER_INTERPRET_USER_ID = 'idUSer',
+        USER_INTERPRET_INTERPRET_ID = 'idInterpret';
 }

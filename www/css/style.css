@@ -28,7 +28,17 @@ div.flash {
 	background: #FFF9D7;
 	border: 1px solid #E2C822;
 	padding: 1em;
-	margin: 1em 0;
+	margin-top: 86px;
+	position: fixed;
+	z-index: 1030;
+	left: 0;
+	right: 0;
+	top: 0;
+}
+
+div.flash.success {
+	background: #b6ffb2;
+	border: 1px solid #42e22c;
 }
 
 a[href^="#error:"] {
@@ -115,4 +125,27 @@ form .error {
 
 .concert-card {
 
+}
+
+.checker {
+	height: 25px;
+	width: 25px;
+	cursor: pointer;
+}
+
+.fa-heart {
+	font-size: 25px;
+	color: #3484D2;
+}
+
+.fa-heart:hover {
+	color: #34a9fb;
+}
+
+.fa-heart.fav {
+	color:#d2373f;
+}
+
+.fa-heart.fav:hover {
+	color: #e73a42;
 }

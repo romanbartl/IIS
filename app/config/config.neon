@@ -27,4 +27,8 @@ services:
 	- App\Forms\SignInFormFactory
 	- App\Forms\SignUpFormFactory
 	- App\Forms\UserSettingsFormFactory
+
+	authorizatorFactory: App\AuthorizatorFactory
+	authorizator: @authorizatorFactory::create
+
 	router: App\RouterFactory::createRouter

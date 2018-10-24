@@ -119,6 +119,40 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
         }
         return $arr;
     }
+
+
+    public function changeUserRole($idUser, $role) {
+	    $this->database->table(self::TABLE_USER)->where(self::USER_COLUMN_ID, $idUser)
+            ->update([self::USER_COLUMN_ADMIN => $role]);
+    }
+
+
+    public function getUsers() {
+	    $row = $this->database->table(self::TABLE_USER);
+	    return $row;
+    }
+
+
+    public function checkFavouriteInterpret($idUser, $idInterpret) {
+	    return $this->database->table(self::TABLE_USER_INTERPRET)
+            ->where(self::USER_INTERPRET_USER_ID, $idUser)->where(self::USER_INTERPRET_INTERPRET_ID, $idInterpret)
+            ->fetch();
+    }
+
+
+    public function saveFavouriteInterpret($idUser, $idInterpret) {
+	    $this->database->table(self::TABLE_USER_INTERPRET)->insert([
+	        self::USER_INTERPRET_USER_ID => $idUser,
+            self::USER_INTERPRET_INTERPRET_ID => $idInterpret
+        ]);
+    }
+
+
+    public function removeFavouriteInterpret($idUser, $idInterpret) {
+        $this->database->table(self::TABLE_USER_INTERPRET)
+            ->where(self::USER_INTERPRET_USER_ID, $idUser)->where(self::USER_INTERPRET_INTERPRET_ID, $idInterpret)
+            ->delete();
+    }
 }
 
 

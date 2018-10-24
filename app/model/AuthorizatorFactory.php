@@ -7,26 +7,33 @@ use Nette\Security\Permission;
 
 class AuthorizatorFactory {
     /**
-     * &return \Nette\Security\IAutharizator
+     * @return \Nette\Security\IAuthorizator
      */
     public static function create() {
         $authorizator = new Permission();
 
         /* Define user roles */
-        $authorizator->addRole('guest');
-        $authorizator->addRole('user', 'guest');
+        $authorizator->addRole('user');
         $authorizator->addRole('admin', 'user');
 
         /* Define resources */
-        /** Must be continually added */
-        $authorizator->addResource('sign');
-        $authorizator->addResource('user');
-
-        /* Define 'host' permissions */
-        $authorizator ->allow('guest', 'sign', array('in', 'up'));
+        $authorizator->addResource('userSource');
+        $authorizator->addResource('interpret');
+        $authorizator->addResource('concert');
+        $authorizator->addResource('festival');
 
         /* Define 'user' permissions */
-        $authorizator->deny('user', 'sign', array('in', 'up'));
+        $authorizator->deny('user', 'interpret', array('add', 'edit', 'remove'));
+        $authorizator->deny('user', 'concert', array('add', 'edit', 'remove'));
+        $authorizator->deny('user', 'festival', array('add', 'edit', 'remove'));
+        $authorizator->deny('user', 'userSource', array('showList', 'changeRole'));
+
         /* Define 'admin' permissions */
+        $authorizator->allow('admin', 'interpret', array('add', 'edit', 'remove'));
+        $authorizator->allow('admin', 'concert', array('add', 'edit', 'remove'));
+        $authorizator->allow('admin', 'festival', array('add', 'edit', 'remove'));
+        $authorizator->allow('admin', 'userSource', array('showList', 'changeRole'));
+
+        return $authorizator;
     }
 }
