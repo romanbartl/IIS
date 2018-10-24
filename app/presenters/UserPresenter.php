@@ -10,7 +10,6 @@ namespace App\Presenters;
 
 use App\Forms;
 use Nette\Application\UI\Form;
-use Tracy\Debugger;
 use App;
 
 class UserPresenter extends BasePresenter

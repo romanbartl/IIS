@@ -132,3 +132,20 @@ form .error {
 	width: 25px;
 	cursor: pointer;
 }
+
+.fa-heart {
+	font-size: 25px;
+	color: #3484D2;
+}
+
+.fa-heart:hover {
+	color: #34a9fb;
+}
+
+.fa-heart.fav {
+	color:#d2373f;
+}
+
+.fa-heart.fav:hover {
+	color: #e73a42;
+}
