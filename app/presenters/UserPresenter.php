@@ -10,6 +10,7 @@ namespace App\Presenters;
 
 use App\Forms;
 use Nette\Application\UI\Form;
+use Tracy\Debugger;
 use App;
 
 class UserPresenter extends BasePresenter
@@ -40,5 +41,18 @@ class UserPresenter extends BasePresenter
 
     public function renderList() {
         $this->template->users = $this->userManager->getUsers();
+    }
+
+
+    public function handleChangeUserRole($idUser, $isAdmin)
+    {
+        if($this->isAjax()) {
+            $role = 0;
+            if ($isAdmin == "0") {
+                $role = 1;
+            }
+            $this->userManager->changeUserRole($idUser, $role);
+            $this->redrawControl('userListSnippet');
+        }
     }
 }

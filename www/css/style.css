@@ -126,3 +126,9 @@ form .error {
 .concert-card {
 
 }
+
+.checker {
+	height: 25px;
+	width: 25px;
+	cursor: pointer;
+}

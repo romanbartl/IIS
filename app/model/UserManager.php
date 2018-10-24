@@ -120,6 +120,13 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
         return $arr;
     }
 
+
+    public function changeUserRole($idUser, $role) {
+	    $this->database->table(self::TABLE_USER)->where(self::USER_COLUMN_ID, $idUser)
+            ->update([self::USER_COLUMN_ADMIN => $role]);
+    }
+
+
     public function getUsers() {
 	    $row = $this->database->table(self::TABLE_USER);
 	    return $row;
