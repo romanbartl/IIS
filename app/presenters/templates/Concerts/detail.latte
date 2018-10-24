@@ -16,39 +16,72 @@
         <div class="row">
             <div class="col-md-4 order-md-2 mb-4" style="padding: 0 30px 0 30px;">
                 <div class="row">
-                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%; padding-bottom: 30px;">
                         <div class="container">
                             <h4>Nákup vstupenek</h4>
                             {if $concert['info']->date < new DateTime()}
                                 <p class="lead">Akce již proběhla.</p>
                             {elseif $concert['tickets'] == null}
-                                <p>Vyprodáno.</p>
+                                <p class="lead">Vyprodáno.</p>
                             {else}
                                 <div style="padding: 30px 10px 0 10px">
-                                    {foreach $concert['tickets'] as $key => $ticket}
-                                        <div class="custom-control custom-radio" style="padding-bottom: 10px;">
-                                            <input type="radio" class="custom-control-input" id="ticket{$key}"
-                                                   name="ticketsRadio" {if $key == 0}checked{/if}
-                                                   onclick="changeMaxAmount({$ticket->count});">
-                                            <label class="custom-control-label" for="ticket{$key}">
-                                                Vstupenka {if $ticket->type == "SIT"}na sezení{elseif $ticket->type == "STAND"}na stání{elseif $ticket->type == "VIP"}VIP{/if}
-                                                <br><span class="text-secondary">{$ticket->price} Kč s DPH</span>
-                                            </label>
+                                    {snippet ticketsSnippet}
+                                        {foreach $concert['tickets'] as $key => $ticket}
+                                            <div class="custom-control custom-radio" style="padding-bottom: 10px;">
+                                                <input type="radio" class="custom-control-input" id="ticket{$key}"
+                                                       name="ticketsRadio" {if $ticket->type == $firstType}checked{/if} {if isset($cart->list[$concertId][$ticket->type]) && $cart->list[$concertId][$ticket->type] == $ticket->count}disabled{/if}
+                                                       onclick="changeMaxAmount({$ticketsMaxAmounts[$key]}); changeHandleType({$ticket->type});" >
+
+                                                <label class="custom-control-label" for="ticket{$key}">
+                                                    Vstupenka {if $ticket->type == "SIT"}na sezení{elseif $ticket->type == "STAND"}na stání{elseif $ticket->type == "VIP"}VIP{/if}
+                                                    <br><span class="text-secondary">{$ticket->price} Kč s DPH</span>
+                                                </label>
+                                            </div>
+                                        {/foreach}
+
+                                        <div style="margin-top: 10px;">
+                                            <label class="custom-control-label" for="inputAmount">Množství</label>
+                                            <input id="inputAmount" min="{if $firstAmount != 0}1{else}0{/if}" max="{$firstAmount}"
+                                                   type="number" class="form-control" name="amount" value="{if $firstAmount == 0}0{else}1{/if}">
                                         </div>
-                                    {/foreach}
-                                    <div style="margin-top: 10px;">
-                                        <label class="custom-control-label" for="inputAmount">Množství</label>
-                                        <input id="inputAmount" min="1" type="number" class="form-control" name="amount" value="1">
-                                    </div>
-                                    <div style="margin-top: 30px;">
-                                        <button type="button" class="btn btn-danger" style="width: 100%">
-                                            Do košíku s tím
-                                        </button>
-                                    </div>
-                                    <script>
-                                        var amount = {$firstAmount};
-                                        $("#inputAmount").attr("max", amount);
-                                    </script>
+
+                                        <div id="cartButtonDiv" style="margin-top: 30px;">
+                                            <a id="addToCartHref" n:href="addToCart!, $concertId, $firstType, 1" {if $firstAmount != 0}class="ajax"{/if}>
+                                                <input id="addToCartButton" type="button" class="ajax btn btn-danger" style="width: 100%;"
+                                                       value="{if $firstAmount == 0}Vše máte v košíku{else}Do košíku s tím {/if}" {if $firstAmount == 0} disabled {/if} >
+                                            </a>
+                                        </div>
+
+                                        <script>
+                                            var handleType = {$firstType};
+                                            var concertId = {$concertId};
+                                            var amount = {$firstAmount} - {$cart->link[$concertId][$firstType]};
+
+                                            $("#inputAmount").attr("max", {$firstAmount});
+
+                                            $("#inputAmount").bind('keyup mouseup', function () {
+                                                if ($("#inputAmount").val() > amount) {
+                                                    $("#inputAmount").val(amount);
+                                                } else if ($("#inputAmount").val() <= 0 ||
+                                                    isNaN($("#inputAmount").val())) {
+                                                    $("#inputAmount").val(1)
+                                                }
+
+                                                changeHandleURL();
+                                            });
+
+                                            $("#inputAmount").keypress(function() {
+                                                if ($("#inputAmount").val() > amount) {
+                                                    $("#inputAmount").val(amount);
+                                                } else if ($("#inputAmount").val() <= 0 ||
+                                                    isNaN($("#inputAmount").val())) {
+                                                    $("#inputAmount").val(1)
+                                                }
+
+                                                changeHandleURL();
+                                            });
+                                        </script>
+                                    {/snippet}
                                 </div>
                             {/if}
                         </div>
@@ -103,6 +136,22 @@
     {include parent}
 
     <script>
+        handleType = {$firstType};
+        concertId = {$concertId};
+
+        function changeHandleType(newType)
+        {
+            handleType = newType;
+            changeHandleURL();
+        }
+
+        function changeHandleURL()
+        {
+            //console.log($("#inputAmount").val() + " " + handleType + " " + { $concertId});
+            var handleAmount = $("#inputAmount").val();
+            $('#addToCartHref').attr('href', '/IIS/concerts/detail/'+concertId+'?concertId='+concertId+'&ticketType='+handleType+'&amount='+handleAmount+'&do=addToCart');
+        }
+
         function changeMaxAmount(newAmount)
         {
             amount = newAmount;
@@ -111,14 +160,25 @@
         }
 
         $("#inputAmount").bind('keyup mouseup', function () {
-            if ($("#inputAmount").val() > amount)
+            if ($("#inputAmount").val() > amount) {
                 $("#inputAmount").val(amount);
+            } else if ($("#inputAmount").val() <= 0 ||
+                isNaN($("#inputAmount").val())) {
+                $("#inputAmount").val(1)
+            }
+
+            changeHandleURL();
         });
 
-
         $("#inputAmount").keypress(function() {
-            if ($("#inputAmount").val() > amount)
+            if ($("#inputAmount").val() > amount) {
                 $("#inputAmount").val(amount);
+            } else if ($("#inputAmount").val() <= 0 ||
+                isNaN($("#inputAmount").val())) {
+                $("#inputAmount").val(1)
+            }
+
+            changeHandleURL();
         });
 
     </script>

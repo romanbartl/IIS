@@ -13,6 +13,7 @@ application:
 
 session:
 	expiration: 14 days
+	autoStart: smart
 
 services:
 	- App\Model\UserManager
@@ -21,6 +22,7 @@ services:
 	- App\Model\GenreManager
 	- App\Model\MembersManager
 	- App\Model\ConcertsManager
+	- App\Model\TicketsManager
 	- App\Forms\FormFactory
 	- App\Forms\SignInFormFactory
 	- App\Forms\SignUpFormFactory

@@ -16,8 +16,9 @@
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<link rel="stylesheet" href="{$basePath}/css/bootstrapChanges.css">
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="{$basePath}/css/spinner.css">
+	<link rel="stylesheet" href="{$basePath}/css/shopping-cart.css">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
 	<title>{ifset title}{include title|stripHtml} | {/ifset}Tickets online</title>
 
@@ -51,10 +52,12 @@
 			</ul>
 
 			<ul class="navbar-nav my-2 my-lg-0 navbarDropdownAccountUl">
-				<li class="nav-item {ifCurrent Cart:default}active{/ifCurrent}">
+				<li data-content="Pro dokončení nákupu pokračujte kliknutím na ikonu košíku!" data-toggle="popover" title="Přidáno do košíku!" id="cartItem" class="nav-item {ifCurrent Cart:default}active{/ifCurrent}">
 					<a class="nav-link" n:href="Cart:default">
-						<i class="fas fa-shopping-cart"></i>
-						<span class="shopping-cart-text">Košík</span>
+						{snippet cart}
+							<i class="fas fa-shopping-cart"></i>
+							<span class="shopping-cart-text">Košík {if $cart->count == 0}(prázdný){else}({$cart->count}){/if}</span>
+						{/snippet}
 					</a>
 				</li>
 
@@ -96,6 +99,77 @@
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+		<script src="{$basePath}/js/nette.ajax.js"></script>
+
+		<script>
+            $(function () {
+                $.nette.init();
+            });
+
+            (function ($, undefined) {
+                $.nette.ext('loading'/*'spinner'*/, {
+                    init: function (x) {
+                        //this.spinner = this.createSpinner();
+                        //this.spinner.appendTo('#cartButtonDiv');
+                    },
+                    start: function (jqXHR, settings) {
+                        //this.spinner.show(this.speed);
+						$('#addToCartButton').attr('disabled', true);
+                        $('#addToCartButton').html('Načítání ...');
+                        $('#addToCartHref').attr('href', '');
+                    },
+                    complete: function () {
+                        $('#addToCartButton').attr('disabled', false);
+                        $('#addToCartButton').html('Do košíku s tím');
+
+                     	$("#inputAmount").val(1);
+
+                        //this.spinner.hide(this.speed);
+
+                        var width = $(window).width();
+
+                        if(width < 974) {
+                            $('#cartItem').attr('data-placement', 'left');
+                            setTimeout(function() {
+                            	$('[data-toggle="popover"]').popover('show');
+                                $('.popover').css('margin-top', '40px');
+                            }, 300);
+                        } else {
+                            $('#cartItem').attr('data-placement', 'bottom');
+                            setTimeout(function() {
+                                $('[data-toggle="popover"]').popover('show');
+                                $('.popover').css('margin-top', '0');
+                            }, 300);
+                        }
+
+                        setTimeout(function() {
+                            $('[data-toggle="popover"]').popover('hide');
+                        }, 3000);
+
+
+						{if isset($firstAmount) && $firstAmount == 0} var amount = 0;{/if}
+
+                        if (amount === 0) {
+                            document.getElementById('addToCartButton').setAttribute('disabled', 'disabled');
+                            document.getElementById('inputAmount').value = '0';
+                        }
+					}
+                }, {
+                    /*createSpinner: function () {
+                        var spinner = $('<div>', {
+                            class: 'lds-dual-ring',
+                            css: {
+                                display: 'none'
+                            }
+                        });
+                        return spinner;
+                    },
+                    spinner: null,
+                    speed: undefined*/
+                });
+            })(jQuery);
+		</script>
 	{/block}
 </body>
 </html>
