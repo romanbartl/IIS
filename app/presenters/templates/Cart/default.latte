@@ -1,17 +1,74 @@
 {block content}
-    <div class="first-div"></div>
-
-    <a n:href="ahoj!" class="ajax" id="pridej">Klikni pls</a><br>
-    <a n:href="smazat!" class="ajax" id="smaz">Smazat</a>
-
-    <div>
-        {foreach $cart->list as $concertId => $ticketType}
-            {$concertId}  <br>
-            {foreach $ticketType as $type => $amount}
-                {$type} : {$amount} <br>
-            {/foreach}
-            <br> <br>
-        {/foreach}
+    <div id="ticketsHeader" class="jumbotron header-of-page">
+        <h1 class="display-4 header" n:block=title>Košík</h1>
     </div>
 
+    <div class="container shopping-cart-container">
+        <div class="card shopping-cart">
+            <div class="card-header bg-dark text-light">
+                <i class="fa fa-shopping-cart" aria-hidden="true" style="margin-right: 10px;"></i>
+                Nákupní košík
+            </div>
+
+            <div class="card-body">
+
+                {foreach $cart->list as $concertId => $ticket}
+                    {foreach $ticket as $type => $amount}
+                        <div class="row">
+                        <div class="col-12 text-sm-center col-sm-12 text-md-left col-md-6" style="padding-left: 40px;">
+                            <h4 class="product-name"><strong>{$concertsNames[$concertId]}</strong></h4>
+                            <h4>
+                                <small>
+                                    Vstupenka{if $type == "STAND"} na sezení{elseif $type == "SIT"} na stání{else} VIP{/if}
+                                </small>
+                            </h4>
+                        </div>
+                        <div class="col-12 col-sm-12 text-sm-center col-md-6 text-md-right row" style="padding-top: 15px; display: flex; justify-content: flex-end">
+                            <div class="col col-md-auto col-sm text-md-center" style="padding-top: 10px;">
+                                <h6><strong>{$ticketsPrices[$concertId][$type]} Kč</strong></h6>
+                            </div>
+                            <div class="col col-md-auto col-sm text-md-center">
+                                <div class="">
+                                    <input type="number" step="1" max="99" min="1" value="{$amount}" title="amount" size="4">
+                                </div>
+                            </div>
+                            <div class="col col-md-auto col-sm text-md-center" style="padding-top: 10px">
+                                <h6><strong>25.00 <span class="text-muted">x</span></strong></h6>
+                            </div>
+                            <div class="col col-md-auto col-sm text-md-center">
+                                <button type="button" class="btn btn-outline-danger btn-xs">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                        <hr>
+                    {/foreach}
+                {/foreach}
+
+                <div class="pull-right">
+                    <a href="" class="btn btn-outline-secondary pull-right">
+                        Aktualizovat košík
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="pull-right" style="margin: 10px">
+                    <a href="" class="btn btn-success pull-right">K pokladně</a>
+                    <div class="pull-right" style="margin: 8px 30px 8px 0;">
+                        Celková cena: <b>50.00 Kč</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{/block}
+
+
+{block scripts}
+    {include parent}
+
+    <script src="https://use.fontawesome.com/c560c025cf.js"></script>
 {/block}

@@ -54,12 +54,8 @@ class ConcertsPresenter extends BasePresenter
 
             if (isset($this->cart->list[$concertId])) {
                 if (isset($this->cart->list[$concertId][$ticketType])) {
-
-                    //if (!$help) {
-                        $this->cart->list[$concertId][$ticketType] += $amount;
-                        $this->cart->count += $amount;
-                    //}
-
+                    $this->cart->list[$concertId][$ticketType] += $amount;
+                    $this->cart->count += $amount;
                 } else {
                     $this->cart->list[$concertId][$ticketType] = $amount;
                     $this->cart->count += $amount;

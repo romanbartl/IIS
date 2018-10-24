@@ -1,51 +1,51 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Roxem Wincle
- * Date: 17.10.2018
- * Time: 13:47
- */
 
 namespace App\Presenters;
 
-use Nette\Http\Session;
+use App\Model\ConcertsManager;
+use App\Model\TicketsManager;
+
 
 class CartPresenter extends BasePresenter
 {
-    private $tickets;
+    /**
+     * @var ConcertsManager
+     */
+    private $concertsManager;
 
 
-    public function actionDefault()
+    /**
+     * @var TicketsManager
+     */
+    private $ticketsManager;
+
+
+    /**
+     * CartPresenter constructor.
+     * @param ConcertsManager $concertsManager
+     * @param TicketsManager $ticketsManager
+     */
+    public function __construct(ConcertsManager $concertsManager, TicketsManager $ticketsManager)
     {
-
-    }
-
-
-    public function handleAhoj()
-    {
-        if($this->isAjax()) {
-            $this->cart = $this->getSession('cart');
-            $this->cart->count += 1;
-            $this->template->cart = $this->cart;
-
-            $this->redrawControl("cart");
-        }
-    }
-
-    public function handleSmazat()
-    {
-        if($this->isAjax()) {
-            $this->cart = $this->getSession('cart');
-            $this->cart->count -= 1;
-            $this->template->cart = $this->cart;
-
-            $this->redrawControl("cart");
-        }
+        parent::__construct();
+        $this->concertsManager = $concertsManager;
+        $this->ticketsManager = $ticketsManager;
     }
 
 
     public function renderDefault()
     {
-        $this->template->cart = $this->cart;
+        $concertsNames = array();
+        $ticketsPrices = array();
+
+        foreach ($this->cart->list as $concertId => $ticket) {
+            $concertsNames[$concertId] = $this->concertsManager->getConcertNameById($concertId);
+
+            foreach ($ticket as $type => $amount)
+                $ticketsPrices[$concertId][$type] = $this->ticketsManager->getTicketPriceByConcertIdAndType($concertId, $type);
+        }
+
+        $this->template->concertsNames = $concertsNames;
+        $this->template->ticketsPrices = $ticketsPrices;
     }
 }

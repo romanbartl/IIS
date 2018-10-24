@@ -100,4 +100,14 @@ class ConcertsManager
 
         return $concert;
     }
+
+
+    /**
+     * @param $concertId
+     * @return bool|Nette\Database\IRow|Nette\Database\Row
+     */
+    public function getConcertNameById($concertId)
+    {
+        return $this->database->query('SELECT name FROM Concert WHERE idConcert = ?', $concertId)->fetchField('name');
+    }
 }
