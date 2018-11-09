@@ -65,10 +65,6 @@ class UserPresenter extends BasePresenter
 
     public function renderFavouriteInterprets() {
         if($this->user->isLoggedIn()) {
-            $inter = $this->userManager->getAllFavouriteInterprets($this->user->getId());
-            if(empty($inter)) {
-                bdump($inter);
-            }
             $this->template->interprets = $this->userManager->getAllFavouriteInterprets($this->user->getId());
         }
         else {
