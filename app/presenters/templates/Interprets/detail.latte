@@ -81,25 +81,27 @@
                         <span class="text-muted">$12</span>
                     </li>
                 </ul>
-                {snippet changeFavourite}
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item d-flex justify-content-between lh-condensed">
-                            <div>
-                                <h5 class="my-0">V oblíbených</h5>
-                            </div>
+                {if $user->isLoggedIn()}
+                    {snippet changeFavourite}
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                                <div>
+                                    <h5 class="my-0">V oblíbených</h5>
+                                </div>
 
-                            {if $isFavourite}
-                                <a n:href="ChangeFavourite!, $user->id, $interpret->idInterpret, 0" class="ajax">
-                                    <i class="fas fa-heart fav" style=""></i>
-                                </a>
-                            {else}
-                                <a n:href="ChangeFavourite!, $user->id, $interpret->idInterpret, 1" class="ajax">
-                                    <i class="far fa-heart" style="" ></i>
-                                </a>
-                            {/if}
-                        </li>
-                    </ul>
-                {/snippet}
+                                {if $isFavourite}
+                                    <a n:href="ChangeFavourite!, $user->id, $interpret->idInterpret, 0" class="ajax">
+                                        <i class="fas fa-heart fav" style=""></i>
+                                    </a>
+                                {else}
+                                    <a n:href="ChangeFavourite!, $user->id, $interpret->idInterpret, 1" class="ajax">
+                                        <i class="far fa-heart" style="" ></i>
+                                    </a>
+                                {/if}
+                            </li>
+                        </ul>
+                    {/snippet}
+                {/if}
             </div>
 
             <div class="col-md-8 order-md-1">
