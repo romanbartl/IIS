@@ -108,13 +108,22 @@
                 <div class="row">
                     <h4 class="mb-3">Aktuální členové</h4>
                     <div class="container">
-                        <ul class="list-group">
-                            {foreach $members as $member}
-                                <li class="list-group-item">{$member->name} {$member->surname}
-                                    {if $member->birth != ""}(* {$member->birth|date:'%d. %m. %Y'}){/if}
-                                </li>
-                            {/foreach}
-                        </ul>
+                        {snippet editMembers}
+                            <ul class="list-group">
+                                {foreach $members as $member}
+                                    {if $user->isLoggedIn() && $user->isAllowed('interpret', 'edit')}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {control memberForm-$member->idMember}
+                                            <a n:href="DeleteMember! $interpret->idInterpret, $member->idMember" class="ajax">Odebrat</a>
+                                        </li>
+                                    {else}
+                                        <li class="list-group-item">{$member->name} {$member->surname}
+                                            {if $member->birth != ""}(* {$member->birth|date:'%d. %m. %Y'}){/if}
+                                        </li>
+                                    {/if}
+                                {/foreach}
+                            </ul>
+                        {/snippet}
                     </div>
                 </div>
 
