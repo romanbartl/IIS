@@ -9,6 +9,7 @@
 namespace App\Presenters;
 
 use App\Forms;
+use Nette\Application\UI\BadSignalException;
 use Nette\Application\UI\Form;
 use App;
 
@@ -28,7 +29,9 @@ class UserPresenter extends BasePresenter
     }
 
     public function renderSettings() {
-
+        if(!$this->user->isLoggedIn()) {
+            throw new BadSignalException;
+        }
     }
 
     protected function createComponentUserSettingsForm($name)
@@ -39,7 +42,12 @@ class UserPresenter extends BasePresenter
     }
 
     public function renderList() {
-        $this->template->users = $this->userManager->getUsers();
+        if($this->user->isAllowed('userSource', 'showList')) {
+            $this->template->users = $this->userManager->getUsers();
+        }
+        else {
+            throw new BadSignalException;
+        }
     }
 
 
@@ -52,6 +60,15 @@ class UserPresenter extends BasePresenter
             }
             $this->userManager->changeUserRole($idUser, $role);
             $this->redrawControl('userListSnippet');
+        }
+    }
+
+    public function renderFavouriteInterprets() {
+        if($this->user->isLoggedIn()) {
+            $this->template->interprets = $this->userManager->getAllFavouriteInterprets($this->user->getId());
+        }
+        else {
+            throw new BadSignalException;
         }
     }
 }
