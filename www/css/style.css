@@ -41,6 +41,11 @@ div.flash.success {
 	border: 1px solid #42e22c;
 }
 
+div.flash.error {
+	background: #ffaaa1;
+	border: 1px solid #e2574f;
+}
+
 a[href^="#error:"] {
 	background: red;
 	color: white;

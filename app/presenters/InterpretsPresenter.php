@@ -2,6 +2,8 @@
 
 namespace App\Presenters;
 
+use App\Forms\AddExistingMemberFormFactory;
+use App\Forms\AddNewMemberFormFactory;
 use App\Forms\IMemberFormFactory;
 use App\Forms\MemberForm;
 use App\Forms\MemberFormFactory;
@@ -57,8 +59,12 @@ class InterpretsPresenter extends BasePresenter
     private $interpretId;
 
 
-    /** @var IMemberFormFactory */
-    private $memberForm;
+    /** @var AddNewMemberFormFactory  */
+    private $addNewMemberFormFactory;
+
+
+    /** @var AddExistingMemberFormFactory  */
+    private $addExistingMemberFormFactory;
 
 
     /**
@@ -69,10 +75,13 @@ class InterpretsPresenter extends BasePresenter
      * @param ConcertsManager $concertsManager
      * @param FestivalsManager $festivalsManager
      * @param UserManager $userManager
+     * @param AddNewMemberFormFactory $addNewMemberFormFactory
+     * @param AddExistingMemberFormFactory $addExistingMemberFormFactory
      */
     public function __construct(InterpretsManager $interpretsManager, AlbumsManager $albumsManager,
                                 MembersManager $membersManager, ConcertsManager $concertsManager,
-                                FestivalsManager $festivalsManager, UserManager $userManager)
+                                FestivalsManager $festivalsManager, UserManager $userManager,
+                                AddNewMemberFormFactory $addNewMemberFormFactory, AddExistingMemberFormFactory $addExistingMemberFormFactory)
     {
         $this->interpretsManager = $interpretsManager;
         $this->albumsManager = $albumsManager;
@@ -80,6 +89,8 @@ class InterpretsPresenter extends BasePresenter
         $this->concertsManager = $concertsManager;
         $this->festivalsManager = $festivalsManager;
         $this->userManager = $userManager;
+        $this->addNewMemberFormFactory = $addNewMemberFormFactory;
+        $this->addExistingMemberFormFactory = $addExistingMemberFormFactory;
     }
 
     public function renderDefault()
@@ -114,6 +125,20 @@ class InterpretsPresenter extends BasePresenter
             };
 
             return $form;
+        });
+    }
+
+    protected function createComponentAddNewMemberForm() {
+        return $this->addNewMemberFormFactory->create(function () {
+            $this->redirect('this');
+        }, $this->interpretId);
+    }
+
+    protected function createComponentAddExistingMemberForm() {
+        return $this->addExistingMemberFormFactory->create(function () {
+            $this->redirect('this');
+        }, $this->interpretId, function () {
+            $this->flashMessage("Vybraný člen je již součástí tohoto interpreta", 'error');
         });
     }
 

@@ -28,6 +28,8 @@ services:
 	- App\Forms\SignInFormFactory
 	- App\Forms\SignUpFormFactory
 	- App\Forms\UserSettingsFormFactory
+	- App\Forms\AddNewMemberFormFactory
+	- App\Forms\AddExistingMemberFormFactory
 
 	authorizatorFactory: App\AuthorizatorFactory
 	authorizator: @authorizatorFactory::create
