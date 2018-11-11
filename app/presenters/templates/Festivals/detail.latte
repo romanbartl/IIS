@@ -1,13 +1,231 @@
 {block content}
-    <div class="first-div"></div>
-    {$festivalId}
+    <div id="carouselExampleIndicators" class="carousel slide first-div" data-ride="carousel">
+        <div class="carousel-inner interpret-main-image-banner">
+            <div class="carousel-item interpret-main-image-banner-item-div active">
+                <img align="middle" class="d-block w-100 interpret-main-image-banner-item"
+                     src="{$festival['info']->label}"
+                     alt="{$festival['info']->festival} banner">
+                <div class="carousel-caption d-none d-md-block interpret-main-image-banner-item-caption">
+                    <h1 n:block=title>{$festival['info']->festival} {$festival['info']->volume} ({$festival['info']->season})</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container interpret-container">
+        <div class="row">
+            <div class="col-md-4 order-md-2 mb-4" style="padding: 0 30px 0 30px;">
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%; padding-bottom: 30px;">
+                        <div class="container">
+                            <h4>Nákup vstupenek</h4>
+                            {if $festival['info']->end < new DateTime()}
+                                <p class="lead">Akce již proběhla.</p>
+                            {elseif $festival['tickets'] == null}
+                                <p class="lead">Vyprodáno.</p>
+                            {else}
+                                <div style="padding: 30px 10px 0 10px">
+                                    {snippet ticketsSnippet}
+                                    {foreach $festival['tickets'] as $key => $ticket}
+                                        <div class="custom-control custom-radio" style="padding-bottom: 10px;">
+                                            <input type="radio" class="custom-control-input" id="ticket{$key}"
+                                                   name="ticketsRadio" {if $ticket->type == $firstType}checked{/if} {if isset($cart->list[$festivalId]['F'][$ticket->type]) && $cart->list[$festivalId]['F'][$ticket->type] == $ticket->count}disabled{/if}
+                                                   onclick="changeMaxAmount({$ticketsMaxAmounts[$key]}); changeHandleType({$ticket->type});" >
+
+                                            <label class="custom-control-label" for="ticket{$key}">
+                                                Vstupenka {if $ticket->type == "SIT"}na sezení{elseif $ticket->type == "STAND"}na stání{elseif $ticket->type == "VIP"}VIP{/if}
+                                                <br><span class="text-secondary">{$ticket->price} Kč s DPH</span>
+                                            </label>
+                                        </div>
+                                    {/foreach}
+
+                                        <div style="margin-top: 10px;">
+                                            <label class="custom-control-label" for="inputAmount">Množství</label>
+                                            <input id="inputAmount" min="{if $firstAmount != 0}1{else}0{/if}" max="{$firstAmount}"
+                                                   type="number" class="form-control" name="amount" value="{if $firstAmount == 0}0{else}1{/if}">
+                                        </div>
+
+                                        <div id="cartButtonDiv" style="margin-top: 30px;">
+                                            <a id="addToCartHref" n:href="addToCart!, $festivalId, $firstType, 1" {if $firstAmount != 0}class="ajax"{/if}>
+                                                <input id="addToCartButton" type="button" class="ajax btn btn-danger" style="width: 100%;"
+                                                       value="{if $firstAmount == 0}Vše máte v košíku{else}Do košíku s tím {/if}" {if $firstAmount == 0} disabled {/if} >
+                                            </a>
+                                        </div>
+
+                                        <script>
+                                            var handleType = {$firstType};
+                                            var festivalId = {$festivalId};
+                                            var amount = {$firstAmount};
+
+                                            $("#inputAmount").attr("max", {$firstAmount});
+
+                                            $("#inputAmount").bind('keyup mouseup', function () {
+                                                if ($("#inputAmount").val() > amount) {
+                                                    $("#inputAmount").val(amount);
+                                                } else if ($("#inputAmount").val() <= 0 ||
+                                                    isNaN($("#inputAmount").val())) {
+                                                    $("#inputAmount").val(1)
+                                                }
+
+                                                changeHandleURL();
+                                            });
+
+                                            $("#inputAmount").keypress(function() {
+                                                if ($("#inputAmount").val() > amount) {
+                                                    $("#inputAmount").val(amount);
+                                                } else if ($("#inputAmount").val() <= 0 ||
+                                                    isNaN($("#inputAmount").val())) {
+                                                    $("#inputAmount").val(1)
+                                                }
+
+                                                changeHandleURL();
+                                            });
+                                        </script>
+                                    {/snippet}
+                                </div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
+                        <div class="container">
+                            <h4>Místo a čas konání</h4>
+                            <p><strong>{$festival['info']->place}</strong><br>{$festival['info']->address}<br>
+                                {$festival['info']->city}, {$festival['info']->zipCode}<br>
+                                <strong>Zahájení: </strong>{$festival['info']->start|date:'%d. %m. %Y v %H:%M'}<br>
+                                <strong>Ukončení: </strong>{$festival['info']->end|date:'%d. %m. %Y v %H:%M'}
+                            </p>
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 order-md-1" style="padding: 0 30px 0 30px;">
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
+                        <div class="container">
+                            <h4>Detail akce</h4>
+                            <p class="lead">{$festival['info']->info}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="mb-4">
+
+                <h3>Program</h3><br>
+
+                <ul class="nav nav-tabs">
+                    {foreach $festival['stages'] as $key => $stage}
+                        <li class="nav-item"><a class="nav-link {if $key == 0}active{/if}" data-toggle="tab" href="#tab-{$stage['id']}" role="tab">{$stage['stage']}</a></li>
+                    {/foreach}
+                </ul>
+                <div class="card card-tabs-1">
+                    <div class="card-block">
+                        <div class="tab-content">
+                            {foreach $festival['stagesProgram'] as $stageId => $program}
+                                <div class="tab-pane active" id="tab-{$stageId}">
+                                    <p class="card-text">
+                                        <ul class="list-group">
+                                        {foreach $program as $interpret}
+                                            <li class="list-group-item">{$interpret['interpret']}</li>
+                                        {/foreach}
+                                        </ul>
+                                    </p>
+                                </div>
+                            {/foreach}
+                            <!--
+                            <div class="tab-pane active" id="tab-1">
+                                <p class="card-text">Libero at quibusdam autem magnam necessitatibus, ullam nisi quo, architecto molestias reprehenderit neque porro velit deleniti ipsa mollitia pariatur! Expedita, eius repudiandae.</p>
+                            </div>
+                            <div class="tab-pane" id="tab-2">
+                                <p class="card-text">Magni autem a perferendis tempore perspiciatis aspernatur sapiente fuga deserunt dignissimos consequuntur maiores aliquid hic, in pariatur, officiis repellat voluptatum provident blanditiis.</p>
+                            </div>
+                            <div class="tab-pane" id="tab-3">
+                                <p class="card-text">Odio, facilis, vel eum nam architecto maxime consequuntur consectetur et qui eveniet alias minus provident suscipit delectus odit cupiditate similique fuga vero!</p>
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 {/block}
+
 
 {block scripts}
     {include parent}
 
+    <script>
+        handleType = {$firstType};
+        festivalId = {$festivalId};
+
+        function changeHandleType(newType)
+        {
+            handleType = newType;
+            changeHandleURL();
+        }
+
+        function changeHandleURL()
+        {
+            var handleAmount = $("#inputAmount").val();
+            $('#addToCartHref').attr('href', '/IIS/festivals/detail/'+festivalId+'?festivalId='+festivalId+'&ticketType='+handleType+'&amount='+handleAmount+'&do=addToCart');
+        }
+
+        function changeMaxAmount(newAmount)
+        {
+            amount = newAmount;
+            $("#inputAmount").attr("max", newAmount);
+            $("#inputAmount").val(1);
+        }
+
+        $("#inputAmount").bind('keyup mouseup', function () {
+            if ($("#inputAmount").val() > amount) {
+                $("#inputAmount").val(amount);
+            } else if ($("#inputAmount").val() <= 0 ||
+                isNaN($("#inputAmount").val())) {
+                $("#inputAmount").val(1)
+            }
+
+            changeHandleURL();
+        });
+
+        $("#inputAmount").keypress(function() {
+            if ($("#inputAmount").val() > amount) {
+                $("#inputAmount").val(amount);
+            } else if ($("#inputAmount").val() <= 0 ||
+                isNaN($("#inputAmount").val())) {
+                $("#inputAmount").val(1)
+            }
+
+            changeHandleURL();
+        });
+
+    </script>
+
+    <script>
+        function initMap() {
+            var uluru = { lat: parseFloat({$festival['info']->lat}), lng: parseFloat({$festival['info']->lng}) };
+            var map = new google.maps.Map(
+                document.getElementById('map'), { zoom: 16, center: uluru });
+            var marker = new google.maps.Marker({ position: uluru, map: map });
+        }
+    </script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADOwfE79SBCO4L4QMUSzEHAWFwLCrUZU4&callback=initMap">
+    </script>
 {/block}
 
+
 {block head}
-    <title n:block=title>Folk Metal Fest VI</title>
+    <style>
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 400px;  /* The height is 400 pixels */
+            width: 100%;  /* The width is the width of the web page */
+        }
+    </style>
 {/block}

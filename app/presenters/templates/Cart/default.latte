@@ -4,6 +4,7 @@
     </div>
 
     <div class="container shopping-cart-container">
+        {snippet cartBody}
         <div class="card shopping-cart">
             <div class="card-header bg-dark text-light">
                 <i class="fa fa-shopping-cart" aria-hidden="true" style="margin-right: 10px;"></i>
@@ -11,57 +12,68 @@
             </div>
 
             <div class="card-body">
-
-                {foreach $cart->list as $concertId => $ticket}
-                    {foreach $ticket as $type => $amount}
-                        <div class="row">
-                        <div class="col-12 text-sm-center col-sm-12 text-md-left col-md-6" style="padding-left: 40px;">
-                            <h4 class="product-name"><strong>{$concertsNames[$concertId]}</strong></h4>
-                            <h4>
-                                <small>
-                                    Vstupenka{if $type == "STAND"} na sezení{elseif $type == "SIT"} na stání{else} VIP{/if}
-                                </small>
-                            </h4>
-                        </div>
-                        <div class="col-12 col-sm-12 text-sm-center col-md-6 text-md-right row" style="padding-top: 15px; display: flex; justify-content: flex-end">
-                            <div class="col col-md-auto col-sm text-md-center" style="padding-top: 10px;">
-                                <h6><strong>{$ticketsPrices[$concertId][$type]} Kč</strong></h6>
-                            </div>
-                            <div class="col col-md-auto col-sm text-md-center">
-                                <div class="">
-                                    <input type="number" step="1" max="99" min="1" value="{$amount}" title="amount" size="4">
+                {foreach $cart->list as $actionId => $tickets}
+                    {foreach $tickets as $action => $ticket}
+                        {foreach $ticket as $type => $amount}
+                            <div class="row">
+                                <div class="col-12 text-sm-center col-sm-12 text-md-left col-md-6" style="padding-left: 40px;">
+                                    {if $action == "F"}
+                                        <a n:href="Festivals:detail $actionId">
+                                    {else}
+                                        <a n:href="Concerts:detail $actionId">
+                                    {/if}
+                                            <h4 class="product-name"><strong>{$actionsNames[$actionId][$action]}</strong></h4>
+                                        </a>
+                                    <h4>
+                                        <small>
+                                            Vstupenka{if $type == "STAND"} na sezení{elseif $type == "SIT"} na stání{else} VIP{/if}
+                                        </small>
+                                    </h4>
+                                </div>
+                                <div class="col-12 col-sm-12 text-sm-center col-md-6 text-md-right row" style="padding-top: 15px; display: flex; justify-content: flex-end">
+                                    <div class="col col-md-auto col-sm text-md-center" style="padding-top: 10px;">
+                                        <h6><strong>{$ticketsPrices[$actionId][$action][$type]} Kč</strong></h6>
+                                    </div>
+                                    <div class="col col-md-auto col-sm text-md-center">
+                                        <div class="">
+                                            <input type="number" step="1" max="99" min="1" value="{$amount}" title="amount" size="4">
+                                        </div>
+                                    </div>
+                                    <div class="col col-md-auto col-sm text-md-center" style="padding-top: 10px; width: 150px;">
+                                        <h6><strong>{$amount*$ticketsPrices[$actionId][$action][$type]} Kč</strong></h6>
+                                    </div>
+                                    <div class="col col-md-auto col-sm text-md-center">
+                                        <a n:href="updateCart!, $actionId, $action, $type, $amount" class="ajax">
+                                            <button type="button" class="btn btn-outline-primary btn-xs">
+                                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                                            </button>
+                                        </a>
+                                    </div>
+                                    <div class="col col-md-auto col-sm text-md-center">
+                                        <a n:href="deleteItemFromCart!, $actionId, $action, $type" class="ajax">
+                                            <button type="button" class="btn btn-outline-danger btn-xs">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col col-md-auto col-sm text-md-center" style="padding-top: 10px">
-                                <h6><strong>25.00 <span class="text-muted">x</span></strong></h6>
-                            </div>
-                            <div class="col col-md-auto col-sm text-md-center">
-                                <button type="button" class="btn btn-outline-danger btn-xs">
-                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                        <hr>
+                            <hr>
+                        {/foreach}
                     {/foreach}
                 {/foreach}
-
-                <div class="pull-right">
-                    <a href="" class="btn btn-outline-secondary pull-right">
-                        Aktualizovat košík
-                    </a>
-                </div>
             </div>
 
             <div class="card-footer">
                 <div class="pull-right" style="margin: 10px">
                     <a href="" class="btn btn-success pull-right">K pokladně</a>
                     <div class="pull-right" style="margin: 8px 30px 8px 0;">
-                        Celková cena: <b>50.00 Kč</b>
+                        Celková cena: <b>{$price} Kč</b>
                     </div>
                 </div>
             </div>
         </div>
+        {/snippet}
     </div>
 
 {/block}
@@ -69,6 +81,8 @@
 
 {block scripts}
     {include parent}
+
+
 
     <script src="https://use.fontawesome.com/c560c025cf.js"></script>
 {/block}

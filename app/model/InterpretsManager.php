@@ -27,7 +27,7 @@ class InterpretsManager extends BaseManager
      */
     public function getAllInterprets()
     {
-        return $this->database->table(self::TABLE_INTERPRET);
+        return $this->database->table(self::TABLE_INTERPRET)->order(self::INTERPRET_NAME);
     }
 
 
