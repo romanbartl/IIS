@@ -95,7 +95,7 @@
                             <p><strong>{$festival['info']->place}</strong><br>{$festival['info']->address}<br>
                                 {$festival['info']->city}, {$festival['info']->zipCode}<br>
                                 <strong>Zahájení: </strong>{$festival['info']->start|date:'%d. %m. %Y v %H:%M'}<br>
-                                <strong>Ukončení: </strong>{$festival['info']->end|date:'%d. %m. %Y v %H:%M'}
+                                <strong>Ukončení: </strong>{$festival['info']->end|date:'%d. %m. %Y'}
                             </p>
                             <div id="map"></div>
                         </div>
@@ -121,30 +121,27 @@
                         <li class="nav-item"><a class="nav-link {if $key == 0}active{/if}" data-toggle="tab" href="#tab-{$stage['id']}" role="tab">{$stage['stage']}</a></li>
                     {/foreach}
                 </ul>
+
                 <div class="card card-tabs-1">
                     <div class="card-block">
-                        <div class="tab-content">
-                            {foreach $festival['stagesProgram'] as $stageId => $program}
-                                <div class="tab-pane active" id="tab-{$stageId}">
-                                    <p class="card-text">
-                                        <ul class="list-group">
-                                        {foreach $program as $interpret}
-                                            <li class="list-group-item">{$interpret['interpret']}</li>
-                                        {/foreach}
-                                        </ul>
-                                    </p>
+                        <div class="tab-content" style="padding: 20px;">
+                            {foreach $festival['stagesProgram'] as $stageId => $stage}
+                                <div class="tab-pane {if $festival['firstStageId'] == $stageId}active{/if}" id="tab-{$stageId}">
+                                    {foreach $stage as $day => $interprets}
+                                        <p class="card-text">
+                                            <h4>{$day|date:'%d. %m. %Y'}</h4>
+                                            <ul class="list-group">
+                                                {foreach $interprets as $interpret}
+                                                    <li class="list-group-item">
+                                                        <strong>{$interpret['start']|date:'%H:%M'} - {$interpret['end']|date:'%H:%M'}: </strong>
+                                                        <span style="margin-left: 10px;"><a n:href="Interprets:detail $interpret['id']">{$interpret['interpret']}{if $interpret['headliner'] == 1} (Headliner){/if}</a></span>
+                                                    </li>
+                                                {/foreach}
+                                            </ul>
+                                        </p>
+                                    {/foreach}
                                 </div>
                             {/foreach}
-                            <!--
-                            <div class="tab-pane active" id="tab-1">
-                                <p class="card-text">Libero at quibusdam autem magnam necessitatibus, ullam nisi quo, architecto molestias reprehenderit neque porro velit deleniti ipsa mollitia pariatur! Expedita, eius repudiandae.</p>
-                            </div>
-                            <div class="tab-pane" id="tab-2">
-                                <p class="card-text">Magni autem a perferendis tempore perspiciatis aspernatur sapiente fuga deserunt dignissimos consequuntur maiores aliquid hic, in pariatur, officiis repellat voluptatum provident blanditiis.</p>
-                            </div>
-                            <div class="tab-pane" id="tab-3">
-                                <p class="card-text">Odio, facilis, vel eum nam architecto maxime consequuntur consectetur et qui eveniet alias minus provident suscipit delectus odit cupiditate similique fuga vero!</p>
-                            </div>-->
                         </div>
                     </div>
                 </div>
