@@ -38,6 +38,11 @@ class MembersManager extends BaseManager
     }
 
 
+    public function getAllMembers() {
+        return $this->database->table(self::TABLE_MEMBER)->fetchAll();
+    }
+
+
     public function deleteMemberFromInterpret($idInterpret, $idMember) {
         $this->database->table(self::TABLE_INTERPRET_MEMBER)
             ->where(self::INTERPRET_MEMBER_INTERPRET_ID, $idInterpret)
@@ -71,5 +76,31 @@ class MembersManager extends BaseManager
                 self::MEMBER_COLUMN_SURNAME => $values->surname,
                 self::MEMBER_COLUMN_BIRTH => $values->birth
                 ]);
+    }
+
+
+
+    public function addMember($values) {
+        $row = $this->database->table(self::TABLE_MEMBER)
+            ->insert([
+                self::MEMBER_COLUMN_NAME => $values->name,
+                self::MEMBER_COLUMN_SURNAME => $values->surname,
+                self::MEMBER_COLUMN_BIRTH => $values->birth
+            ]);
+        return $row->idMember;
+    }
+
+
+    public function connectMemberAndInterpret($idInterpret, $idMember) {
+        try {
+            $this->database->table(self::TABLE_INTERPRET_MEMBER)
+                ->insert([
+                    self::INTERPRET_MEMBER_INTERPRET_ID => $idInterpret,
+                    self::INTERPRET_MEMBER_MEMBER_ID => $idMember
+                ]);
+        }
+        catch (Nette\Database\UniqueConstraintViolationException $e) {
+            throw $e;
+        }
     }
 }
