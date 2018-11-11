@@ -63,33 +63,60 @@ class FestivalsManager
                                                         WHERE Y.idYear = ?', $yearId)->fetch();
 
 
-
         // TODO should be request from TicketsManager!!!!
         $festival['tickets'] = $this->database->query('SELECT price, type, COUNT(type) AS count 
                                                           FROM Ticket WHERE bought = 0 AND idYear = ? GROUP BY type ORDER BY type ASC', $yearId);
 
 
-            $stages = $this->database->query('SELECT S.idStage AS id, S.name AS stage 
-                                                          FROM Stage AS S 
-                                                          LEFT JOIN Stage_has_Interpret_in_Year AS SHIIY ON SHIIY.idStage = S.idStage 
-                                                          WHERE SHIIY.idYear = ?
-                                                          GROUP BY S.idStage', $yearId);
+        $stages = $this->database->query('SELECT S.idStage AS id, S.name AS stage 
+                                              FROM Stage AS S 
+                                              LEFT JOIN Stage_has_Interpret_in_Year AS SHIIY ON SHIIY.idStage = S.idStage 
+                                              WHERE SHIIY.idYear = ?
+                                              GROUP BY S.idStage ORDER BY S.idStage ASC', $yearId);
+
         $festival['stagesProgram'] = array();
 
+        $festStart = new \DateTime($festival['info']['start']);
+        $festEnd = new \DateTime($festival['info']['end']);
+
+        $firstStageId = null;
+        $first = true;
+
         foreach ($stages as $stage) {
-            $festival['stagesProgram'][$stage['id']] =
-                $this->database->query('SELECT I.name AS interpret, SHI.start AS start, SHI.end AS end, SHI.headliner AS headliner
+            $festival['stagesProgram'][$stage['id']] = array();
+
+            for ($i = $festStart; $i <= $festEnd; $i->modify('+1 day')) {
+                $festival['stagesProgram'][$stage['id']][$i->format('Y-m-d')] = array();
+
+                $program =
+                    $this->database->query('SELECT I.idInterpret AS id, I.name AS interpret, SHI.start AS start, SHI.end AS end, SHI.headliner AS headliner
                                             FROM Interpret AS I 
                                             LEFT JOIN Stage_has_Interpret_in_Year AS SHI ON SHI.idInterpret = I.idInterpret
-                                            WHERE SHI.idStage = ? AND SHI.idYear = ?
-                                            ORDER BY start ASC', $stage['id'], $yearId);
+                                            WHERE SHI.idStage = ? AND SHI.idYear = ? AND DATE_FORMAT(SHI.start, "%Y-%m-%d") = ?
+                                            ORDER BY start ASC', $stage['id'], $yearId, $i->format('Y-m-d'));
+
+                foreach ($program as $interpret) {
+                    $festival['stagesProgram'][$stage['id']][$i->format('Y-m-d')][] = $interpret;
+                }
+            }
+
+            $festStart = new \DateTime($festival['info']['start']);
+            $festEnd = new \DateTime($festival['info']['end']);
+
+            if ($first) {
+                $firstStageId = $stage['id'];
+                $first = false;
+            }
         }
+
 
         $festival['stages'] = $this->database->query('SELECT S.idStage AS id, S.name AS stage 
                                                           FROM Stage AS S 
                                                           LEFT JOIN Stage_has_Interpret_in_Year AS SHIIY ON SHIIY.idStage = S.idStage 
                                                           WHERE SHIIY.idYear = ?
                                                           GROUP BY S.idStage', $yearId);
+
+        $festival['firstStageId'] = $firstStageId;
 
         return $festival;
     }
