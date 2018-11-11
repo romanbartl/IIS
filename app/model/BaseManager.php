@@ -40,4 +40,16 @@ class BaseManager
         TABLE_USER_INTERPRET = 'User_has_Interpret',
         USER_INTERPRET_USER_ID = 'idUSer',
         USER_INTERPRET_INTERPRET_ID = 'idInterpret';
+
+    const
+        TABLE_MEMBER = 'Member',
+        MEMBER_COLUMN_ID = 'idMember',
+        MEMBER_COLUMN_NAME = 'name',
+        MEMBER_COLUMN_SURNAME = 'surname',
+        MEMBER_COLUMN_BIRTH ='birth';
+
+    const
+        TABLE_INTERPRET_MEMBER = 'Interpret_has_Member',
+        INTERPRET_MEMBER_INTERPRET_ID = 'idInterpret',
+        INTERPRET_MEMBER_MEMBER_ID = 'idMember';
 }

@@ -122,7 +122,8 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
 
 
     public function changeUserRole($idUser, $role) {
-	    $this->database->table(self::TABLE_USER)->where(self::USER_COLUMN_ID, $idUser)
+	    $this->database->table(self::TABLE_USER)
+            ->where(self::USER_COLUMN_ID, $idUser)
             ->update([self::USER_COLUMN_ADMIN => $role]);
     }
 
@@ -135,7 +136,8 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
 
     public function checkFavouriteInterpret($idUser, $idInterpret) {
 	    return $this->database->table(self::TABLE_USER_INTERPRET)
-            ->where(self::USER_INTERPRET_USER_ID, $idUser)->where(self::USER_INTERPRET_INTERPRET_ID, $idInterpret)
+            ->where(self::USER_INTERPRET_USER_ID, $idUser)
+            ->where(self::USER_INTERPRET_INTERPRET_ID, $idInterpret)
             ->fetch();
     }
 
@@ -150,8 +152,15 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
 
     public function removeFavouriteInterpret($idUser, $idInterpret) {
         $this->database->table(self::TABLE_USER_INTERPRET)
-            ->where(self::USER_INTERPRET_USER_ID, $idUser)->where(self::USER_INTERPRET_INTERPRET_ID, $idInterpret)
+            ->where(self::USER_INTERPRET_USER_ID, $idUser)
+            ->where(self::USER_INTERPRET_INTERPRET_ID, $idInterpret)
             ->delete();
+    }
+
+
+    public function getAllFavouriteInterprets($idUser) {
+	    return $this->database->query('SELECT Interpret.idInterpret, name, label, founded FROM Interpret LEFT JOIN User_has_Interpret ON
+                        Interpret.idInterpret = User_has_Interpret.idInterpret WHERE User_has_Interpret.idUser = ?', $idUser)->fetchAll();
     }
 }
 

@@ -64,7 +64,7 @@ class UserSettingsFormFactory
             ->setDefaultValue($this->user->getIdentity()->address);
 
         $form->addEmail('email', 'Email:')
-            ->setDefaultValue($this->user->getIdentity()->email); // TODO: Email doesn't change
+            ->setDefaultValue($this->user->getIdentity()->email);
 
         $form->addSubmit('send', 'Uložit změny');
 

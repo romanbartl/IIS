@@ -36,4 +36,40 @@ class MembersManager extends BaseManager
     {
         return $this->database->query('SELECT m.* FROM Member AS m LEFT JOIN Interpret_has_Member AS ihm ON ihm.idMember = m.idMember WHERE ihm.idInterpret = ?', $interpretId);
     }
+
+
+    public function deleteMemberFromInterpret($idInterpret, $idMember) {
+        $this->database->table(self::TABLE_INTERPRET_MEMBER)
+            ->where(self::INTERPRET_MEMBER_INTERPRET_ID, $idInterpret)
+            ->where(self::INTERPRET_MEMBER_MEMBER_ID, $idMember)
+            ->delete();
+
+        $member = $this->database->table(self::TABLE_INTERPRET_MEMBER)
+            ->where(self::INTERPRET_MEMBER_MEMBER_ID, $idMember)
+            ->fetch();
+
+        if($member == false){
+            $this->database->table(self::TABLE_MEMBER)
+                ->where(self::MEMBER_COLUMN_ID, $idMember)
+                ->delete();
+        }
+    }
+
+
+    public function getMember($idMember) {
+        return $this->database->table(self::TABLE_MEMBER)
+            ->where(self::MEMBER_COLUMN_ID, $idMember)
+            ->fetch();
+    }
+
+
+    public function editMember($values) {
+        $this->database->table(self::TABLE_MEMBER)
+            ->where(self::MEMBER_COLUMN_ID, $values->idMember)
+            ->update([
+                self::MEMBER_COLUMN_NAME => $values->name,
+                self::MEMBER_COLUMN_SURNAME => $values->surname,
+                self::MEMBER_COLUMN_BIRTH => $values->birth
+                ]);
+    }
 }
