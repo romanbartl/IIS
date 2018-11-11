@@ -7,6 +7,7 @@ use App\Forms\MemberForm;
 use App\Forms\MemberFormFactory;
 use App\Model\AlbumsManager;
 use App\Model\ConcertsManager;
+use App\Model\FestivalsManager;
 use App\Model\DuplicateNameException;
 use App\Model\InterpretsManager;
 use App\Model\MembersManager;
@@ -40,6 +41,12 @@ class InterpretsPresenter extends BasePresenter
     public $concertsManager;
 
 
+    /**
+     * @var FestivalsManager
+     */
+    public $festivalsManager;
+
+
     /** @var UserManager  */
     private $userManager;
 
@@ -60,16 +67,18 @@ class InterpretsPresenter extends BasePresenter
      * @param AlbumsManager $albumsManager
      * @param MembersManager $membersManager
      * @param ConcertsManager $concertsManager
+     * @param FestivalsManager $festivalsManager
      * @param UserManager $userManager
      */
     public function __construct(InterpretsManager $interpretsManager, AlbumsManager $albumsManager,
                                 MembersManager $membersManager, ConcertsManager $concertsManager,
-                                UserManager $userManager)
+                                FestivalsManager $festivalsManager, UserManager $userManager)
     {
         $this->interpretsManager = $interpretsManager;
         $this->albumsManager = $albumsManager;
         $this->membersManager = $membersManager;
         $this->concertsManager = $concertsManager;
+        $this->festivalsManager = $festivalsManager;
         $this->userManager = $userManager;
     }
 
@@ -110,12 +119,24 @@ class InterpretsPresenter extends BasePresenter
 
     public function renderDetail()
     {
+        $upcomingActions = 0;
+
         $this->template->interpret = $this->interpretsManager->getInterpretById($this->interpretId);
         $this->template->isFavourite = $this->userManager->checkFavouriteInterpret($this->user->id, $this->interpretId);
         $this->template->albums = $this->albumsManager->getAlbumsByInterpretId($this->interpretId);
         $this->template->members = $this->membersManager->getMembersByInterpretId($this->interpretId);
         $this->template->expiredConcerts = $this->concertsManager->getExpiredConcertsByInterpretId($this->interpretId);
+        $this->template->expiredFestivals = $this->festivalsManager->getExpiredFestivalsByInterpretId($this->interpretId);
+
+        $upcomingConcerts = $this->concertsManager->getUpcomingConcertsByInterpretId($this->interpretId);
+        $upcomingFestivals = $this->festivalsManager->getUpcomingFestivalsByInterpretId($this->interpretId);
+
+        foreach ($upcomingConcerts as $concert) {$upcomingActions++;}
+        foreach ($upcomingFestivals as $festival) {$upcomingActions++;}
+
         $this->template->upcomingConcerts = $this->concertsManager->getUpcomingConcertsByInterpretId($this->interpretId);
+        $this->template->upcomingFestivals = $this->festivalsManager->getUpcomingFestivalsByInterpretId($this->interpretId);
+        $this->template->upcomingActions = $upcomingActions;
     }
 
 

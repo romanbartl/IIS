@@ -23,6 +23,7 @@ services:
 	- App\Model\MembersManager
 	- App\Model\ConcertsManager
 	- App\Model\TicketsManager
+	- App\Model\FestivalsManager
 	- App\Forms\FormFactory
 	- App\Forms\SignInFormFactory
 	- App\Forms\SignUpFormFactory

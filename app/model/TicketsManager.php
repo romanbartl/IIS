@@ -37,6 +37,16 @@ class TicketsManager
     }
 
 
+    public function getTicketPriceByFestivalIdAndType($concertId, $ticketType)
+    {
+        return $this->database->query('SELECT price 
+                                            FROM Ticket 
+                                            WHERE idYear = ?
+                                            AND type = ?
+                                            LIMIT 1', $concertId, $ticketType)->fetchField('price');
+    }
+
+
     public function getAmountOfUnsoldTicketsByConcertIdAndType($ticketId, $ticketType)
     {
 

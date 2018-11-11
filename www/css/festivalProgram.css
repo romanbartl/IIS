@@ -1,0 +1,18 @@
+.card-tabs-1 {
+    z-index: -1;
+    margin-top: -1px;
+}
+
+.card-tabs-2 .card-header {
+    padding-bottom: 0;
+}
+.card-tabs-2 .nav-tabs {
+    margin: -1px;
+}
+
+.card-tabs-3 .card-header {
+    padding: 0;
+}
+.card-tabs-3 .nav-tabs {
+    margin: -1px;
+}
