@@ -36,4 +36,23 @@ class GenreManager extends BaseManager
     {
         return $this->database->query('SELECT g.name FROM Genre AS g LEFT JOIN Album_has_Genre AS ahg ON ahg.idGenre = g.idGenre WHERE ahg.idAlbum = ?', $albumId);
     }
+
+    public function getAllGenres() {
+        return $this->database->table(self::TABLE_GENRE)
+            ->fetchAll();
+    }
+
+
+    public function connectGenreWithAlbum($idAlbum, $idGenre) {
+        try {
+            $this->database->table(self::TABLE_ALBUM_GENRE)
+                ->insert([
+                    self::ALBUM_GENRE_ALBUM_ID => $idAlbum,
+                    self::ALBUM_GENRE_GENRE_ID => $idGenre
+                ]);
+        }
+        catch (Nette\Database\UniqueConstraintViolationException $e) {
+            throw new DuplicateNameException;
+        }
+    }
 }

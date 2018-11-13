@@ -27,11 +27,11 @@ class AddNewMemberFormFactory
     }
 
 
-    public function create(callable $onSuccess, $idInterpret) {
+    public function create(callable $onSuccess, $idAlbum) {
         $form = $this->factory->create();
 
-        $form->addHidden('idInterpret', $idInterpret);
-        $form->addText('name', 'Jméno:');
+        $form->addHidden('idInterpret', $idAlbum);
+        $form->addText('name', "Jméno:");
 
         $form->addText('surname', 'Příjmení:');
 
