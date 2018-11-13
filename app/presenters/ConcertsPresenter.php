@@ -50,20 +50,24 @@ class ConcertsPresenter extends BasePresenter
     public function handleAddToCart($concertId, $ticketType, $amount)
     {
         if($this->isAjax()) {
-            $this->cart = $this->getSession('cart');
+            $amount = $this->concertsManager->lockConcertTickets($concertId, $ticketType, $amount);
 
-            if (isset($this->cart->list[$concertId]['C'])) {
-                if (isset($this->cart->list[$concertId]['C'][$ticketType])) {
-                    $this->cart->list[$concertId]['C'][$ticketType] += $amount;
-                    $this->cart->count += $amount;
+            if ($amount != 0) {
+                $this->cart = $this->getSession('cart');
+
+                if (isset($this->cart->list[$concertId]['C'])) {
+                    if (isset($this->cart->list[$concertId]['C'][$ticketType])) {
+                        $this->cart->list[$concertId]['C'][$ticketType] += $amount;
+                        $this->cart->count += $amount;
+                    } else {
+                        $this->cart->list[$concertId]['C'][$ticketType] = $amount;
+                        $this->cart->count += $amount;
+                    }
+
                 } else {
                     $this->cart->list[$concertId]['C'][$ticketType] = $amount;
                     $this->cart->count += $amount;
                 }
-
-            } else {
-                $this->cart->list[$concertId]['C'][$ticketType] = $amount;
-                $this->cart->count += $amount;
             }
 
             $this->redrawControl('cart');
@@ -98,7 +102,7 @@ class ConcertsPresenter extends BasePresenter
         foreach ($concert['tickets'] as $key => $ticket) {
             if (isset($this->cart->list[$this->concertId]['C'][$ticket->type])) {
                 //is in cart
-                $count = $ticket->count - $this->cart->list[$this->concertId]['C'][$ticket->type];
+                $count = $ticket->count;
                 $ticketsMaxAmounts[] = $count;
 
                 if (($count != 0 && $key == 0 && $firstType != "") || ($count != 0 && $key != 0 && $firstType == "")

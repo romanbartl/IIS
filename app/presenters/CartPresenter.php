@@ -5,6 +5,8 @@ namespace App\Presenters;
 use App\Model\ConcertsManager;
 use App\Model\FestivalsManager;
 use App\Model\TicketsManager;
+use Nette\Mail\Message;
+use Nette\Mail\SendmailMailer;
 
 
 class CartPresenter extends BasePresenter
@@ -56,23 +58,28 @@ class CartPresenter extends BasePresenter
 
             unset($this->cart->list[$actionId][$actionType][$type]);
 
+            if ($actionType == 'C')
+                $this->concertsManager->unlockConcertTickets($actionId, $type, $amount);
+            else if ($actionType == 'F')
+                $this->festivalsManager->unlockFestivalTickets($actionId, $type, $amount);
+
             $this->redrawControl('cart');
             $this->redrawControl('cartBody');
         }
     }
 
 
-    /**
-     * @param $actionId
-     * @param $actionType
-     * @param $type
-     * @param $amount
-     */
-    public function handleUpdateCart($actionId, $actionType, $type, $amount)
+    public function handleSendOrder()
     {
-        if($this->isAjax()) {
+        /*$mail = new Message;
 
-        }
+        $mail->setFrom('TickcetsOnline4Fan <info@ticketsonline.4fan.cz>')
+            ->addTo($this->user->getIdentity()->email)
+            ->setSubject('Potvrzení objednávky')
+            ->setBody("Dobrý den,\nvaše objednávka byla přijata.");
+
+        $mailer = new SendmailMailer;
+        $mailer->send($mail);*/
     }
 
 

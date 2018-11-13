@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: root
- * Date: 2.10.18
- * Time: 13:39
- */
 
 namespace App\Presenters;
 
@@ -41,23 +35,32 @@ class FestivalsPresenter extends BasePresenter
     }
 
 
+    /**
+     * @param $festivalId
+     * @param $ticketType
+     * @param $amount
+     */
     public function handleAddToCart($festivalId, $ticketType, $amount)
     {
         if($this->isAjax()) {
-            $this->cart = $this->getSession('cart');
+            $amount = $this->festivalManager->lockFestivalTickets($festivalId, $ticketType, $amount);
 
-            if (isset($this->cart->list[$festivalId]['F'])) {
-                if (isset($this->cart->list[$festivalId]['F'][$ticketType])) {
-                    $this->cart->list[$festivalId]['F'][$ticketType] += $amount;
-                    $this->cart->count += $amount;
+            if ($amount != 0) {
+                $this->cart = $this->getSession('cart');
+
+                if (isset($this->cart->list[$festivalId]['F'])) {
+                    if (isset($this->cart->list[$festivalId]['F'][$ticketType])) {
+                        $this->cart->list[$festivalId]['F'][$ticketType] += $amount;
+                        $this->cart->count += $amount;
+                    } else {
+                        $this->cart->list[$festivalId]['F'][$ticketType] = $amount;
+                        $this->cart->count += $amount;
+                    }
+
                 } else {
                     $this->cart->list[$festivalId]['F'][$ticketType] = $amount;
                     $this->cart->count += $amount;
                 }
-
-            } else {
-                $this->cart->list[$festivalId]['F'][$ticketType] = $amount;
-                $this->cart->count += $amount;
             }
 
             $this->redrawControl('cart');
@@ -79,7 +82,7 @@ class FestivalsPresenter extends BasePresenter
         foreach ($festival['tickets'] as $key => $ticket) {
             if (isset($this->cart->list[$this->festivalId]['F'][$ticket->type])) {
                 //is in cart
-                $count = $ticket->count - $this->cart->list[$this->festivalId]['F'][$ticket->type];
+                $count = $ticket->count;
                 $ticketsMaxAmounts[] = $count;
 
                 if (($count != 0 && $key == 0 && $firstType != "") || ($count != 0 && $key != 0 && $firstType == "")
