@@ -30,6 +30,8 @@ services:
 	- App\Forms\UserSettingsFormFactory
 	- App\Forms\AddNewMemberFormFactory
 	- App\Forms\AddExistingMemberFormFactory
+	- App\Forms\AddAlbumFormFactory
+	- App\Forms\GenreFormFactory
 
 	authorizatorFactory: App\AuthorizatorFactory
 	authorizator: @authorizatorFactory::create

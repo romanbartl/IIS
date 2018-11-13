@@ -28,6 +28,7 @@ class AlbumsManager extends BaseManager
     /**
      * AlbumsManager constructor.
      * @param Nette\Database\Context $database
+     * @param GenreManager $genreManager
      */
     public function __construct(Nette\Database\Context $database, GenreManager $genreManager)
     {
@@ -52,5 +53,43 @@ class AlbumsManager extends BaseManager
         }
 
         return $returnAlbums;
+    }
+
+
+    public function getAlbum($idAlbum) {
+        return $this->database->table(self::TABLE_ALBUM)
+            ->where(self::ALBUM_COLUMN_ID, $idAlbum)->fetch();
+    }
+
+
+    public function editAlbum($values) {
+        $this->database->table(self::TABLE_ALBUM)
+            ->where(self::ALBUM_COLUMN_ID, $values->idAlbum)
+            ->update([
+                self::ALBUM_COLUMN_NAME => $values->name,
+                self::ALBUM_COLUMN_LABEL => $values->label,
+                self::ALBUM_COLUMN_RELEASE => $values->release
+            ]);
+    }
+
+
+    public function deleteAlbum($idAlbum) {
+        $this->database->table(self::TABLE_ALBUM_GENRE)
+            ->where(self::ALBUM_GENRE_ALBUM_ID, $idAlbum)
+            ->delete();
+        $this->database->table(self::TABLE_ALBUM)
+            ->where(self::ALBUM_COLUMN_ID, $idAlbum)
+            ->delete();
+    }
+
+
+    public function addAlbum($values) {
+        $this->database->table(self::TABLE_ALBUM)
+            ->insert([
+                self::ALBUM_COLUMN_NAME => $values->name,
+                self::ALBUM_COLUMN_LABEL => $values->label,
+                self::ALBUM_COLUMN_RELEASE => $values->release,
+                self::ALBUM_COLUMN_INTERPRET_ID => $values->idInterpret
+            ]);
     }
 }
