@@ -25,6 +25,9 @@ class BaseManager
 
     const
         TABLE_ALBUM = 'Album',
+        ALBUM_COLUMN_ID = 'idAlbum',
+        ALBUM_COLUMN_NAME = 'name',
+        ALBUM_COLUMN_LABEL = 'label',
         ALBUM_COLUMN_INTERPRET_ID = 'idInterpret',
         ALBUM_COLUMN_RELEASE = 'release';
 
