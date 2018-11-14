@@ -75,6 +75,8 @@ class FestivalsPresenter extends BasePresenter
 
         $festival = $this->festivalManager->getFestivalById($this->festivalId);
 
+        if ($festival['info'] == null) $this->redirect('Notfound:default');
+
         $ticketsMaxAmounts = array();
         $firstType = "";
         $firstAmount = 0;

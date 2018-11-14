@@ -95,6 +95,8 @@ class ConcertsPresenter extends BasePresenter
         //TODO change getConcertById by some method from TicketsManager after it's working
         $concert = $this->concertsManager->getConcertById($this->concertId);
 
+        if ($concert['info'] == null) $this->redirect('Notfound:default');
+
         $ticketsMaxAmounts = array();
         $firstType = "";
         $firstAmount = 0;

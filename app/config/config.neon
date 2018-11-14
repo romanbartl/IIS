@@ -6,7 +6,8 @@ parameters:
 
 
 application:
-	errorPresenter: Error
+	catchExceptions: true
+	errorPresenter: Notfound
 	mapping:
 		*: App\*Module\Presenters\*Presenter
 
