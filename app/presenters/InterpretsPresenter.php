@@ -129,6 +129,9 @@ class InterpretsPresenter extends BasePresenter
     public function actionDetail($id)
     {
         $this->interpretId = $id;
+        if($this->user->isLoggedIn()) {
+            $this->userManager->resetIsNew($this->user->getId(), $this->interpretId);
+        }
     }
 
 
@@ -172,9 +175,11 @@ class InterpretsPresenter extends BasePresenter
 
             $form = new \Nette\Application\UI\Form;
             $form->addHidden('idAlbum', $idAlbum);
+            $form->addHidden('currentRelease', $album->release->format('Y-m-d'));
             $form->addText('name', "Název:")
                 ->setDefaultValue($album->name);
             $form->addText('label', "Obrázek:")
+                ->setRequired("Vyplňte prosím URL obrázku!")
                 ->setDefaultValue($album->label);
             $form->addText('release', 'Datum vydání:')
                 ->setType('date')
@@ -183,6 +188,9 @@ class InterpretsPresenter extends BasePresenter
 
             $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
                 $this->albumsManager->editAlbum($values);
+                if($values->currentRelease != $values->release) {
+                    $this->userManager->setIsNew($this->interpretId);
+                }
                 $this->redirect('this');
             };
 
@@ -255,6 +263,7 @@ class InterpretsPresenter extends BasePresenter
 
     protected function createComponentAddAlbumForm() {
         return $this->addAlbumFormFactory->create(function () {
+            $this->userManager->setIsNew($this->interpretId);
             $this->redirect('this');
         }, $this->interpretId);
     }

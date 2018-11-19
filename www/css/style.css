@@ -154,3 +154,9 @@ form .error {
 .fa-heart.fav:hover {
 	color: #e73a42;
 }
+
+.badge-new {
+	position: absolute;
+	left: 0 !important;
+	font-size: 100% !important;
+}

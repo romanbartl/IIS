@@ -32,7 +32,8 @@ class AddAlbumFormFactory
         $form->addHidden('idInterpret', $idInterpret);
         $form->addText('name', 'Název:');
 
-        $form->addText('label', 'Obrázek:');
+        $form->addText('label', 'Obrázek:')
+            ->setRequired("Vyplňte prosím URL obrázku!");
 
         $form->addText('release', 'Datum vydání:')
             ->setType('date');
