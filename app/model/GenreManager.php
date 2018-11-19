@@ -34,7 +34,7 @@ class GenreManager extends BaseManager
      */
     public function getGenresByAlbumId($albumId)
     {
-        return $this->database->query('SELECT g.name FROM Genre AS g LEFT JOIN Album_has_Genre AS ahg ON ahg.idGenre = g.idGenre WHERE ahg.idAlbum = ?', $albumId);
+        return $this->database->query('SELECT g.name, g.idGenre FROM Genre AS g LEFT JOIN Album_has_Genre AS ahg ON ahg.idGenre = g.idGenre WHERE ahg.idAlbum = ?', $albumId);
     }
 
     public function getAllGenres() {
@@ -62,5 +62,13 @@ class GenreManager extends BaseManager
             ->insert([
                 self::GENRE_COLUMN_NAME => $name
             ]);
+    }
+
+
+    public function deleteGenreFromAlbum($idAlbum, $idGenre) {
+        $this->database->table(self::TABLE_ALBUM_GENRE)
+            ->where(self::ALBUM_GENRE_ALBUM_ID, $idAlbum)
+            ->where(self::ALBUM_GENRE_GENRE_ID, $idGenre)
+            ->delete();
     }
 }

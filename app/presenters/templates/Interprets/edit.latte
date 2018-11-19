@@ -80,7 +80,7 @@
 									{control changeAlbumForm-$album->idAlbum}
 									<b>Žánry</b>
 									{foreach $album->genres as $genre}
-										{$genre->name}<br/>
+										{$genre->name}(<a n:href="DeleteGenreFromAlbum! $album->idAlbum, $genre->idGenre" class="ajax">Odebrat</a>)<br/>
 									{/foreach}
 
 									<a n:href="DeleteAlbum! $album->idAlbum" class="ajax">Odebrat</a>

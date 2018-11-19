@@ -296,4 +296,12 @@ class InterpretsPresenter extends BasePresenter
             $this->redrawControl('editAlbums');
         }
     }
+
+
+    public function handleDeleteGenreFromAlbum($idAlbum, $idGenre) {
+        if($this->isAjax()) {
+            $this->genreManager->deleteGenreFromAlbum($idAlbum, $idGenre);
+            $this->redrawControl('editAlbums');
+        }
+    }
 }
