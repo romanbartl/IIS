@@ -12,6 +12,7 @@ use App\Forms\MemberFormFactory;
 use App\Model\AlbumsManager;
 use App\Model\ConcertsManager;
 use App\Model\FestivalsManager;
+use App\Model\GenreManager;
 use App\Model\InterpretsManager;
 use App\Model\MembersManager;
 use App\Model\UserManager;
@@ -75,6 +76,9 @@ class InterpretsPresenter extends BasePresenter
     private $genreFormFactory;
 
 
+    private $genreManager;
+
+
     /**
      * InterpretsPresenter constructor.
      * @param InterpretsManager $interpretsManager
@@ -87,12 +91,13 @@ class InterpretsPresenter extends BasePresenter
      * @param AddExistingMemberFormFactory $addExistingMemberFormFactory
      * @param AddAlbumFormFactory $addAlbumFormFactory
      * @param GenreFormFactory $genreFormFactory
+     * @param GenreManager $genreManager
      */
     public function __construct(InterpretsManager $interpretsManager, AlbumsManager $albumsManager,
                                 MembersManager $membersManager, ConcertsManager $concertsManager,
                                 FestivalsManager $festivalsManager, UserManager $userManager,
                                 AddNewMemberFormFactory $addNewMemberFormFactory, AddExistingMemberFormFactory $addExistingMemberFormFactory,
-                                AddAlbumFormFactory $addAlbumFormFactory, GenreFormFactory $genreFormFactory)
+                                AddAlbumFormFactory $addAlbumFormFactory, GenreFormFactory $genreFormFactory, GenreManager $genreManager)
     {
         $this->interpretsManager = $interpretsManager;
         $this->albumsManager = $albumsManager;
@@ -104,6 +109,7 @@ class InterpretsPresenter extends BasePresenter
         $this->addExistingMemberFormFactory = $addExistingMemberFormFactory;
         $this->addAlbumFormFactory = $addAlbumFormFactory;
         $this->genreFormFactory = $genreFormFactory;
+        $this->genreManager = $genreManager;
     }
 
     public function renderDefault()
@@ -115,9 +121,6 @@ class InterpretsPresenter extends BasePresenter
     public function actionDetail($id)
     {
         $this->interpretId = $id;
-        if($this->user->isLoggedIn() && $this->user->isAllowed('interpret', 'edit')) {
-            $this->redirect("Interprets:edit", $id);
-        }
     }
 
     protected function createComponentMemberForm()
@@ -172,10 +175,17 @@ class InterpretsPresenter extends BasePresenter
 
 
     protected function createComponentAddExistingGenreForm() {
-        return $this->genreFormFactory->create(function () {
+        return $this->genreFormFactory->createConnectGenreAlbumForm(function () {
             $this->redirect('this');
         }, $this->interpretId, function () {
             $this->flashMessage("Vybraný žánr je již přídán k tomuto albu.", 'error');
+        });
+    }
+
+
+    protected function createComponentAddNewGenreForm() {
+        return $this->genreFormFactory->createAddNewGenreForm(function () {
+            $this->redirect('this');
         });
     }
 
@@ -212,6 +222,7 @@ class InterpretsPresenter extends BasePresenter
         $this->template->members = $this->membersManager->getMembersByInterpretId($this->interpretId);
         $this->template->expiredConcerts = $this->concertsManager->getExpiredConcertsByInterpretId($this->interpretId);
         $this->template->expiredFestivals = $this->festivalsManager->getExpiredFestivalsByInterpretId($this->interpretId);
+        $this->template->allGenres = $this->genreManager->getAllGenres();
 
         $upcomingConcerts = $this->concertsManager->getUpcomingConcertsByInterpretId($this->interpretId);
         $upcomingFestivals = $this->festivalsManager->getUpcomingFestivalsByInterpretId($this->interpretId);

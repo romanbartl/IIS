@@ -55,4 +55,12 @@ class GenreManager extends BaseManager
             throw new DuplicateNameException;
         }
     }
+
+
+    public function addGenre($name) {
+        $this->database->table(self::TABLE_GENRE)
+            ->insert([
+                self::GENRE_COLUMN_NAME => $name
+            ]);
+    }
 }

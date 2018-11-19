@@ -32,7 +32,9 @@ class BaseManager
         ALBUM_COLUMN_RELEASE = 'release';
 
     const
-        TABLE_GENRE = 'Genre';
+        TABLE_GENRE = 'Genre',
+        GENRE_COLUMN_ID = 'idGenre',
+        GENRE_COLUMN_NAME = 'name';
 
     const
         TABLE_ALBUM_GENRE = 'Album_has_Genre',

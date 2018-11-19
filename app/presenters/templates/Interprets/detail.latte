@@ -14,6 +14,9 @@
     <div class="container interpret-container">
         <div class="row">
             <div class="col-md-4 order-md-2 mb-4">
+                {if $user->isLoggedIn() && $user->isAllowed('interpret', 'edit')}
+                    <a class="btn btn-primary d-flex justify-content-between align-items-center mb-3 text-center" n:href="Interprets:edit $interpret->idInterpret" role="button">Editovat interpreta</a>
+                {/if}
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text">Nadcházející akce</span>
                     <span class="badge badge-secondary badge-pill">{$upcomingActions}</span>
