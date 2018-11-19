@@ -65,10 +65,10 @@
                     {if !$user->loggedIn}
                         <button class="btn btn-warning pull-right" disabled>Objednávat mohou pouze přihlášení uživatelé</button>
                     {else}
-                        {if $cart->list == null}
+                        {if $cart->count == 0}
                             <button class="btn btn-warning pull-right" disabled>Váš košík je prázdný</button>
                         {else}
-                            <a n:href="sendOrder!" class="btn btn-success pull-right">Objednat</a>
+                            <a n:href="sendOrder!" class="ajax btn btn-success pull-right">Objednat</a>
                         {/if}
                     {/if}
                     <div class="pull-right" style="margin: 8px 30px 8px 0;">

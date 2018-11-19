@@ -51,4 +51,40 @@ class TicketsManager
     {
 
     }
+
+
+    /**
+     * @param $userId
+     * @param $amount
+     * @param $type
+     * @param $festId
+     */
+    public function buyFestivalTickets($userId, $amount, $type, $festId)
+    {
+        $this->database->query('LOCK TABLES Ticket WRITE;');
+
+        $this->database->query('UPDATE Ticket SET bought = 1, idUser = ?, inCart = 0
+                                    WHERE type = ? AND idYear = ? AND inCart = 1
+                                    LIMIT ?', $userId, $type, $festId, intval($amount));
+
+        $this->database->query('UNLOCK TABLES;');
+    }
+
+
+    /**
+     * @param $userId
+     * @param $amount
+     * @param $type
+     * @param $concertId
+     */
+    public function buyConcertTickets($userId, $amount, $type, $concertId)
+    {
+        $this->database->query('LOCK TABLES Ticket WRITE;');
+
+        $this->database->query('UPDATE Ticket SET bought = 1, idUser = ?, inCart = 0
+                                    WHERE type = ? AND idConcert = ? AND inCart = 1
+                                    LIMIT ?', $userId, $type, $concertId, intval($amount));
+
+        $this->database->query('UNLOCK TABLES;');
+    }
 }

@@ -58,7 +58,7 @@ class FestivalsManager
 
         $dbCount = $this->database->query('SELECT COUNT(*) AS count
                                     FROM Ticket
-                                    WHERE bought = 0 AND inCart = 0 AND idYear = ? AND type = ?', $festivalId, $type)->fetchField('count');
+                                    WHERE bought = 0 AND idUser IS NULL AND inCart = 0 AND idYear = ? AND type = ?', $festivalId, $type)->fetchField('count');
 
         if ($dbCount < $count) $count = $dbCount;
 
@@ -68,7 +68,7 @@ class FestivalsManager
         }
 
         $this->database->query("UPDATE Ticket SET inCart = 1
-                                    WHERE type = ? AND idYear = ? AND inCart = 0
+                                    WHERE type = ? AND idYear = ? AND inCart = 0 AND idUser IS NULL
                                     LIMIT ?", $type, $festivalId, intval($count));
 
         $this->database->query('UNLOCK TABLES;');

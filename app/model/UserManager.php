@@ -162,6 +162,23 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
 	    return $this->database->query('SELECT Interpret.idInterpret, name, label, founded FROM Interpret LEFT JOIN User_has_Interpret ON
                         Interpret.idInterpret = User_has_Interpret.idInterpret WHERE User_has_Interpret.idUser = ?', $idUser)->fetchAll();
     }
+
+
+    /**
+     * @param $userId
+     * @return Nette\Database\ResultSet
+     */
+    public function getBoughtTickets($userId) {
+	    return
+            $this->database->query('SELECT T.idTicket, T.price, T.type, COUNT(*) AS amount, F.name AS festivalName, Y.volume AS volume, Y.idYear AS idYear, C.idConcert AS idConcert, C.name AS concertName
+                                        FROM Ticket AS T
+                                        LEFT JOIN Concert AS C ON C.idConcert = T.idConcert
+                                        LEFT JOIN Year AS Y ON Y.idYear = T.idYear
+                                        LEFT JOIN Festival AS F ON Y.idFestival = F.idFestival
+                                        WHERE bought = 1 AND idUser = ?
+                                        GROUP BY T.idYear, T.type, T.idConcert
+                                        ORDER BY Y.start DESC, C.date DESC', $userId);
+    }
 }
 
 
