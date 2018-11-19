@@ -58,7 +58,7 @@ class NewsPresenter extends BasePresenter
         $albums = false;
         $concertCnt = 0;
         $festCnt = 0;
-        $albCnt = 0
+        $albCnt = 0;
 
         $slideConcerts = $this->concertsManager->getNewsConcertsSliderPages(3);
 
