@@ -19,71 +19,73 @@
                     <div class="jumbotron jumbotron-fluid" style="width: 100%; padding-bottom: 30px;">
                         <div class="container">
                             <h4>Nákup vstupenek</h4>
-                            {if $festival['info']->end < new DateTime()}
-                                <p class="lead">Akce již proběhla.</p>
-                            {elseif $festival['tickets'] == null}
-                                <p class="lead">Vyprodáno.</p>
-                            {else}
-                                <div style="padding: 30px 10px 0 10px">
-                                    {snippet ticketsSnippet}
-                                    {foreach $festival['tickets'] as $key => $ticket}
-                                        <div class="custom-control custom-radio" style="padding-bottom: 10px;">
-                                            <input type="radio" class="custom-control-input" id="ticket{$key}"
-                                                   name="ticketsRadio" {if $ticket->type == $firstType}checked{/if} {if isset($cart->list[$festivalId]['F'][$ticket->type]) && $cart->list[$festivalId]['F'][$ticket->type] == $ticket->count}disabled{/if}
-                                                   onclick="changeMaxAmount({$ticketsMaxAmounts[$key]}); changeHandleType({$ticket->type});" >
+                            {snippet ticketsSnippet}
+                                {if $festival['info']->end < new DateTime()}
+                                    <p class="lead">Akce již proběhla.</p>
+                                {elseif $festival['tickets'] == null}
+                                    <p class="lead">Vyprodáno.</p>
+                                {elseif $firstAmount == 0}
+                                    <p class="lead">Nelze zakoupit.</p>
+                                {else}
+                                    <div style="padding: 30px 10px 0 10px">
+                                        {foreach $festival['tickets'] as $key => $ticket}
+                                            <div class="custom-control custom-radio" style="padding-bottom: 10px;">
+                                                <input type="radio" class="custom-control-input" id="ticket{$key}"
+                                                       name="ticketsRadio" {if $ticket->type == $firstType}checked{/if} {if isset($cart->list[$festivalId]['F'][$ticket->type]) && $cart->list[$festivalId]['F'][$ticket->type] == $ticket->count}disabled{/if}
+                                                       onclick="changeMaxAmount({$ticketsMaxAmounts[$key]}); changeHandleType({$ticket->type});" >
 
-                                            <label class="custom-control-label" for="ticket{$key}">
-                                                Vstupenka {if $ticket->type == "SIT"}na sezení{elseif $ticket->type == "STAND"}na stání{elseif $ticket->type == "VIP"}VIP{/if}
-                                                <br><span class="text-secondary">{$ticket->price} Kč s DPH</span>
-                                            </label>
-                                        </div>
-                                    {/foreach}
+                                                <label class="custom-control-label" for="ticket{$key}">
+                                                    Vstupenka {if $ticket->type == "SIT"}na sezení{elseif $ticket->type == "STAND"}na stání{elseif $ticket->type == "VIP"}VIP{/if}
+                                                    <br><span class="text-secondary">{$ticket->price} Kč s DPH</span>
+                                                </label>
+                                            </div>
+                                        {/foreach}
 
-                                        <div style="margin-top: 10px;">
-                                            <label class="custom-control-label" for="inputAmount">Množství</label>
-                                            <input id="inputAmount" min="{if $firstAmount != 0}1{else}0{/if}" max="{$firstAmount}"
-                                                   type="number" class="form-control" name="amount" value="{if $firstAmount == 0}0{else}1{/if}">
-                                        </div>
+                                            <div style="margin-top: 10px;">
+                                                <label class="custom-control-label" for="inputAmount">Množství</label>
+                                                <input id="inputAmount" min="{if $firstAmount != 0}1{else}0{/if}" max="{$firstAmount}"
+                                                       type="number" class="form-control" name="amount" value="{if $firstAmount == 0}0{else}1{/if}">
+                                            </div>
 
-                                        <div id="cartButtonDiv" style="margin-top: 30px;">
-                                            <a id="addToCartHref" n:href="addToCart!, $festivalId, $firstType, 1" {if $firstAmount != 0}class="ajax"{/if}>
-                                                <input id="addToCartButton" type="button" class="ajax btn btn-danger" style="width: 100%;"
-                                                       value="{if $firstAmount == 0}Vše máte v košíku{else}Do košíku s tím {/if}" {if $firstAmount == 0} disabled {/if} >
-                                            </a>
-                                        </div>
+                                            <div id="cartButtonDiv" style="margin-top: 30px;">
+                                                <a id="addToCartHref" n:href="addToCart!, $festivalId, $firstType, 1" {if $firstAmount != 0}class="ajax"{/if}>
+                                                    <input id="addToCartButton" type="button" class="ajax btn btn-danger" style="width: 100%;"
+                                                           value="{if $firstAmount == 0}Vše máte v košíku{else}Do košíku s tím {/if}" {if $firstAmount == 0} disabled {/if} >
+                                                </a>
+                                            </div>
 
-                                        <script>
-                                            var handleType = {$firstType};
-                                            var festivalId = {$festivalId};
-                                            var amount = {$firstAmount};
+                                            <script>
+                                                var handleType = {$firstType};
+                                                var festivalId = {$festivalId};
+                                                var amount = {$firstAmount};
 
-                                            $("#inputAmount").attr("max", {$firstAmount});
+                                                $("#inputAmount").attr("max", {$firstAmount});
 
-                                            $("#inputAmount").bind('keyup mouseup', function () {
-                                                if ($("#inputAmount").val() > amount) {
-                                                    $("#inputAmount").val(amount);
-                                                } else if ($("#inputAmount").val() <= 0 ||
-                                                    isNaN($("#inputAmount").val())) {
-                                                    $("#inputAmount").val(1)
-                                                }
+                                                $("#inputAmount").bind('keyup mouseup', function () {
+                                                    if ($("#inputAmount").val() > amount) {
+                                                        $("#inputAmount").val(amount);
+                                                    } else if ($("#inputAmount").val() <= 0 ||
+                                                        isNaN($("#inputAmount").val())) {
+                                                        $("#inputAmount").val(1)
+                                                    }
 
-                                                changeHandleURL();
-                                            });
+                                                    changeHandleURL();
+                                                });
 
-                                            $("#inputAmount").keypress(function() {
-                                                if ($("#inputAmount").val() > amount) {
-                                                    $("#inputAmount").val(amount);
-                                                } else if ($("#inputAmount").val() <= 0 ||
-                                                    isNaN($("#inputAmount").val())) {
-                                                    $("#inputAmount").val(1)
-                                                }
+                                                $("#inputAmount").keypress(function() {
+                                                    if ($("#inputAmount").val() > amount) {
+                                                        $("#inputAmount").val(amount);
+                                                    } else if ($("#inputAmount").val() <= 0 ||
+                                                        isNaN($("#inputAmount").val())) {
+                                                        $("#inputAmount").val(1)
+                                                    }
 
-                                                changeHandleURL();
-                                            });
-                                        </script>
-                                    {/snippet}
-                                </div>
-                            {/if}
+                                                    changeHandleURL();
+                                                });
+                                            </script>
+                                    </div>
+                                {/if}
+                            {/snippet}
                         </div>
                     </div>
                 </div>

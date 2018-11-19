@@ -22,6 +22,7 @@ class RouterFactory
         $router[] = new Route('festivals/detail/[<id>]', array('presenter' => 'Festivals', 'action' => 'detail'));
         $router[] = new Route('concerts/detail/[<id>]', array('presenter' => 'Concerts', 'action' => 'detail'));
         $router[] = new Route('news/', array('presenter' => 'News', 'action' => 'default'));
+        $router[] = new Route('notfound/', array('presenter' => 'Notfound', 'action' => 'default'));
         $router[] = new Route('concerts/', array('presenter' => 'Concerts', 'action' => 'default'));
         $router[] = new Route('festivals/', array('presenter' => 'Festivals', 'action' => 'default'));
         $router[] = new Route('interprets/', array('presenter' => 'Interprets', 'action' => 'default'));

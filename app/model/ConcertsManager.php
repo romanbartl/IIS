@@ -96,9 +96,53 @@ class ConcertsManager
 
         // TODO should be request from TicketsManager!!!!
         $concert['tickets'] = $this->database->query('SELECT price, type, COUNT(type) AS count 
-                                                          FROM Ticket WHERE bought = 0 AND idConcert = ? GROUP BY type ORDER BY type ASC', $concertId);
+                                                          FROM Ticket WHERE bought = 0 AND inCart = 0 AND idConcert = ? GROUP BY type ORDER BY type ASC', $concertId);
 
         return $concert;
+    }
+
+
+    /**
+     * @param $concertId
+     * @param $type
+     * @param $count
+     * @return false|mixed
+     */
+    public function lockConcertTickets($concertId, $type, $count)
+    {
+        $this->database->query('LOCK TABLES Ticket WRITE;');
+
+        $dbCount = $this->database->query('SELECT COUNT(*) AS count
+                                    FROM Ticket
+                                    WHERE bought = 0 AND inCart = 0 AND idConcert = ? AND type = ?', $concertId, $type)->fetchField('count');
+
+        if ($dbCount < $count) $count = $dbCount;
+
+        if ($count == 0) {
+            $this->database->query('UNLOCK TABLES;');
+            return $count;
+        }
+
+        $this->database->query('UPDATE Ticket SET inCart = 1
+                                    WHERE type = ? AND idConcert = ? AND inCart = 0
+                                    LIMIT ?', $type, $concertId, intval($count));
+
+        $this->database->query('UNLOCK TABLES;');
+
+        return $count;
+    }
+
+
+    /**
+     * @param $concertId
+     * @param $type
+     * @param $count
+     */
+    public function unlockConcertTickets($concertId, $type, $count)
+    {
+        $this->database->query('UPDATE Ticket SET inCart = 0
+                                    WHERE type = ? AND idConcert = ? AND inCart = 1
+                                    LIMIT ?', $type, $concertId, intval($count));
     }
 
 

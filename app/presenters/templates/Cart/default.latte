@@ -12,6 +12,9 @@
             </div>
 
             <div class="card-body">
+                {if $cart->list == null}
+                    Váš košík je prázdný
+                {/if}
                 {foreach $cart->list as $actionId => $tickets}
                     {foreach $tickets as $action => $ticket}
                         {foreach $ticket as $type => $amount}
@@ -34,20 +37,13 @@
                                     <div class="col col-md-auto col-sm text-md-center" style="padding-top: 10px;">
                                         <h6><strong>{$ticketsPrices[$actionId][$action][$type]} Kč</strong></h6>
                                     </div>
-                                    <div class="col col-md-auto col-sm text-md-center">
+                                    <div class="col col-md-auto col-sm text-md-center" style="padding-top: 10px;">
                                         <div class="">
-                                            <input type="number" step="1" max="99" min="1" value="{$amount}" title="amount" size="4">
+                                            <h6><strong>{$amount} Ks</strong></h6>
                                         </div>
                                     </div>
                                     <div class="col col-md-auto col-sm text-md-center" style="padding-top: 10px; width: 150px;">
                                         <h6><strong>{$amount*$ticketsPrices[$actionId][$action][$type]} Kč</strong></h6>
-                                    </div>
-                                    <div class="col col-md-auto col-sm text-md-center">
-                                        <a n:href="updateCart!, $actionId, $action, $type, $amount" class="ajax">
-                                            <button type="button" class="btn btn-outline-primary btn-xs">
-                                                <i class="fa fa-refresh" aria-hidden="true"></i>
-                                            </button>
-                                        </a>
                                     </div>
                                     <div class="col col-md-auto col-sm text-md-center">
                                         <a n:href="deleteItemFromCart!, $actionId, $action, $type" class="ajax">
@@ -66,7 +62,15 @@
 
             <div class="card-footer">
                 <div class="pull-right" style="margin: 10px">
-                    <a href="" class="btn btn-success pull-right">K pokladně</a>
+                    {if !$user->loggedIn}
+                        <button class="btn btn-warning pull-right" disabled>Objednávat mohou pouze přihlášení uživatelé</button>
+                    {else}
+                        {if $cart->list == null}
+                            <button class="btn btn-warning pull-right" disabled>Váš košík je prázdný</button>
+                        {else}
+                            <a n:href="sendOrder!" class="btn btn-success pull-right">Objednat</a>
+                        {/if}
+                    {/if}
                     <div class="pull-right" style="margin: 8px 30px 8px 0;">
                         Celková cena: <b>{$price} Kč</b>
                     </div>
@@ -81,8 +85,5 @@
 
 {block scripts}
     {include parent}
-
-
-
     <script src="https://use.fontawesome.com/c560c025cf.js"></script>
 {/block}

@@ -12,7 +12,6 @@ use App\Forms\MemberFormFactory;
 use App\Model\AlbumsManager;
 use App\Model\ConcertsManager;
 use App\Model\FestivalsManager;
-use App\Model\DuplicateNameException;
 use App\Model\InterpretsManager;
 use App\Model\MembersManager;
 use App\Model\UserManager;
@@ -238,6 +237,9 @@ class InterpretsPresenter extends BasePresenter
         $upcomingActions = 0;
 
         $this->template->interpret = $this->interpretsManager->getInterpretById($this->interpretId);
+
+        if ($this->template->interpret == null) $this->redirect('Notfound:default');
+
         $this->template->isFavourite = $this->userManager->checkFavouriteInterpret($this->user->id, $this->interpretId);
         $this->template->albums = $this->albumsManager->getAlbumsByInterpretId($this->interpretId);
         $this->template->members = $this->membersManager->getMembersByInterpretId($this->interpretId);

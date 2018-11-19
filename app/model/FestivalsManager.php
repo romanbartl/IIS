@@ -47,6 +47,50 @@ class FestivalsManager
 
 
     /**
+     * @param $festivalId
+     * @param $type
+     * @param $count
+     * @return false|mixed
+     */
+    public function lockFestivalTickets($festivalId, $type, $count)
+    {
+        $this->database->query('LOCK TABLES Ticket WRITE;');
+
+        $dbCount = $this->database->query('SELECT COUNT(*) AS count
+                                    FROM Ticket
+                                    WHERE bought = 0 AND inCart = 0 AND idYear = ? AND type = ?', $festivalId, $type)->fetchField('count');
+
+        if ($dbCount < $count) $count = $dbCount;
+
+        if ($count == 0) {
+            $this->database->query('UNLOCK TABLES;');
+            return $count;
+        }
+
+        $this->database->query("UPDATE Ticket SET inCart = 1
+                                    WHERE type = ? AND idYear = ? AND inCart = 0
+                                    LIMIT ?", $type, $festivalId, intval($count));
+
+        $this->database->query('UNLOCK TABLES;');
+
+        return $count;
+    }
+
+
+    /**
+     * @param $festivalId
+     * @param $type
+     * @param $count
+     */
+    public function unlockFestivalTickets($festivalId, $type, $count)
+    {
+        $this->database->query('UPDATE Ticket SET inCart = 0
+                                    WHERE type = ? AND idYear = ? AND inCart = 1
+                                    LIMIT ?', $type, $festivalId, intval($count));
+    }
+
+
+    /**
      * @param $yearId
      * @return mixed
      */
@@ -65,7 +109,7 @@ class FestivalsManager
 
         // TODO should be request from TicketsManager!!!!
         $festival['tickets'] = $this->database->query('SELECT price, type, COUNT(type) AS count 
-                                                          FROM Ticket WHERE bought = 0 AND idYear = ? GROUP BY type ORDER BY type ASC', $yearId);
+                                                          FROM Ticket WHERE bought = 0 AND inCart = 0 AND idYear = ? GROUP BY type ORDER BY type ASC', $yearId);
 
 
         $stages = $this->database->query('SELECT S.idStage AS id, S.name AS stage 
