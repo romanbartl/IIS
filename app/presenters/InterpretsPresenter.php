@@ -8,6 +8,7 @@ use App\Forms\AddNewInterpret;
 use App\Forms\AddNewMemberFormFactory;
 use App\Forms\GenreFormFactory;
 use App\Forms\IMemberFormFactory;
+use App\Forms\InterpretForms;
 use App\Forms\MemberForm;
 use App\Forms\MemberFormFactory;
 use App\Model\AlbumsManager;
@@ -80,7 +81,7 @@ class InterpretsPresenter extends BasePresenter
     private $genreManager;
 
 
-    private $addNewInterpret;
+    private $interpretForms;
 
 
     /**
@@ -96,14 +97,14 @@ class InterpretsPresenter extends BasePresenter
      * @param AddAlbumFormFactory $addAlbumFormFactory
      * @param GenreFormFactory $genreFormFactory
      * @param GenreManager $genreManager
-     * @param AddNewInterpret $addNewInterpret
+     * @param InterpretForms $interpretForms
      */
     public function __construct(InterpretsManager $interpretsManager, AlbumsManager $albumsManager,
                                 MembersManager $membersManager, ConcertsManager $concertsManager,
                                 FestivalsManager $festivalsManager, UserManager $userManager,
                                 AddNewMemberFormFactory $addNewMemberFormFactory, AddExistingMemberFormFactory $addExistingMemberFormFactory,
                                 AddAlbumFormFactory $addAlbumFormFactory, GenreFormFactory $genreFormFactory, GenreManager $genreManager,
-                                AddNewInterpret $addNewInterpret)
+                                InterpretForms $interpretForms)
     {
         $this->interpretsManager = $interpretsManager;
         $this->albumsManager = $albumsManager;
@@ -116,7 +117,7 @@ class InterpretsPresenter extends BasePresenter
         $this->addAlbumFormFactory = $addAlbumFormFactory;
         $this->genreFormFactory = $genreFormFactory;
         $this->genreManager = $genreManager;
-        $this->addNewInterpret = $addNewInterpret;
+        $this->interpretForms = $interpretForms;
     }
 
     public function renderDefault()
@@ -129,6 +130,15 @@ class InterpretsPresenter extends BasePresenter
     {
         $this->interpretId = $id;
     }
+
+
+    protected function createComponentEditInterpretForm() {
+        return $this->interpretForms->createEditInterpretForm(function () {
+            $this->flashMessage("Informace o interpretu byly změněny.", "success");
+            $this->redirect('this');
+        }, $this->interpretId);
+    }
+
 
     protected function createComponentMemberForm()
     {
@@ -284,7 +294,7 @@ class InterpretsPresenter extends BasePresenter
 
 
     protected function createComponentAddNewInterpretForm() {
-        return $this->addNewInterpret->create(function ($idInterpret) {
+        return $this->interpretForms->createAddNewInterpret(function ($idInterpret) {
             $this->redirect("Interprets:edit", $idInterpret);
             $this->flashMessage("Interpret úspěšně vytvořen.", "success");
         });

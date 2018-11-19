@@ -50,4 +50,15 @@ class InterpretsManager extends BaseManager
                 self::INTERPRET_FOUNDED => $values->founded
             ]);
     }
+
+
+    public function updateInterpret($values) {
+        $this->database->table(self::TABLE_INTERPRET)
+            ->where(self::INTERPRET_ID, $values->idInterpret)
+            ->update([
+                self::INTERPRET_NAME => $values->name,
+                self::INTERPRET_LABEL => $values->label,
+                self::INTERPRET_FOUNDED => $values->founded
+            ]);
+    }
 }

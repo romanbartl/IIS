@@ -32,7 +32,7 @@ services:
 	- App\Forms\AddExistingMemberFormFactory
 	- App\Forms\AddAlbumFormFactory
 	- App\Forms\GenreFormFactory
-	- App\Forms\AddNewInterpret
+	- App\Forms\InterpretForms
 
 	authorizatorFactory: App\AuthorizatorFactory
 	authorizator: @authorizatorFactory::create
