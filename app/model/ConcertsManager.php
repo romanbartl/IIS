@@ -114,7 +114,7 @@ class ConcertsManager
 
         $dbCount = $this->database->query('SELECT COUNT(*) AS count
                                     FROM Ticket
-                                    WHERE bought = 0 AND inCart = 0 AND idConcert = ? AND type = ?', $concertId, $type)->fetchField('count');
+                                    WHERE bought = 0 AND idUser IS NULL AND inCart = 0 AND idConcert = ? AND type = ?', $concertId, $type)->fetchField('count');
 
         if ($dbCount < $count) $count = $dbCount;
 
@@ -124,7 +124,7 @@ class ConcertsManager
         }
 
         $this->database->query('UPDATE Ticket SET inCart = 1
-                                    WHERE type = ? AND idConcert = ? AND inCart = 0
+                                    WHERE type = ? AND idConcert = ? AND inCart = 0 AND idUser IS NULL
                                     LIMIT ?', $type, $concertId, intval($count));
 
         $this->database->query('UNLOCK TABLES;');
@@ -141,7 +141,7 @@ class ConcertsManager
     public function unlockConcertTickets($concertId, $type, $count)
     {
         $this->database->query('UPDATE Ticket SET inCart = 0
-                                    WHERE type = ? AND idConcert = ? AND inCart = 1
+                                    WHERE type = ? AND idConcert = ? AND inCart = 1 AND idUser IS NULL
                                     LIMIT ?', $type, $concertId, intval($count));
     }
 

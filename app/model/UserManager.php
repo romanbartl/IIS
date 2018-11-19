@@ -164,6 +164,7 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
     }
 
 
+
     public function resetIsNew($idUser, $idInterpret) {
 	    $this->database->table(self::TABLE_USER_INTERPRET)
             ->where(self::USER_INTERPRET_USER_ID, $idUser)
@@ -172,12 +173,29 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
     }
 
 
-    public function setIsNew($idInterpret) {
-	    $this->database->table(self::TABLE_USER_INTERPRET)
+    public function setIsNew($idInterpret)
+    {
+        $this->database->table(self::TABLE_USER_INTERPRET)
             ->where(self::USER_INTERPRET_INTERPRET_ID, $idInterpret)
             ->update([
                 self::USER_INTERPRET_IS_NEW => 1
             ]);
+    }
+
+    /**
+     * @param $userId
+     * @return Nette\Database\ResultSet
+     */
+    public function getBoughtTickets($userId) {
+	    return
+            $this->database->query('SELECT T.idTicket, T.price, T.type, COUNT(*) AS amount, F.name AS festivalName, Y.volume AS volume, Y.idYear AS idYear, C.idConcert AS idConcert, C.name AS concertName
+                                        FROM Ticket AS T
+                                        LEFT JOIN Concert AS C ON C.idConcert = T.idConcert
+                                        LEFT JOIN Year AS Y ON Y.idYear = T.idYear
+                                        LEFT JOIN Festival AS F ON Y.idFestival = F.idFestival
+                                        WHERE bought = 1 AND idUser = ?
+                                        GROUP BY T.idYear, T.type, T.idConcert
+                                        ORDER BY Y.start DESC, C.date DESC', $userId);
     }
 }
 

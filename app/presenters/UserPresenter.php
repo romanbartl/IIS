@@ -63,12 +63,19 @@ class UserPresenter extends BasePresenter
         }
     }
 
-    public function renderFavouriteInterprets() {
+    public function renderFavouriteInterprets()
+    {
         if($this->user->isLoggedIn()) {
             $this->template->interprets = $this->userManager->getAllFavouriteInterprets($this->user->getId());
         }
         else {
             throw new BadSignalException;
         }
+    }
+
+
+    public function renderBoughtTickets()
+    {
+        $this->template->boughtTickets = $this->userManager->getBoughtTickets($this->user->getId());
     }
 }

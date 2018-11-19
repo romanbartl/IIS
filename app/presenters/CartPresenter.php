@@ -71,15 +71,37 @@ class CartPresenter extends BasePresenter
 
     public function handleSendOrder()
     {
-        /*$mail = new Message;
+        if($this->isAjax()) {
+            $userId = $this->user->getId();
 
-        $mail->setFrom('TickcetsOnline4Fan <info@ticketsonline.4fan.cz>')
-            ->addTo($this->user->getIdentity()->email)
-            ->setSubject('Potvrzení objednávky')
-            ->setBody("Dobrý den,\nvaše objednávka byla přijata.");
+            foreach ($this->cart->list as $actionId => $tickets) {
+                foreach ($tickets as $action => $ticket) {
+                    foreach ($ticket as $type => $amount) {
+                        if ($action == 'C') $this->ticketsManager->buyConcertTickets($userId, $amount, $type, $actionId);
+                        else if ($action == 'F') $this->ticketsManager->buyFestivalTickets($userId, $amount, $type, $actionId);
+                    }
+                }
+            }
 
-        $mailer = new SendmailMailer;
-        $mailer->send($mail);*/
+            $this->cart->list = null;
+            $this->cart->count = 0;
+            $this->redrawControl('cart');
+            $this->redrawControl('cartBody');
+
+            $this->flashMessage('Objednávka byla vyřízena a odeslali jsme Vám ověřovací e-mail.');
+            $this->redirect('Cart:default');
+
+            //TODO uncomment when released
+            /*$mail = new Message;
+
+            $mail->setFrom('TickcetsOnline4Fan <info@ticketsonline.4fan.cz>')
+                ->addTo($this->user->getIdentity()->email)
+                ->setSubject('Potvrzení objednávky')
+                ->setBody("Dobrý den,\nvaše objednávka byla přijata.\nVaše zakoupené lístky najdete v sekci \"Zakoupené listky\" na našich webových stránkách.");
+
+            $mailer = new SendmailMailer;
+            $mailer->send($mail);*/
+        }
     }
 
 

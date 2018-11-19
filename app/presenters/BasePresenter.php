@@ -24,8 +24,6 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
         parent::startup();
         $this->cart = $this->getSession('cart');
 
-        //$this->cart->count = null;
-
         if ($this->cart->count == null) {
             $this->cart->count = 0;
             $this->cart->list = array();
