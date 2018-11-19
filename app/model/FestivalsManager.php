@@ -201,4 +201,42 @@ class FestivalsManager
                                     WHERE SHIIY.idInterpret = ? AND Y.start >= CURDATE()
                                     ORDER BY Y.start ASC", $interpretId);
     }
+
+
+    /**
+     * @return Nette\Database\ResultSet
+     */
+    public function getFestivalsNews()
+    {
+        return
+            $this->database->query('SELECT Y.idYear AS idYear, F.name AS festival, F.label AS label, season, volume, start, 
+                                        end, P.name AS place, C.name AS city, COUNT(T.idYear) AS tickets
+                                        FROM Year AS Y 
+                                        LEFT JOIN Festival AS F ON F.idFestival = Y.idFestival 
+                                        LEFT JOIN Place AS P ON P.idPlace = Y.idPlace 
+                                        LEFT JOIN City AS C ON C.idCity = P.idCity 
+                                        LEFT JOIN Ticket AS T ON T.idYear = Y.idYear
+                                        WHERE Y.start > NOW() 
+                                        GROUP BY Y.idYear
+                                        ORDER BY start DESC');
+    }
+
+
+    /**
+     * @param $limit
+     * @return Nette\Database\ResultSet
+     */
+    public function getNewsFestivalsSliderPages($limit)
+    {
+        return
+            $this->database->query('SELECT I.name AS interpret, I.label AS label, F.name AS festName, 
+                                        Y.volume AS volume, Y.info AS info, "fest" AS "type" 
+                                        FROM Interpret AS I
+                                        LEFT JOIN Stage_has_Interpret_in_Year AS SHIIY on I.idInterpret = SHIIY.idInterpret 
+                                        LEFT JOIN Year AS Y ON Y.idYear = SHIIY.idYear
+                                        LEFT JOIN Festival AS F ON F.idFestival = Y.idFestival
+                                        WHERE Y.idYear IS NOT NULL AND Y.start > NOW() AND SHIIY.headliner = 1
+                                        ORDER BY Y.start DESC
+                                        LIMIT ?', intval($limit));
+    }
 }

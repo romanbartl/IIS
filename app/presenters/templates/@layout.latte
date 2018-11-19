@@ -108,69 +108,6 @@
             $(function () {
                 $.nette.init();
             });
-
-            (function ($, undefined) {
-                $.nette.ext('loading'/*'spinner'*/, {
-                    init: function (x) {
-                        //this.spinner = this.createSpinner();
-                        //this.spinner.appendTo('#cartButtonDiv');
-                    },
-                    start: function (jqXHR, settings) {
-                        //this.spinner.show(this.speed);
-						$('#addToCartButton').attr('disabled', true);
-                        $('#addToCartButton').html('Načítání ...');
-                        $('#addToCartHref').attr('href', '');
-                    },
-                    complete: function () {
-                        $('#addToCartButton').attr('disabled', false);
-                        $('#addToCartButton').html('Do košíku s tím');
-
-                     	$("#inputAmount").val(1);
-
-                        //this.spinner.hide(this.speed);
-
-                        var width = $(window).width();
-
-                        if(width < 974) {
-                            $('#cartItem').attr('data-placement', 'left');
-                            setTimeout(function() {
-                            	$('[data-toggle="popover"]').popover('show');
-                                $('.popover').css('margin-top', '40px');
-                            }, 300);
-                        } else {
-                            $('#cartItem').attr('data-placement', 'bottom');
-                            setTimeout(function() {
-                                $('[data-toggle="popover"]').popover('show');
-                                $('.popover').css('margin-top', '0');
-                            }, 300);
-                        }
-
-                        setTimeout(function() {
-                            $('[data-toggle="popover"]').popover('hide');
-                        }, 3000);
-
-
-						{if isset($firstAmount) && $firstAmount == 0} var amount = 0;{/if}
-
-                        if (amount === 0) {
-                            document.getElementById('addToCartButton').setAttribute('disabled', 'disabled');
-                            document.getElementById('inputAmount').value = '0';
-                        }
-					}
-                }, {
-                    /*createSpinner: function () {
-                        var spinner = $('<div>', {
-                            class: 'lds-dual-ring',
-                            css: {
-                                display: 'none'
-                            }
-                        });
-                        return spinner;
-                    },
-                    spinner: null,
-                    speed: undefined*/
-                });
-            })(jQuery);
 		</script>
 	{/block}
 </body>

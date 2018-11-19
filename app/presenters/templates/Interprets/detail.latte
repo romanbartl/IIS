@@ -149,8 +149,8 @@
                                                 <img class="card-img-top interpret-banner-image" src="{$album->label}">
                                             </div>
                                             <div class="card-body">
-                                                <p class="card-text"><h5>{$album->name}</h5></p>
-                                                <p class="card-text">{$album->release|date:'%d. %m. %Y'}</p>
+                                                <p class="card-text"><h5>{if $album->name == ""}Zatím bez názvu{else}{$album->name}{/if}</h5></p>
+                                                <p class="card-text">{if new \DateTime($album->release) > new \DateTime()}Předběžné datum vydání: {/if}{$album->release|date:'%d. %m. %Y'}</p>
 
                                                 <p class="card-text">
                                                     {foreach $album->genres as $genre}
