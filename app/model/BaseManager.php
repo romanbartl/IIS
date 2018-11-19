@@ -21,7 +21,9 @@ class BaseManager
     const
         TABLE_INTERPRET = 'Interpret',
         INTERPRET_ID = 'idInterpret',
-        INTERPRET_NAME = 'name';
+        INTERPRET_NAME = 'name',
+        INTERPRET_LABEL = 'label',
+        INTERPRET_FOUNDED = 'founded';
 
     const
         TABLE_ALBUM = 'Album',

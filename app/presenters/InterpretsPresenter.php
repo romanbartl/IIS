@@ -4,6 +4,7 @@ namespace App\Presenters;
 
 use App\Forms\AddAlbumFormFactory;
 use App\Forms\AddExistingMemberFormFactory;
+use App\Forms\AddNewInterpret;
 use App\Forms\AddNewMemberFormFactory;
 use App\Forms\GenreFormFactory;
 use App\Forms\IMemberFormFactory;
@@ -79,6 +80,9 @@ class InterpretsPresenter extends BasePresenter
     private $genreManager;
 
 
+    private $addNewInterpret;
+
+
     /**
      * InterpretsPresenter constructor.
      * @param InterpretsManager $interpretsManager
@@ -92,12 +96,14 @@ class InterpretsPresenter extends BasePresenter
      * @param AddAlbumFormFactory $addAlbumFormFactory
      * @param GenreFormFactory $genreFormFactory
      * @param GenreManager $genreManager
+     * @param AddNewInterpret $addNewInterpret
      */
     public function __construct(InterpretsManager $interpretsManager, AlbumsManager $albumsManager,
                                 MembersManager $membersManager, ConcertsManager $concertsManager,
                                 FestivalsManager $festivalsManager, UserManager $userManager,
                                 AddNewMemberFormFactory $addNewMemberFormFactory, AddExistingMemberFormFactory $addExistingMemberFormFactory,
-                                AddAlbumFormFactory $addAlbumFormFactory, GenreFormFactory $genreFormFactory, GenreManager $genreManager)
+                                AddAlbumFormFactory $addAlbumFormFactory, GenreFormFactory $genreFormFactory, GenreManager $genreManager,
+                                AddNewInterpret $addNewInterpret)
     {
         $this->interpretsManager = $interpretsManager;
         $this->albumsManager = $albumsManager;
@@ -110,6 +116,7 @@ class InterpretsPresenter extends BasePresenter
         $this->addAlbumFormFactory = $addAlbumFormFactory;
         $this->genreFormFactory = $genreFormFactory;
         $this->genreManager = $genreManager;
+        $this->addNewInterpret = $addNewInterpret;
     }
 
     public function renderDefault()
@@ -266,6 +273,21 @@ class InterpretsPresenter extends BasePresenter
         $this->template->upcomingConcerts = $this->concertsManager->getUpcomingConcertsByInterpretId($this->interpretId);
         $this->template->upcomingFestivals = $this->festivalsManager->getUpcomingFestivalsByInterpretId($this->interpretId);
         $this->template->upcomingActions = $upcomingActions;
+    }
+
+
+    public function renderAdd() {
+        if(!$this->user->isLoggedIn() || !$this->user->isAllowed('interpret', 'add')) {
+            throw new BadSignalException;
+        }
+    }
+
+
+    protected function createComponentAddNewInterpretForm() {
+        return $this->addNewInterpret->create(function ($idInterpret) {
+            $this->redirect("Interprets:edit", $idInterpret);
+            $this->flashMessage("Interpret úspěšně vytvořen.", "success");
+        });
     }
 
 

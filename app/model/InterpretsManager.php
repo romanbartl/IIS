@@ -40,4 +40,14 @@ class InterpretsManager extends BaseManager
     {
         return $this->database->table(self::TABLE_INTERPRET)->where(self::INTERPRET_ID, $id)->fetch();
     }
+
+
+    public function addInterpret($values) {
+        return $this->database->table(self::TABLE_INTERPRET)
+            ->insert([
+                self::INTERPRET_NAME => $values->name,
+                self::INTERPRET_LABEL => $values->label,
+                self::INTERPRET_FOUNDED => $values->founded
+            ]);
+    }
 }
