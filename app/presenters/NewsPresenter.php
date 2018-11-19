@@ -56,25 +56,27 @@ class NewsPresenter extends BasePresenter
         $concerts = false;
         $festivals = false;
         $albums = false;
-
+        $concertCnt = 0;
+        $festCnt = 0;
+        $albCnt = 0;
 
         $slideConcerts = $this->concertsManager->getNewsConcertsSliderPages(3);
 
-        if ($festCnt = count($slideConcerts) != 0) {
+        if ($slideConcerts != null && $concertCnt = count($slideConcerts) != 0) {
             $concerts = true;
             $sliderShow[0] = $slideConcerts->fetchAll()[0];
         }
 
         $slideFestivals = $this->festivalsManager->getNewsFestivalsSliderPages(3);
 
-        if ($concertCnt = count($slideFestivals) != 0) {
+        if ($slideFestivals != null && $festCnt = count($slideFestivals) != 0) {
             $festivals = true;
             $sliderShow[1] = $slideFestivals->fetchAll()[0];
         }
 
         $slideAlbums = $this->albumsManager->getNewsAlbumsSliderPages(3);
 
-        if ($albCnt = count($slideAlbums) != 0) {
+        if ($slideAlbums != null && $albCnt = count($slideAlbums) != 0) {
             $albums = true;
             $sliderShow[2] = $slideAlbums->fetchAll()[0];
         }
