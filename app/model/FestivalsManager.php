@@ -218,7 +218,7 @@ class FestivalsManager
                                         LEFT JOIN Ticket AS T ON T.idYear = Y.idYear
                                         WHERE Y.start > NOW() 
                                         GROUP BY Y.idYear
-                                        ORDER BY start DESC');
+                                        ORDER BY start ASC');
     }
 
 
@@ -236,7 +236,7 @@ class FestivalsManager
                                         LEFT JOIN Year AS Y ON Y.idYear = SHIIY.idYear
                                         LEFT JOIN Festival AS F ON F.idFestival = Y.idFestival
                                         WHERE Y.idYear IS NOT NULL AND Y.start > NOW() AND SHIIY.headliner = 1
-                                        ORDER BY Y.start DESC
+                                        ORDER BY Y.start ASC
                                         LIMIT ?', intval($limit));
     }
 }
