@@ -104,7 +104,7 @@ class AlbumsManager extends BaseManager
                                       FROM Album AS A 
                                       LEFT JOIN Interpret AS I ON I.idInterpret = A.idInterpret 
                                       WHERE TIMESTAMPADD(DAY, 30, A.release) >= NOW()
-                                      ORDER BY releaseDate DESC');
+                                      ORDER BY releaseDate ASC');
     }
 
 
@@ -118,6 +118,6 @@ class AlbumsManager extends BaseManager
                                         FROM Interpret AS I
                                         LEFT JOIN Album AS A ON A.idInterpret = I.idInterpret
                                         WHERE TIMESTAMPADD(DAY, 30, A.release) >= NOW()
-                                        ORDER BY A.release DESC LIMIT ?', intval($limit));
+                                        ORDER BY A.release ASC LIMIT ?', intval($limit));
     }
 }

@@ -172,7 +172,7 @@ class ConcertsManager
                                         LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret 
                                         WHERE chi.headliner = 1 AND c.date > NOW()
                                         GROUP BY c.idConcert 
-                                        ORDER BY c.date DESC');
+                                        ORDER BY c.date ASC');
     }
 
 
@@ -187,6 +187,6 @@ class ConcertsManager
                                         FROM Interpret AS I 
                                         LEFT JOIN Concert_has_Interpret AS CHI on CHI.idInterpret = I.idInterpret 
                                         LEFT JOIN Concert AS C ON C.idConcert = CHI.idConcert 
-                                        WHERE C.date > NOW() ORDER BY C.date DESC LIMIT ?', intval($limit));
+                                        WHERE C.date > NOW() ORDER BY C.date ASC LIMIT ?', intval($limit));
     }
 }
