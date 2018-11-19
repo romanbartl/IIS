@@ -21,7 +21,9 @@ class BaseManager
     const
         TABLE_INTERPRET = 'Interpret',
         INTERPRET_ID = 'idInterpret',
-        INTERPRET_NAME = 'name';
+        INTERPRET_NAME = 'name',
+        INTERPRET_LABEL = 'label',
+        INTERPRET_FOUNDED = 'founded';
 
     const
         TABLE_ALBUM = 'Album',
@@ -32,7 +34,9 @@ class BaseManager
         ALBUM_COLUMN_RELEASE = 'release';
 
     const
-        TABLE_GENRE = 'Genre';
+        TABLE_GENRE = 'Genre',
+        GENRE_COLUMN_ID = 'idGenre',
+        GENRE_COLUMN_NAME = 'name';
 
     const
         TABLE_ALBUM_GENRE = 'Album_has_Genre',

@@ -32,7 +32,7 @@ class GenreFormFactory extends Control
     }
 
 
-    public function create(callable $onSuccess, $idInterpret, callable $onError) {
+    public function createConnectGenreAlbumForm(callable $onSuccess, $idInterpret, callable $onError) {
         $form = $this->factory->create();
 
         $albums = $this->albumsManager->getAlbumsByInterpretId($idInterpret);
@@ -60,6 +60,22 @@ class GenreFormFactory extends Control
             catch (DuplicateNameException $e) {
                 $onError();
             }
+            $onSuccess();
+        };
+
+        return $form;
+    }
+
+
+    public function createAddNewGenreForm(callable $onSuccess) {
+        $form = $this->factory->create();
+
+        $form->addText('genreName', 'Název žánru:');
+
+        $form->addSubmit('send', 'Uložit');
+
+        $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
+            $this->genreManager->addGenre($values->genreName);
             $onSuccess();
         };
 
