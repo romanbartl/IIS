@@ -92,4 +92,32 @@ class AlbumsManager extends BaseManager
                 self::ALBUM_COLUMN_INTERPRET_ID => $values->idInterpret
             ]);
     }
+
+
+    /**
+     * @return Nette\Database\ResultSet
+     */
+    public function getAlbumsNews()
+    {
+        return
+            $this->database->query('SELECT I.idInterpret AS idInterpret, I.name AS interpret, A.name AS name, A.label AS label, A.release AS releaseDate 
+                                      FROM Album AS A 
+                                      LEFT JOIN Interpret AS I ON I.idInterpret = A.idInterpret 
+                                      WHERE TIMESTAMPADD(DAY, 30, A.release) >= NOW()
+                                      ORDER BY releaseDate DESC');
+    }
+
+
+    /**
+     * @param $limit
+     * @return Nette\Database\ResultSet
+     */
+    public function getNewsAlbumsSliderPages($limit) {
+        return
+            $this->database->query('SELECT I.name AS interpret, I.label AS label, A.release AS date, "album" AS "type"
+                                        FROM Interpret AS I
+                                        LEFT JOIN Album AS A ON A.idInterpret = I.idInterpret
+                                        WHERE TIMESTAMPADD(DAY, 30, A.release) >= NOW()
+                                        ORDER BY A.release DESC LIMIT ?', intval($limit));
+    }
 }

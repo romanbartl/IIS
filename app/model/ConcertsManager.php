@@ -154,4 +154,39 @@ class ConcertsManager
     {
         return $this->database->query('SELECT name FROM Concert WHERE idConcert = ?', $concertId)->fetchField('name');
     }
+
+
+    /**
+     * @return Nette\Database\ResultSet
+     */
+    public function getConcertsNews()
+    {
+        return
+            $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date, p.name AS placeName, 
+                                        ci.name AS city, COUNT(t.idConcert) AS tickets, i.label AS label 
+                                        FROM Concert AS c 
+                                        LEFT JOIN Place AS p ON p.idPlace = c.idPlace 
+                                        LEFT JOIN City AS ci ON ci.idCity = p.idCity 
+                                        LEFT JOIN Ticket AS t ON t.idConcert = c.idConcert 
+                                        LEFT JOIN Concert_has_Interpret AS chi ON chi.idConcert = c.idConcert 
+                                        LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret 
+                                        WHERE chi.headliner = 1 AND c.date > NOW()
+                                        GROUP BY c.idConcert 
+                                        ORDER BY c.date DESC');
+    }
+
+
+    /**
+     * @param $limit
+     * @return Nette\Database\ResultSet
+     */
+    public function getNewsConcertsSliderPages($limit)
+    {
+        return
+            $this->database->query('SELECT I.name AS interpret, I.label AS label, C.info AS info, C.name AS concertName, "concert" AS "type" 
+                                        FROM Interpret AS I 
+                                        LEFT JOIN Concert_has_Interpret AS CHI on CHI.idInterpret = I.idInterpret 
+                                        LEFT JOIN Concert AS C ON C.idConcert = CHI.idConcert 
+                                        WHERE C.date > NOW() ORDER BY C.date DESC LIMIT ?', intval($limit));
+    }
 }
