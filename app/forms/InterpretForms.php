@@ -29,9 +29,11 @@ class InterpretForms
     public function createAddNewInterpret(callable $onSuccess) {
         $form = $this->factory->create();
 
-        $form->addText('name', 'Název interpreta:');
+        $form->addText('name', 'Název interpreta:')
+            ->setRequired('Vyplňte prosím název interpreta.');
 
-        $form->addText('label', 'Obrázek (URL):');
+        $form->addText('label', 'Obrázek (URL):')
+            ->setRequired('Vyplňte prosím URL obrázku.');
 
         $form->addText('founded', 'Datum založení:')
             ->setType('date');
@@ -54,10 +56,12 @@ class InterpretForms
 
         $form->addHidden('idInterpret', $idInterpret);
         $form->addText('name', 'Název interpreta:')
-            ->setDefaultValue($interpret->name);
+            ->setDefaultValue($interpret->name)
+            ->setRequired('Vyplňte prosím název interpreta.');
 
         $form->addText('label', 'Obrázek (URL):')
-            ->setDefaultValue($interpret->label);
+            ->setDefaultValue($interpret->label)
+            ->setRequired('Vyplňte prosím URL obrázku.');
 
         $form->addText('founded', 'Datum založení:')
             ->setType('date')

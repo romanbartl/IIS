@@ -14,6 +14,9 @@
 						<a n:href="Interprets:detail $interpret->idInterpret">
 							<div class="card mb-4 shadow-sm interpret-banner">
 								<div class="interpret-banner-image-div">
+									{if $interpret->isNew}
+										<span class="badge badge-danger badge-new">Novinka!</span>
+									{/if}
 									<img class="card-img-top interpret-banner-image" src="{$interpret->label}">
 								</div>
 								<div class="card-body">

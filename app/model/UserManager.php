@@ -159,10 +159,28 @@ class UserManager extends BaseManager implements Nette\Security\IAuthenticator
 
 
     public function getAllFavouriteInterprets($idUser) {
-	    return $this->database->query('SELECT Interpret.idInterpret, name, label, founded FROM Interpret LEFT JOIN User_has_Interpret ON
+	    return $this->database->query('SELECT Interpret.idInterpret, Interpret.name, Interpret.label, Interpret.founded, User_has_Interpret.isNew FROM Interpret LEFT JOIN User_has_Interpret ON
                         Interpret.idInterpret = User_has_Interpret.idInterpret WHERE User_has_Interpret.idUser = ?', $idUser)->fetchAll();
     }
 
+
+
+    public function resetIsNew($idUser, $idInterpret) {
+	    $this->database->table(self::TABLE_USER_INTERPRET)
+            ->where(self::USER_INTERPRET_USER_ID, $idUser)
+            ->where(self::USER_INTERPRET_INTERPRET_ID, $idInterpret)
+            ->update([self::USER_INTERPRET_IS_NEW => 0]);
+    }
+
+
+    public function setIsNew($idInterpret)
+    {
+        $this->database->table(self::TABLE_USER_INTERPRET)
+            ->where(self::USER_INTERPRET_INTERPRET_ID, $idInterpret)
+            ->update([
+                self::USER_INTERPRET_IS_NEW => 1
+            ]);
+    }
 
     /**
      * @param $userId
