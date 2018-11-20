@@ -129,4 +129,52 @@ class ConcertsPresenter extends BasePresenter
         $this->template->firstType = $firstType;
         $this->template->firstAmount = $firstAmount;
     }
+
+
+    public function actionEdit($id) {
+        $this->concertId = $id;
+    }
+
+
+    public function renderEdit()
+    {
+        $this->template->concertId = $this->concertId;
+
+        //TODO change getConcertById by some method from TicketsManager after it's working
+        $concert = $this->concertsManager->getConcertById($this->concertId);
+
+        if ($concert['info'] == null) $this->redirect('Notfound:default');
+
+        $ticketsMaxAmounts = array();
+        $firstType = "";
+        $firstAmount = 0;
+
+        foreach ($concert['tickets'] as $key => $ticket) {
+            if (isset($this->cart->list[$this->concertId]['C'][$ticket->type])) {
+                //is in cart
+                $count = $ticket->count;
+                $ticketsMaxAmounts[] = $count;
+
+                if (($count != 0 && $key == 0 && $firstType != "") || ($count != 0 && $key != 0 && $firstType == "")
+                    || ($count != 0 && $key == 0 && $firstType == "")) {
+                    $firstType = $ticket->type;
+                    $firstAmount = $count;
+                }
+
+            } else {
+                //not in cart
+                $ticketsMaxAmounts[] = $ticket->count;
+
+                if ($firstType == "") {
+                    $firstType = $ticket->type;
+                    $firstAmount = $ticket->count;
+                }
+            }
+        }
+
+        $this->template->concert = $this->concertsManager->getConcertById($this->concertId);
+        $this->template->ticketsMaxAmounts = $ticketsMaxAmounts;
+        $this->template->firstType = $firstType;
+        $this->template->firstAmount = $firstAmount;
+    }
 }

@@ -60,4 +60,14 @@ class BaseManager
         TABLE_INTERPRET_MEMBER = 'Interpret_has_Member',
         INTERPRET_MEMBER_INTERPRET_ID = 'idInterpret',
         INTERPRET_MEMBER_MEMBER_ID = 'idMember';
+
+    const
+        TABLE_PLACE = 'Place',
+        PLACE_COLUMN_PLACE_ID = '',
+        PLACE_COLUMN_NAME = '',
+        PLACE_COLUMN_ADDRESS = '',
+        PLACE_COLUMN_GPS_LAT = '',
+        PLACE_COLUMN_GPS_LNG = '',
+        PLACE_COLUMN_ZIP_CODE = '',
+        PLACE_COLUMN_ID_CITY = '';
 }
