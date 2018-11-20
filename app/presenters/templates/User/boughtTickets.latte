@@ -3,33 +3,34 @@
         <h1 style="margin-top: 180px;" class="display-4 header" n:block=title>Zakoupené lístky</h1>
     </div>
 
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Název akce</th>
-            <th scope="col">Typ vstupenky</th>
-            <th scope="col">Cena za kus</th>
-            <th scope="col">Počet</th>
-            <th scope="col">Сelková cena</th>
-        </tr>
-        </thead>
-        <tbody>
-        {foreach $boughtTickets as $ticket}
+    <div style="padding-left: 60px; padding-right: 60px;">
+        <table class="table table-hover">
+            <thead>
             <tr>
-                <th>{$iterator->getCounter()}</th>
-                {if $ticket->festivalName != null}
-                    <th><a n:href="Festivals:detail $ticket->idYear">{$ticket->festivalName} {$ticket->volume}</a></th>
-                {else}
-                    <th><a n:href="Concerts:detail $ticket->idConcert">{$ticket->concertName}</a></th>
-                {/if}
-                <th>{if $ticket->type == "STAND"}Stání{elseif $ticket->type == "SIT"}Sezení{else}V.I.P.{/if}</th>
-                <th>{$ticket->price} Kč</th>
-                <th>{$ticket->amount}</th>
-                <th>{$ticket->amount*$ticket->price} Kč</th>
+                <th scope="col">#</th>
+                <th scope="col">Název akce</th>
+                <th scope="col">Typ vstupenky</th>
+                <th scope="col">Cena za kus</th>
+                <th scope="col">Počet</th>
+                <th scope="col">Сelková cena</th>
             </tr>
-        {/foreach}
-        </tbody>
-    </table>
-
+            </thead>
+            <tbody>
+            {foreach $boughtTickets as $ticket}
+                <tr>
+                    <th>{$iterator->getCounter()}</th>
+                    {if $ticket->festivalName != null}
+                        <th><a n:href="Festivals:detail $ticket->idYear">{$ticket->festivalName} {$ticket->volume}</a></th>
+                    {else}
+                        <th><a n:href="Concerts:detail $ticket->idConcert">{$ticket->concertName}</a></th>
+                    {/if}
+                    <th>{if $ticket->type == "STAND"}Stání{elseif $ticket->type == "SIT"}Sezení{else}V.I.P.{/if}</th>
+                    <th>{$ticket->price} Kč</th>
+                    <th>{$ticket->amount}</th>
+                    <th>{$ticket->amount*$ticket->price} Kč</th>
+                </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    </div>
 {/block}

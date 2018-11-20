@@ -61,10 +61,9 @@ class ConcertsManager
     {
         return
             $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date, p.name AS placeName, 
-                                        ci.name AS city, COUNT(t.idConcert) AS tickets, i.label AS label 
+                                        p.city AS city, COUNT(t.idConcert) AS tickets, i.label AS label 
                                         FROM Concert AS c 
-                                        LEFT JOIN Place AS p ON p.idPlace = c.idPlace 
-                                        LEFT JOIN City AS ci ON ci.idCity = p.idCity 
+                                        LEFT JOIN Place AS p ON p.idPlace = c.idPlace
                                         LEFT JOIN Ticket AS t ON t.idConcert = c.idConcert 
                                         LEFT JOIN Concert_has_Interpret AS chi ON chi.idConcert = c.idConcert 
                                         LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret 
@@ -81,10 +80,9 @@ class ConcertsManager
     {
         $concert['info'] = $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date, 
                                                   c.capacity AS capacity, c.info AS info, p.name AS place, p.gpsLat AS lat, p.gpsLng AS lng,
-                                                  p.address AS address, p.zipCode AS zipCode, ci.name AS city, i.label AS label
+                                                  p.address AS address, p.zipCode AS zipCode, p.city AS city, i.label AS label
                                                   FROM Concert AS c 
                                                   LEFT JOIN Place AS p ON p.idPlace = c.idPlace
-                                                  LEFT JOIN City AS ci ON ci.idCity = p.idCity 
                                                   LEFT JOIN Concert_has_Interpret AS chi ON chi.idConcert = c.idConcert
                                                   LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret
                                                   WHERE chi.headliner = 1 AND c.idConcert = ? LIMIT 1', $concertId)->fetch();
@@ -163,10 +161,9 @@ class ConcertsManager
     {
         return
             $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date, p.name AS placeName, 
-                                        ci.name AS city, COUNT(t.idConcert) AS tickets, i.label AS label 
+                                        COUNT(t.idConcert) AS tickets, i.label AS label, p.city AS city
                                         FROM Concert AS c 
-                                        LEFT JOIN Place AS p ON p.idPlace = c.idPlace 
-                                        LEFT JOIN City AS ci ON ci.idCity = p.idCity 
+                                        LEFT JOIN Place AS p ON p.idPlace = c.idPlace
                                         LEFT JOIN Ticket AS t ON t.idConcert = c.idConcert 
                                         LEFT JOIN Concert_has_Interpret AS chi ON chi.idConcert = c.idConcert 
                                         LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret 

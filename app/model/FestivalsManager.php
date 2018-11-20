@@ -35,11 +35,10 @@ class FestivalsManager
     {
         return
             $this->database->query('SELECT Y.idYear AS idYear, F.name AS festival, F.label AS label, season, volume, start, 
-                                        end, P.name AS place, C.name AS city, COUNT(T.idYear) AS tickets
+                                        end, P.name AS place, P.city AS city, COUNT(T.idYear) AS tickets
                                         FROM Year AS Y 
                                         LEFT JOIN Festival AS F ON F.idFestival = Y.idFestival 
-                                        LEFT JOIN Place AS P ON P.idPlace = Y.idPlace 
-                                        LEFT JOIN City AS C ON C.idCity = P.idCity 
+                                        LEFT JOIN Place AS P ON P.idPlace = Y.idPlace
                                         LEFT JOIN Ticket AS T ON T.idYear = Y.idYear
                                         GROUP BY Y.idYear
                                         ORDER BY start DESC');
@@ -99,11 +98,10 @@ class FestivalsManager
         $festival['info'] = $this->database->query('SELECT idYear, F.name AS festival, F.label AS label, 
                                                         season, volume, start, end, info, P.name AS place, P.address AS address, 
                                                         P.gpsLat AS lat, P.gpsLng AS lng, P.zipCode zipCode, 
-                                                        C.name AS city 
+                                                        P.city AS city 
                                                         FROM Year AS Y 
                                                         LEFT JOIN Festival AS F ON F.idFestival = Y.idFestival 
-                                                        LEFT JOIN Place AS P ON P.idPlace = Y.idPlace 
-                                                        LEFT JOIN City AS C ON C.idCity = P.idCity 
+                                                        LEFT JOIN Place AS P ON P.idPlace = Y.idPlace
                                                         WHERE Y.idYear = ?', $yearId)->fetch();
 
 
@@ -210,11 +208,10 @@ class FestivalsManager
     {
         return
             $this->database->query('SELECT Y.idYear AS idYear, F.name AS festival, F.label AS label, season, volume, start, 
-                                        end, P.name AS place, C.name AS city, COUNT(T.idYear) AS tickets
+                                        end, P.name AS place, P.city AS city, COUNT(T.idYear) AS tickets
                                         FROM Year AS Y 
                                         LEFT JOIN Festival AS F ON F.idFestival = Y.idFestival 
-                                        LEFT JOIN Place AS P ON P.idPlace = Y.idPlace 
-                                        LEFT JOIN City AS C ON C.idCity = P.idCity 
+                                        LEFT JOIN Place AS P ON P.idPlace = Y.idPlace
                                         LEFT JOIN Ticket AS T ON T.idYear = Y.idYear
                                         WHERE Y.start > NOW() 
                                         GROUP BY Y.idYear
@@ -238,5 +235,14 @@ class FestivalsManager
                                         WHERE Y.idYear IS NOT NULL AND Y.start > NOW() AND SHIIY.headliner = 1
                                         ORDER BY Y.start ASC
                                         LIMIT ?', intval($limit));
+    }
+
+
+    /**
+     * @param $name
+     * @param $label
+     */
+    public function addNewFestival($name, $label) {
+        $this->database->query('INSERT INTO Festival(name, label) VALUES (?, ?)', $name, $label);
     }
 }

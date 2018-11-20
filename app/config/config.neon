@@ -33,6 +33,7 @@ services:
 	- App\Forms\AddAlbumFormFactory
 	- App\Forms\GenreFormFactory
 	- App\Forms\InterpretForms
+	- App\Forms\FestivalForms
 
 	authorizatorFactory: App\AuthorizatorFactory
 	authorizator: @authorizatorFactory::create
