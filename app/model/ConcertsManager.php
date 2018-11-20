@@ -95,7 +95,7 @@ class ConcertsManager
                                                         FROM Concert AS c 
                                                         LEFT JOIN Place AS p ON p.idPlace = c.idPlace
                                                         WHERE c.idConcert = ? 
-                                                        LIMIT 1', $concertId);
+                                                        LIMIT 1', $concertId)->fetch();
 
 
         $concert['label'] = $this->database->query('SELECT i.label AS label
