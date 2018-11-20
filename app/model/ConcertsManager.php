@@ -97,14 +97,16 @@ class ConcertsManager
                                                         WHERE c.idConcert = ? 
                                                         LIMIT 1', $concertId);
 
-        $concert['label'] = '';
-
 
         $concert['label'] = $this->database->query('SELECT i.label AS label
                                                     FROM Concert_has_Interpret AS chi
                                                     LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret
                                                     WHERE chi.headliner = 1 AND chi.idConcert = 2
                                                     LIMIT 1')->fetchField('label');
+
+        if ($concert['label'] == null) {
+            $concert['label'] = 'https://www.daysinn-downtownedmonton.com/wp-content/uploads/2014/11/rock_concert.jpg';
+        }
 
 
         $concert['interprets'] = $this->database->query('SELECT i.idInterpret AS idInterpret, i.name AS name, chi.headliner AS headliner
