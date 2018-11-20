@@ -6,7 +6,6 @@ parameters:
 
 
 application:
-	catchExceptions: true
 	errorPresenter: Notfound
 	mapping:
 		*: App\*Module\Presenters\*Presenter
@@ -34,6 +33,7 @@ services:
 	- App\Forms\AddAlbumFormFactory
 	- App\Forms\GenreFormFactory
 	- App\Forms\InterpretForms
+	- App\Forms\FestivalForms
 
 	authorizatorFactory: App\AuthorizatorFactory
 	authorizator: @authorizatorFactory::create

@@ -44,9 +44,26 @@
 				<li class="nav-item {ifCurrent Concerts:default}active{/ifCurrent} {ifCurrent Concerts:detail}active{/ifCurrent}">
 					<a class="nav-link" n:href="Concerts:default">Koncerty</a>
 				</li>
-				<li class="nav-item {ifCurrent Festivals:default}active{/ifCurrent} {ifCurrent Festivals:detail}active{/ifCurrent}">
-					<a class="nav-link" n:href="Festivals:default">Festivaly</a>
-				</li>
+				{if $user->isLoggedIn() && $user->isInRole('admin')}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownFestLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Festivaly
+						</a>
+						<div id="navbarDropdownFestivalsBubble" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownFestLink">
+							{if $user->isAllowed('festival', 'add')}
+								<a class="dropdown-item" n:href="Festivals:addFestival">Přidat festival</a>
+							{/if}
+							{if $user->isAllowed('festival', 'edit')}
+								<a class="dropdown-item" n:href="Festivals:editFestivals">Upravit festivaly</a>
+							{/if}
+							<a class="dropdown-item" n:href="Festivals:default">Zobrazit ročníky festivalů</a>
+						</div>
+					</li>
+				{else}
+					<li class="nav-item {ifCurrent Festivals:default}active{/ifCurrent} {ifCurrent Festivals:detail}active{/ifCurrent}">
+						<a class="nav-link" n:href="Festivals:default">Festivaly</a>
+					</li>
+				{/if}
 				<li class="nav-item {ifCurrent Interprets:default}active{/ifCurrent} {ifCurrent Interprets:detail}active{/ifCurrent}">
 					<a class="nav-link" n:href="Interprets:default">Interpreti</a>
 				</li>
