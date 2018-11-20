@@ -1,0 +1,102 @@
+{block content}
+    <div id="carouselExampleIndicators" class="carousel slide first-div" data-ride="carousel">
+        <div class="carousel-inner interpret-main-image-banner">
+            <div class="carousel-item interpret-main-image-banner-item-div active">
+                <img align="middle" class="d-block w-100 interpret-main-image-banner-item"
+                     src="{$festival['info']->label}"
+                     alt="{$festival['info']->festival} banner">
+                <div class="carousel-caption d-none d-md-block interpret-main-image-banner-item-caption">
+                    <h1 n:block=title>{$festival['info']->festival} {$festival['info']->volume} ({$festival['info']->season})</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container interpret-container">
+        <div class="row">
+            <div class="col-md-4 order-md-2 mb-4" style="padding: 0 30px 0 30px;">
+                <div class="row">
+                    <a style="width: 100%" class="btn btn-primary d-flex justify-content-between align-items-center mb-4 text-center" role="button" n:href="Festivals:detail $festivalId">Detail ročníku</a>
+                </div>
+
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%; padding-bottom: 30px;">
+                        <div class="container">
+                            <h4>Vstupeneky</h4>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
+                        <div class="container">
+                            <h4>Místo a čas konání</h4>
+                            <p><strong>{$festival['info']->place}</strong><br>{$festival['info']->address}<br>
+                                {$festival['info']->city}, {$festival['info']->zipCode}<br>
+                                <strong>Zahájení: </strong>{$festival['info']->start|date:'%d. %m. %Y v %H:%M'}<br>
+                                <strong>Ukončení: </strong>{$festival['info']->end|date:'%d. %m. %Y'}
+                            </p>
+                            lat, long
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8 order-md-1" style="padding: 0 30px 0 30px;">
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
+                        <div class="container">
+                            <h4>Detail akce</h4>
+                            <p class="lead">{control editFestivalInfoForm}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="mb-4">
+
+                <h3>Přidat stage k ročníku</h3>
+
+
+                <hr class="mb-4">
+
+                <h3>Program</h3><br>
+
+
+
+
+                <ul class="nav nav-tabs">
+                    {foreach $festival['stages'] as $key => $stage}
+                        <li class="nav-item"><a class="nav-link {if $key == 0}active{/if}" data-toggle="tab" href="#tab-{$stage['id']}" role="tab">{$stage['stage']}</a></li>
+                    {/foreach}
+                </ul>
+
+                <div class="card card-tabs-1">
+                    <div class="card-block">
+                        <div class="tab-content" style="padding: 20px;">
+                            {foreach $festival['stagesProgram'] as $stageId => $stage}
+                                <div class="tab-pane {if $festival['firstStageId'] == $stageId}active{/if}" id="tab-{$stageId}">
+                                    {foreach $stage as $day => $interprets}
+                                        <p class="card-text">
+                                        <h4>{$day|date:'%d. %m. %Y'}</h4>
+                                        <ul class="list-group">
+                                            {foreach $interprets as $interpret}
+                                                <li class="list-group-item">
+                                                    <strong>{$interpret['start']|date:'%H:%M'} - {$interpret['end']|date:'%H:%M'}: </strong>
+                                                    <span style="margin-left: 10px;"><a n:href="Interprets:detail $interpret['id']">{$interpret['interpret']}{if $interpret['headliner'] == 1} (Headliner){/if}</a></span>
+                                                </li>
+                                            {/foreach}
+                                        </ul>
+                                        </p>
+                                    {/foreach}
+                                </div>
+                            {/foreach}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{/block}
