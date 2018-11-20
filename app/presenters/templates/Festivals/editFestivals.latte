@@ -1,3 +1,36 @@
 {block content}
-
+    <div class="jumbotron header-of-page" style="max-height: 300px">
+        <h1 style="margin-top: 180px;" class="display-4 header" n:block=title>Úprava festivalů</h1>
+    </div>
+    <div class="album py-5 bg-light default-container">
+        <div class="container">
+            <div class="row">
+                {foreach $festivals as $festival}
+                    <div class="col-md-4">
+                        {form editFestivalForm-$festival->idFestival}
+                            <div class="card mb-4 shadow-sm interpret-banner">
+                                <div class="interpret-banner-image-div">
+                                    <img class="card-img-top interpret-banner-image" src="{$festival->label}">
+                                </div>
+                                <div class="card-body">
+                                    Název: {input name} <br>
+                                    URL obrázku: {input label} <br>
+                                    {input send}
+                                </div>
+                            </div>
+                        {/form}
+                    </div>
+                {/foreach}
+                <div class="col-md-4 align-self-center" align="center">
+                    <a n:href="Festivals:addFestival">
+                        <div class="card mb-4 shadow-sm interpret-banner">
+                            <div class="card-body">
+                                <p class="card-text"><h1><i class="fas fa-plus"></i></h1></p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 {/block}

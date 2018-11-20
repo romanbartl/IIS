@@ -5,6 +5,8 @@ namespace App\Presenters;
 
 use App\Forms\FestivalForms;
 use App\Model\FestivalsManager;
+use Nette\Application\UI\Multiplier;
+use Nette\Forms\Form;
 
 class FestivalsPresenter extends BasePresenter
 {
@@ -26,6 +28,12 @@ class FestivalsPresenter extends BasePresenter
 
 
     /**
+     * @var
+     */
+    private $festival;
+
+
+    /**
      * FestivalsPresenter constructor.
      * @param FestivalsManager $festivalsManager
      * @param FestivalForms $festivalForms
@@ -44,11 +52,74 @@ class FestivalsPresenter extends BasePresenter
     }
 
 
-    protected function createComponentAddNewFestival() {
+    public function renderEditFestivals()
+    {
+        $this->template->festivals = $this->festivalManager->getFestivalsIds();
+    }
+
+
+    protected function createComponentAddNewFestival()
+    {
         return $this->festivalForms->createAddNewFestival(function () {
             $this->flashMessage('Festival byl úspěšně přidán.');
-            $this->redirect('this');
+            $this->redirect('Festivals:editFestivals');
         });
+    }
+
+
+    protected function createComponentAddNewYear()
+    {
+        return $this->festivalForms->createAddNewYear(function ($idYear) {
+            $this->flashMessage('Ročník byl úspěšně přidán.');
+            $this->redirect('Festivals:editYear', $idYear);
+        });
+    }
+
+
+    protected function createComponentEditFestivalForm()
+    {
+        return new Multiplier(function ($idFestival, $onSuccess) {
+            $festival = $this->festivalManager->getFestival($idFestival);
+
+            $form = new \Nette\Application\UI\Form;
+            $form->addHidden('idFestival', $idFestival);
+            $form->addText('name', "Název:")
+                ->setDefaultValue($festival->name);
+            $form->addText('label', "Obrázek:")
+                ->setRequired("Vyplňte prosím URL obrázku!")
+                ->setDefaultValue($festival->label);
+
+            $form->addSubmit('send', 'Uložit');
+
+            $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
+                $this->festivalManager->editFestival($values->idFestival, $values->name, $values->label);
+                $this->redirect('this');
+            };
+
+            return $form;
+        });
+    }
+
+
+    protected function createComponentEditFestivalInfoForm()
+    {
+        $form = new \Nette\Application\UI\Form;
+        $form->addTextArea('info', '')
+            ->setDefaultValue($this->festival['info']->info);
+
+        $form->addSubmit('send', 'Uložit');
+
+        $form->onSuccess[] = function (Form $form, $values) {
+            $this->festivalManager->editFestivalInfo($this->festivalId, $values->info);
+            $this->redirect('this');
+        };
+
+        return $form;
+    }
+
+    protected function createComponentAddStageToYearForm()
+    {
+
     }
 
 
@@ -83,6 +154,20 @@ class FestivalsPresenter extends BasePresenter
             $this->redrawControl('cart');
             $this->redrawControl('ticketsSnippet');
         }
+    }
+
+
+    public function actionEditYear($id)
+    {
+        $this->festivalId = $id;
+        $this->festival = $this->festivalManager->getFestivalById($id);
+    }
+
+
+    public function renderEditYear()
+    {
+        $this->template->festival = $this->festivalManager->getFestivalById($this->festivalId);
+        $this->template->festivalId = $this->festivalId;
     }
 
 

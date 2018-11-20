@@ -242,7 +242,89 @@ class FestivalsManager
      * @param $name
      * @param $label
      */
-    public function addNewFestival($name, $label) {
+    public function addNewFestival($name, $label)
+    {
         $this->database->query('INSERT INTO Festival(name, label) VALUES (?, ?)', $name, $label);
+    }
+
+
+    /**
+     * @return Nette\Database\ResultSet
+     */
+    public function getFestivalsIds()
+    {
+        return $this->database->query('SELECT * FROM Festival ORDER BY name ASC');
+    }
+
+
+    /**
+     * @param $idFestival
+     * @return Nette\Database\ResultSet
+     */
+    public function getFestival($idFestival)
+    {
+        return $this->database->query('SELECT * FROM Festival WHERE idFestival = ?', $idFestival)->fetch();
+    }
+
+
+    /**
+     * @param $idFestival
+     * @param $name
+     * @param $label
+     */
+    public function editFestival($idFestival, $name, $label)
+    {
+        $this->database->query('UPDATE Festival SET name = ?, label = ? WHERE idFestival = ?', $name, $label, $idFestival);
+    }
+
+
+    /**
+     * @param $volume
+     * @param $season
+     * @param $startDate
+     * @param $startTime
+     * @param $endDate
+     * @param $endTime
+     * @param $festivalId
+     * @return string
+     */
+    public function addNewYear($volume, $season, $startDate, $startTime, $endDate, $endTime, $festivalId)
+    {
+        $startDateTime = date('Y-m-d H:i:s', strtotime("$startDate $startTime"));
+        $endDateTime = date('Y-m-d H:i:s', strtotime("$endDate $endTime"));
+
+        $this->database->query('INSERT INTO Year (idPlace, season, volume, start, end, idFestival) 
+                                        VALUES (NULL, ?, ?, ?, ?, ?)', $season, $volume, $startDateTime, $endDateTime, $festivalId);
+
+        return $this->database->getInsertId('Year');
+    }
+
+
+    /**
+     * @param $idYear
+     * @param $info
+     */
+    public function editFestivalInfo($idYear, $info)
+    {
+        $this->database->query('UPDATE Year SET info = ? WHERE idYear = ?', $info, $idYear);
+    }
+
+
+    /**
+     * @param $idYear
+     * @return Nette\Database\ResultSet
+     */
+    public function getStagesNotInYear($idYear)
+    {
+        return
+            $this->database->query('SELECT S.idStage AS id, S.name AS stage 
+                                    FROM Stage AS S 
+                                    WHERE S.idStage NOT IN (
+                                        SELECT S.idStage
+                                        FROM Stage AS S
+                                        LEFT JOIN Stage_has_Interpret_in_Year AS SHIIY ON SHIIY.idStage = S.idStage
+                                        WHERE SHIIY.idYear = 16
+                                    )
+                                    ORDER BY S.name ASC');
     }
 }

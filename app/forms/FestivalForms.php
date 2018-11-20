@@ -56,4 +56,46 @@ class FestivalForms
 
         return $form;
     }
+
+
+    public function createAddNewYear(callable $onSuccess) {
+        $festivals = $this->festivalsManager->getFestivalsIds();
+        $result = array();
+
+        foreach ($festivals as $festival) {
+            $result[$festival->idFestival] = $festival->name;
+        }
+
+        $form = $this->factory->create();
+
+        $form->addText('volume', 'Ročník festivalu:')
+            ->setRequired('Vyplňte prosím ročník festivalu.');
+
+        $form->addText('season', 'Období festivalu:')
+            ->setRequired('Vyplňte prosím období festivalu.');
+
+        $form->addText('startDate', 'Začátek festivalu (datum):')
+            ->setType('date');
+
+        $form->addText('startTime', 'Začátek festivalu (čas):')
+            ->setType('time');
+
+        $form->addText('endDate', 'Konec festivalu (datum):')
+            ->setType('date');
+
+        $form->addText('endTime', 'Konec festivalu (čas):')
+            ->setType('time');
+
+        $form->addSelect('festivalId', 'Festival:', $result);
+
+        $form->addSubmit('send', 'Uložit');
+
+        $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
+            $id = $this->festivalsManager->addNewYear($values->volume, $values->season, $values->startDate, $values->startTime,
+                $values->endDate, $values->endTime, $values->festivalId);
+            $onSuccess($id);
+        };
+
+        return $form;
+    }
 }
