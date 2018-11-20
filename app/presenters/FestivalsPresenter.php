@@ -3,6 +3,7 @@
 namespace App\Presenters;
 
 
+use App\Forms\FestivalForms;
 use App\Model\FestivalsManager;
 
 class FestivalsPresenter extends BasePresenter
@@ -19,19 +20,35 @@ class FestivalsPresenter extends BasePresenter
 
 
     /**
+     * @var FestivalForms
+     */
+    private $festivalForms;
+
+
+    /**
      * FestivalsPresenter constructor.
      * @param FestivalsManager $festivalsManager
+     * @param FestivalForms $festivalForms
      */
-    public function __construct(FestivalsManager $festivalsManager)
+    public function __construct(FestivalsManager $festivalsManager, FestivalForms $festivalForms)
     {
         parent::__construct();
         $this->festivalManager = $festivalsManager;
+        $this->festivalForms = $festivalForms;
     }
 
 
     public function renderDefault()
     {
         $this->template->festivals = $this->festivalManager->getAllFestivalsWithTickets();
+    }
+
+
+    protected function createComponentAddNewFestival() {
+        return $this->festivalForms->createAddNewFestival(function () {
+            $this->flashMessage('Festival byl úspěšně přidán.');
+            $this->redirect('this');
+        });
     }
 
 
