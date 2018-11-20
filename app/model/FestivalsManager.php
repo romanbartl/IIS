@@ -35,7 +35,7 @@ class FestivalsManager
     {
         return
             $this->database->query('SELECT Y.idYear AS idYear, F.name AS festival, F.label AS label, season, volume, start, 
-                                        end, P.name AS place, p.city AS city, COUNT(T.idYear) AS tickets
+                                        end, P.name AS place, P.city AS city, COUNT(T.idYear) AS tickets
                                         FROM Year AS Y 
                                         LEFT JOIN Festival AS F ON F.idFestival = Y.idFestival 
                                         LEFT JOIN Place AS P ON P.idPlace = Y.idPlace
