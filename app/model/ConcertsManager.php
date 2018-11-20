@@ -78,7 +78,7 @@ class ConcertsManager
      */
     public function getConcertById($concertId)
     {
-        $concert['info'] = $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date, 
+        /*$concert['info'] = $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date,
                                                   c.capacity AS capacity, c.info AS info, p.name AS place, p.gpsLat AS lat, p.gpsLng AS lng,
                                                   p.address AS address, p.zipCode AS zipCode, p.city AS city, i.label AS label
                                                   FROM Concert AS c 
@@ -86,13 +86,32 @@ class ConcertsManager
                                                   LEFT JOIN Concert_has_Interpret AS chi ON chi.idConcert = c.idConcert
                                                   LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret
                                                   WHERE chi.headliner = 1 AND c.idConcert = ? LIMIT 1', $concertId)->fetch();
+        */
+
+
+        $concert['info'] = $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date, 
+                                                        c.capacity AS capacity, c.info AS info, p.name AS place, p.gpsLat AS lat, p.gpsLng AS lng,
+                                                        p.address AS address, p.zipCode AS zipCode, p.city AS city
+                                                        FROM Concert AS c 
+                                                        LEFT JOIN Place AS p ON p.idPlace = c.idPlace
+                                                        WHERE c.idConcert = ? 
+                                                        LIMIT 1', $concertId);
+
+        $concert['label'] = '';
+
+
+        $concert['label'] = $this->database->query('SELECT i.label AS label
+                                                    FROM Concert_has_Interpret AS chi
+                                                    LEFT JOIN Interpret AS i ON i.idInterpret = chi.idInterpret
+                                                    WHERE chi.headliner = 1 AND chi.idConcert = 2
+                                                    LIMIT 1')->fetchField('label');
+
 
         $concert['interprets'] = $this->database->query('SELECT i.idInterpret AS idInterpret, i.name AS name, chi.headliner AS headliner
                                                             FROM Interpret AS i 
                                                             LEFT JOIN Concert_has_Interpret AS chi ON chi.idInterpret = i.idInterpret 
                                                             WHERE chi.idConcert = ? ORDER BY chi.headliner DESC', $concertId);
 
-        // TODO should be request from TicketsManager!!!!
         $concert['tickets'] = $this->database->query('SELECT price, type, COUNT(type) AS count 
                                                           FROM Ticket WHERE bought = 0 AND inCart = 0 AND idConcert = ? GROUP BY type ORDER BY type ASC', $concertId);
 
