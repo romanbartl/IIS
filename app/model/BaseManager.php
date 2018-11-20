@@ -60,4 +60,29 @@ class BaseManager
         TABLE_INTERPRET_MEMBER = 'Interpret_has_Member',
         INTERPRET_MEMBER_INTERPRET_ID = 'idInterpret',
         INTERPRET_MEMBER_MEMBER_ID = 'idMember';
+
+    const
+        TABLE_PLACE = 'Place',
+        PLACE_COLUMN_PLACE_ID = 'idPlace',
+        PLACE_COLUMN_NAME = 'name',
+        PLACE_COLUMN_ADDRESS = 'address',
+        PLACE_COLUMN_GPS_LAT = 'gpsLat',
+        PLACE_COLUMN_GPS_LNG = 'gpsLng',
+        PLACE_COLUMN_ZIP_CODE = 'zipCode',
+        PLACE_COLUMN_CITY = 'city';
+
+    const
+        TABLE_CONCERT = 'Concert',
+        CONCERT_COLUMN_CONCERT_ID = 'idConcert',
+        CONCERT_COLUMN_NAME = 'name',
+        CONCERT_COLUMN_DATE = 'date',
+        CONCERT_COLUMN_CAPACITY = 'capacity',
+        CONCERT_COLUMN_INFO = 'info',
+        CONCERT_COLUMN_PLACE_ID = 'idPlace';
+
+    const
+        TABLE_CONCERT_INTERPRET = 'Concert_has_Interpret',
+        CONCERT_INTERPRET_CONCERT_ID = 'idConcert',
+        CONCERT_INTERPRET_INTERPRET_ID = 'idInterpret',
+        CONCERT_INTERPRET_HEADLINER = 'headliner';
 }

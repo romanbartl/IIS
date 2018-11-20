@@ -2,7 +2,10 @@
 
 namespace App\Presenters;
 
+use App\Forms\ConcertForms;
+use App\Forms\PlaceForms;
 use App\Model\ConcertsManager;
+use App\Model\PlaceManager;
 
 
 class ConcertsPresenter extends BasePresenter
@@ -18,15 +21,28 @@ class ConcertsPresenter extends BasePresenter
      */
     private $concertId;
 
+    private $placeForms;
+
+    private $placeManager;
+
+    private $concertForms;
+
 
     /**
      * ConcertsPresenter constructor.
      * @param ConcertsManager $concertsManager
+     * @param PlaceForms $placeForms
+     * @param PlaceManager $placeManager
+     * @param ConcertForms $concertForms
      */
-    public function __construct(ConcertsManager $concertsManager)
+    public function __construct(ConcertsManager $concertsManager, PlaceForms $placeForms, PlaceManager $placeManager,
+                                ConcertForms $concertForms)
     {
         parent::__construct();
         $this->concertsManager = $concertsManager;
+        $this->placeForms = $placeForms;
+        $this->placeManager = $placeManager;
+        $this->concertForms = $concertForms;
     }
 
 
@@ -128,5 +144,113 @@ class ConcertsPresenter extends BasePresenter
         $this->template->ticketsMaxAmounts = $ticketsMaxAmounts;
         $this->template->firstType = $firstType;
         $this->template->firstAmount = $firstAmount;
+    }
+
+
+    public function actionEdit($id) {
+        $this->concertId = $id;
+    }
+
+
+    public function renderEdit()
+    {
+        $this->template->concertId = $this->concertId;
+
+        //TODO change getConcertById by some method from TicketsManager after it's working
+        $concert = $this->concertsManager->getConcertById($this->concertId);
+
+
+
+        $ticketsMaxAmounts = array();
+        $firstType = "";
+        $firstAmount = 0;
+
+        foreach ($concert['tickets'] as $key => $ticket) {
+            if (isset($this->cart->list[$this->concertId]['C'][$ticket->type])) {
+                //is in cart
+                $count = $ticket->count;
+                $ticketsMaxAmounts[] = $count;
+
+                if (($count != 0 && $key == 0 && $firstType != "") || ($count != 0 && $key != 0 && $firstType == "")
+                    || ($count != 0 && $key == 0 && $firstType == "")) {
+                    $firstType = $ticket->type;
+                    $firstAmount = $count;
+                }
+
+            } else {
+                //not in cart
+                $ticketsMaxAmounts[] = $ticket->count;
+
+                if ($firstType == "") {
+                    $firstType = $ticket->type;
+                    $firstAmount = $ticket->count;
+                }
+            }
+        }
+
+        $this->template->concert = $this->concertsManager->getConcertById($this->concertId);
+        $this->template->ticketsMaxAmounts = $ticketsMaxAmounts;
+        $this->template->firstType = $firstType;
+        $this->template->firstAmount = $firstAmount;
+    }
+
+
+    protected function createComponentAddNewPlaceForm() {
+        return $this->placeForms->createAddNewPlaceForm(function () {
+            $this->flashMessage('Nové místo úspěšně přidáno.', 'success');
+            $this->redirect('this');
+        });
+    }
+
+
+    protected function createComponentAddExistingPlaceForm() {
+        return $this->placeForms->createAddExistingPlaceConcertForm(function () {
+            $this->flashMessage('Nové místo úspěšně přidáno.', 'success');
+            $this->redirect('this');
+        }, $this->concertId);
+    }
+
+
+    protected function createComponentEditPlaceForm() {
+        $concert = $this->concertsManager->getConcertById($this->concertId);
+        $idPlace = $concert['info']->idPlace;
+        return $this->placeForms->createEditPlaceForm(function () {
+            $this->flashMessage('Aktuální místo upraveno.', 'success');
+            $this->redirect('this');
+        }, $idPlace);
+    }
+
+
+    protected function createComponentBasicInfoForm() {
+        return $this->concertForms->createBasicInfoForm(function () {
+            $this->flashMessage('Informace o koncertu byly upraveny.', 'success');
+            $this->redirect('this');
+        }, $this->concertId);
+    }
+
+    protected function createComponentAddHeadlinerToConcertForm() {
+        return $this->concertForms->createAddHeadlinerToConcertForm(function () {
+            $this->flashMessage('Headliner byl přidán.', 'success');
+            $this->redirect('this');
+        }, $this->concertId);
+    }
+
+
+    public function handleDeleteInterpret($idConcert, $idInterpret) {
+        if($this->isAjax()) {
+            $this->concertsManager->deleteInterpretFromConcert($idConcert, $idInterpret);
+            $this->redrawControl('concertInterprets');
+        }
+    }
+
+
+    protected function createComponentAddInterpretToConcertForm() {
+        return $this->concertForms->createAddInterpretToConcertForm(function () {
+            $this->flashMessage('Interpret byl přidán.', 'success');
+            $this->redirect('this');
+        }, $this->concertId, function () {
+            $this->flashMessage('Interpret je již na koncertu.', 'error');
+            $this->redirect('this');
+        });
     }
 }

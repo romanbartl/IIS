@@ -18,6 +18,7 @@ class RouterFactory
 	{
 		$router = new RouteList;
         $router[] = new Route('interprets/edit/[<id>]', array('presenter' => 'Interprets', 'action' => 'edit'));
+        $router[] = new Route('concerts/edit/[<id>]', array('presenter' => 'Concerts', 'action' => 'edit'));
         $router[] = new Route('interprets/detail/[<id>]', array('presenter' => 'Interprets', 'action' => 'detail'));
         $router[] = new Route('festivals/detail/[<id>]', array('presenter' => 'Festivals', 'action' => 'detail'));
         $router[] = new Route('concerts/detail/[<id>]', array('presenter' => 'Concerts', 'action' => 'detail'));

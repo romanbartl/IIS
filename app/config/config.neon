@@ -24,6 +24,7 @@ services:
 	- App\Model\ConcertsManager
 	- App\Model\TicketsManager
 	- App\Model\FestivalsManager
+	- App\Model\PlaceManager
 	- App\Forms\FormFactory
 	- App\Forms\SignInFormFactory
 	- App\Forms\SignUpFormFactory
@@ -34,6 +35,8 @@ services:
 	- App\Forms\GenreFormFactory
 	- App\Forms\InterpretForms
 	- App\Forms\FestivalForms
+	- App\Forms\PlaceForms
+	- App\Forms\ConcertForms
 
 	authorizatorFactory: App\AuthorizatorFactory
 	authorizator: @authorizatorFactory::create

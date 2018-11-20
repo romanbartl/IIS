@@ -1,0 +1,163 @@
+{block content}
+	<div id="carouselExampleIndicators" class="carousel slide first-div" data-ride="carousel">
+		<div class="carousel-inner interpret-main-image-banner">
+			<div class="carousel-item interpret-main-image-banner-item-div active">
+				<img align="middle" class="d-block w-100 interpret-main-image-banner-item"
+				     src="{$concert['info']->label}"
+				     alt="{$concert['info']->name} banner">
+				<div class="carousel-caption d-none d-md-block interpret-main-image-banner-item-caption">
+					<h1 n:block=title>{$concert['info']->name} ({$concert['info']->date|date:'%d. %m. %Y'})</h1>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container interpret-container">
+		<div class="row">
+			<div class="col-md-4 order-md-2 mb-4" style="padding: 0 30px 0 30px;">
+				<div class="row">
+					<div class="col mb-4">
+						<a class="btn btn-primary d-flex justify-content-between align-items-center" n:href="Concerts:detail $concert['info']->idConcert" role="button">Detail koncertu</a>
+					</div>
+				</div>
+				<div class="row">
+					<div class="jumbotron jumbotron-fluid" style="width: 100%; padding-bottom: 30px;">
+						<div class="container">
+							<h4>Editace vstupenek</h4>
+							{snippet ticketsSnippet}
+
+							{/snippet}
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="jumbotron jumbotron-fluid" style="width: 100%">
+						<div class="container">
+							<h4>Upravit aktuální místo</h4>
+							{control editPlaceForm}
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="jumbotron jumbotron-fluid" style="width: 100%">
+						<div class="container">
+							<h4>Vybrat místo konání</h4>
+							{control addExistingPlaceForm}
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col mb-4">
+						<button type="button" class="btn btn-primary d-flex justify-content-between align-items-center" data-toggle="modal" data-target="#addNewPlaceModal">
+							Přidat nové místo (pouze do DB)
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8 order-md-1" style="padding: 0 30px 0 30px;">
+				{control basicInfoForm}
+
+				<hr class="mb-4">
+
+				{snippet concertInterprets}
+				<div class="row">
+					<h4 class="mb-3">Vystoupí</h4>
+					<div class="container">
+						<ul class="list-group">
+							{if $concert['interprets'] == null}
+								<p>Program zatím není zveřejněný.</p>
+							{/if}
+							{foreach $concert['interprets'] as $interpret}
+								<a n:href="Interprets:detail $interpret->idInterpret">
+									<li class="list-group-item  d-flex justify-content-between align-items-center">
+										{$interpret->name} {if $interpret->headliner == 1}(Headliner){/if}
+										<a n:href="DeleteInterpret! $concert['info']->idConcert, $interpret->idInterpret" class="ajax">Odebrat</a>
+									</li>
+								</a>
+							{/foreach}
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeHeadlinerModal">
+									Přidat/Vyměnit Headlinera
+								</button>
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addInterpretModal">
+									Přidat dalšího Interpreta
+								</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+				{/snippet}
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="addNewPlaceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					{control addNewPlaceForm}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="changeHeadlinerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					{control addHeadlinerToConcertForm}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="addInterpretModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					{control addInterpretToConcertForm}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{/block}
+
+{block head}
+	<style>
+		/* Set the size of the div element that contains the map */
+		#map {
+			height: 400px;  /* The height is 400 pixels */
+			width: 100%;  /* The width is the width of the web page */
+		}
+	</style>
+{/block}
