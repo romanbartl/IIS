@@ -8,6 +8,7 @@ use App\Model\ConcertsManager;
 use App\Model\PlaceManager;
 use App\Model\TicketsManager;
 use Nette\Application\UI\Multiplier;
+use Nette\Forms\Form;
 
 
 class ConcertsPresenter extends BasePresenter
@@ -277,32 +278,45 @@ class ConcertsPresenter extends BasePresenter
     }
 
 
-//    protected function createComponentChangeAlbumForm()
-//    {
-//        return new Multiplier(function ($type, $onSuccess) {
-////            $album = $this->ticketManager->
-//
-//            $form = new \Nette\Application\UI\Form;
-//            $form->addHidden('idAlbum', $idConcert);
-//            $form->addText('name', "Název:")
-//                ->setDefaultValue($album->name);
-//            $form->addText('label', "Obrázek:")
-//                ->setRequired("Vyplňte prosím URL obrázku!")
-//                ->setDefaultValue($album->label);
-//            $form->addText('release', 'Datum vydání:')
-//                ->setType('date')
-//                ->setDefaultValue($album->release->format('Y-m-d'));
-//            $form->addSubmit('send', 'Uložit');
-//
-//            $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
-//                $this->albumsManager->editAlbum($values);
-//                if($values->currentRelease != $values->release) {
-//                    $this->userManager->setIsNew($this->interpretId);
-//                }
-//                $this->redirect('this');
-//            };
-//
-//            return $form;
-//        });
-//    }
+    protected function createComponentChangeAlbumForm()
+    {
+        return new Multiplier(function ($idArray, $onSuccess) {
+            $ticketsByType = $this->ticketManager->getTicketsConcertByType($this->concertId);
+
+            $form = new \Nette\Application\UI\Form;
+
+            $form->addHidden('idConcert', $this->concertId);
+
+            $form->addHidden('price', $ticketsByType['all'][$idArray]->price);
+
+            $form->addHidden('type', $ticketsByType['all'][$idArray]->type);
+
+            $form->addHidden('currentAmount', $ticketsByType['all'][$idArray]->cnt);
+
+            $form->addText('amount', "Počet vstupenek:")
+                ->setRequired("Vyplňte prosím počet vstupenek!")
+                ->setDefaultValue($ticketsByType['all'][$idArray]->cnt);
+            $form->addSubmit('send', 'Uložit');
+
+            $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
+                $cntRemoved = $this->ticketManager->changeAmountOfTickets($values);
+                $limit = abs($values->currentAmount - $values->amount);
+                if(($values->amount - $values->currentAmount) > 0) {
+                    $add = $values->amount - $values->currentAmount;
+                    $this->flashMessage("Bylo přidáno $add vstupenek!");
+                }
+                else if(($values->amount - $values->currentAmount) < 0) {
+                    if($limit > $cntRemoved) {
+                        $this->flashMessage("Některé vstupenky jsou v košíku nebo prodány! Smazáno $cntRemoved vstupenek místo $limit!");
+                    }
+                    else {
+                        $this->flashMessage("Všech $cntRemoved vstupenek bylo smazáno!", "success");
+                    }
+                }
+                $this->redirect('this');
+            };
+
+            return $form;
+        });
+    }
 }
