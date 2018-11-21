@@ -45,30 +45,45 @@
             </div>
 
             <div class="col-md-8 order-md-1" style="padding: 0 30px 0 30px;">
-                <div class="row">
-                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
-                        <div class="container">
-                            <h4>Detail akce</h4>
-                            <p class="lead">{control editFestivalInfoForm}</p>
-                        </div>
-                    </div>
-                </div>
+                <h3>Informace o ročníku</h3>
+                {control editFestivalInfoForm}
 
                 <hr class="mb-4">
 
-                <h3>Přidat stage k ročníku</h3>
+                <h3>Vytvořit novou stage</h3>
 
+                {control addNewStage}
+
+                <hr class="mb-4">
+
+                <h3>Seznam všech stage</h3>
+
+                {foreach $allStages as $stage}
+                    {control editStagesNames-$stage->idStage}
+                    <a n:href="deleteStage! $stage->idStage">
+                        <button type="button" class="btn btn-outline-danger btn-xs" style="margin-right: 30px;">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </a>
+                {/foreach}
+
+                <hr class="mb-4">
+
+                <h3>Přidat program</h3>
+                {control addStageToYearForm}
 
                 <hr class="mb-4">
 
                 <h3>Program</h3><br>
 
-
-
-
                 <ul class="nav nav-tabs">
                     {foreach $festival['stages'] as $key => $stage}
-                        <li class="nav-item"><a class="nav-link {if $key == 0}active{/if}" data-toggle="tab" href="#tab-{$stage['id']}" role="tab">{$stage['stage']}</a></li>
+                        <li class="nav-item">
+                            <button type="button" data-toggle="modal" data-target="#deleteStageFromYear-{$stage->id}" class="btn btn-outline-danger btn-xs" style="margin-right: 30px;">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                            <a class="nav-link {if $key == 0}active{/if}" data-toggle="tab" href="#tab-{$stage['id']}" role="tab">{$stage['stage']}</a>
+                        </li>
                     {/foreach}
                 </ul>
 
@@ -76,6 +91,27 @@
                     <div class="card-block">
                         <div class="tab-content" style="padding: 20px;">
                             {foreach $festival['stagesProgram'] as $stageId => $stage}
+
+                                <div class="modal fade" id="deleteStageFromYear-{$stageId}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Jste si jisti, že chcete smazat celou stage z ročníku?</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Smazání stage z ročníku nenávratně smaže celý program dané stage.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+                                                <a n:href="deleteStageInYear! $stageId"><button type="button" class="btn btn-primary">Opravdu smazat</button></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="tab-pane {if $festival['firstStageId'] == $stageId}active{/if}" id="tab-{$stageId}">
                                     {foreach $stage as $day => $interprets}
                                         <p class="card-text">
@@ -83,6 +119,11 @@
                                         <ul class="list-group">
                                             {foreach $interprets as $interpret}
                                                 <li class="list-group-item">
+                                                    <a n:href="deleteInterpretFromStage! $interpret['id'], $stageId">
+                                                        <button type="button" class="btn btn-outline-danger btn-xs" style="margin-right: 30px;">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                        </button>
+                                                    </a>
                                                     <strong>{$interpret['start']|date:'%H:%M'} - {$interpret['end']|date:'%H:%M'}: </strong>
                                                     <span style="margin-left: 10px;"><a n:href="Interprets:detail $interpret['id']">{$interpret['interpret']}{if $interpret['headliner'] == 1} (Headliner){/if}</a></span>
                                                 </li>
@@ -99,4 +140,9 @@
             </div>
         </div>
     </div>
+{/block}
+
+{block scripts}
+    {include parent}
+    <script src="https://use.fontawesome.com/c560c025cf.js"></script>
 {/block}

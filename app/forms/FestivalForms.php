@@ -75,16 +75,20 @@ class FestivalForms
             ->setRequired('Vyplňte prosím období festivalu.');
 
         $form->addText('startDate', 'Začátek festivalu (datum):')
-            ->setType('date');
+            ->setType('date')
+            ->setRequired('Vyplňte prosím začátek festivalu.');
 
         $form->addText('startTime', 'Začátek festivalu (čas):')
-            ->setType('time');
+            ->setType('time')
+            ->setRequired('Vyplňte prosím konec festivalu.');
 
         $form->addText('endDate', 'Konec festivalu (datum):')
-            ->setType('date');
+            ->setType('date')
+            ->setRequired('Vyplňte prosím začátek festivalu.');
 
         $form->addText('endTime', 'Konec festivalu (čas):')
-            ->setType('time');
+            ->setType('time')
+            ->setRequired('Vyplňte prosím začátek festivalu.');
 
         $form->addSelect('festivalId', 'Festival:', $result);
 

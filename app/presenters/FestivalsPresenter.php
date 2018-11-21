@@ -5,6 +5,7 @@ namespace App\Presenters;
 
 use App\Forms\FestivalForms;
 use App\Model\FestivalsManager;
+use App\Model\InterpretsManager;
 use Nette\Application\UI\Multiplier;
 use Nette\Forms\Form;
 
@@ -28,6 +29,12 @@ class FestivalsPresenter extends BasePresenter
 
 
     /**
+     * @var InterpretsManager
+     */
+    private $interpretsManager;
+
+
+    /**
      * @var
      */
     private $festival;
@@ -37,12 +44,15 @@ class FestivalsPresenter extends BasePresenter
      * FestivalsPresenter constructor.
      * @param FestivalsManager $festivalsManager
      * @param FestivalForms $festivalForms
+     * @param InterpretsManager $interpretsManager
      */
-    public function __construct(FestivalsManager $festivalsManager, FestivalForms $festivalForms)
+    public function __construct(FestivalsManager $festivalsManager, FestivalForms $festivalForms,
+                                InterpretsManager $interpretsManager)
     {
         parent::__construct();
         $this->festivalManager = $festivalsManager;
         $this->festivalForms = $festivalForms;
+        $this->interpretsManager = $interpretsManager;
     }
 
 
@@ -104,13 +114,60 @@ class FestivalsPresenter extends BasePresenter
     protected function createComponentEditFestivalInfoForm()
     {
         $form = new \Nette\Application\UI\Form;
-        $form->addTextArea('info', '')
+
+        $allFestivals = array();
+        $festivals = $this->festivalManager->getAllFestivals();
+
+        foreach ($festivals as $festival) {
+            $allFestivals[$festival->idFestival] = $festival->name;
+        }
+
+        $form->addSelect('festivalId', 'Festival:', $allFestivals)
+             ->setDefaultValue($this->festival['info']->idFest)
+            ->setRequired();
+
+        $form->addText('volume', "Ročník:")
+            ->setDefaultValue($this->festival['info']->volume)
+            ->setRequired();
+
+        $form->addText('season', "Období:")
+            ->setDefaultValue($this->festival['info']->season)
+            ->setRequired();
+
+        $form->addTextArea('info', 'Detail akce: ')
             ->setDefaultValue($this->festival['info']->info);
 
         $form->addSubmit('send', 'Uložit');
 
         $form->onSuccess[] = function (Form $form, $values) {
-            $this->festivalManager->editFestivalInfo($this->festivalId, $values->info);
+            if ($this->festivalManager->editFestivalInfo($this->festivalId, $values->festivalId, $values->volume, $values->season, $values->info)) {
+                $this->flashMessage('Ročník byl úspěšně upraven.', 'success');
+
+            } else {
+                $this->flashMessage('Ujistěte se, zda-li Vámi zadaný ročník již neexistuje.', 'error');
+            }
+
+            $this->redirect('this');
+        };
+
+        return $form;
+    }
+
+
+    protected function createComponentAddNewStage()
+    {
+        $form = new \Nette\Application\UI\Form;
+
+        $form->addText('name', 'Název stage:')
+            ->setRequired('Vyplňte prosím název stage.')
+            ->setRequired();;
+
+        $form->addSubmit('send', 'Uložit');
+
+
+        $form->onSuccess[] = function (Form $form, $values) {
+            $this->festivalManager->addStage($values->name);
+            $this->flashMessage('Stage byla přidána', 'success');
             $this->redirect('this');
         };
 
@@ -121,16 +178,98 @@ class FestivalsPresenter extends BasePresenter
     protected function createComponentAddStageToYearForm()
     {
         $allStages = array();
-        $stages = $this->festivalManager->getStagesNotInYear($this->festivalId);
+        $allInterprets = array();
+        $stages = $this->festivalManager->getStages();
+        $interprets = $this->interpretsManager->getAllInterprets();
 
         foreach ($stages as $stage) {
             $allStages[$stage->idStage] = $stage->name;
         }
 
+        foreach ($interprets as $interpret) {
+            $allInterprets[$interpret->idInterpret] = $interpret->name;
+        }
+
         $form = new \Nette\Application\UI\Form;
-        $form->addSelect('stageId', 'Stage:', $allStages);
+        $form->addSelect('stageId', 'Stage:', $allStages)->setRequired();
+        $form->addSelect('interpretId', 'Interpret:', $allInterprets)->setRequired();
+
+        $form->addText('date', 'Datum:')
+            ->setType('date')
+            ->setRequired('Vyplňte prosím datum vystoupení.');
+
+        $form->addText('startTime', 'Začátek vystoupení (čas):')
+            ->setType('time')
+            ->setRequired('Vyplňte prosím začátek vystoupení.');
+
+        $form->addText('endTime', 'Konec vystoupení (čas):')
+            ->setType('time')
+            ->setRequired('Vyplňte prosím konec vystoupení.');
+
+        $form->addCheckbox('headliner', "Headliner");
 
 
+        $form->addSubmit('send', 'Uložit');
+
+        $form->onSuccess[] = function (Form $form, $values) {
+            $startDateTime = date('Y-m-d H:i:s', strtotime("$values->date $values->startTime"));
+            $endDateTime = date('Y-m-d H:i:s', strtotime("$values->date $values->endTime"));
+
+            if ($startDateTime < $this->festival['info']->start) {
+                $this->flashMessage('Vystoupení nesmí začít před začátkem festivalu!', 'error');
+
+            } elseif ($endDateTime > $this->festival['info']->end) {
+                $this->flashMessage('Vystoupení nesmí začít po konci festivalu!', 'error');
+
+            } else if ($startDateTime > $endDateTime) {
+                $this->flashMessage('Vystoupení nesmí skončit dříve, než začne!', 'error');
+
+            } else {
+                $this->festivalManager->addStageToYear($values->stageId, $values->interpretId, $this->festivalId, $startDateTime, $endDateTime, $values->headliner);
+            }
+
+            $this->redirect('this');
+
+
+        };
+
+        return $form;
+    }
+
+
+    protected function createComponentEditStagesNames()
+    {
+        return new Multiplier(function ($idStage, $onSuccess) {
+            $stage = $this->festivalManager->getStageById($idStage);
+
+            $form = new \Nette\Application\UI\Form;
+
+
+            $form->addText('name', "Název:")
+                ->setDefaultValue($stage->name);
+
+            $form->addHidden('idStage', $idStage);
+
+            $form->addSubmit('send', 'Uložit');
+
+            $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
+                $this->festivalManager->editStage($values->idStage, $values->name);
+                $this->redirect('this');
+            };
+
+            return $form;
+        });
+    }
+
+
+    public function handleDeleteStage($stageId)
+    {
+        if ($this->festivalManager->deleteStage($stageId)) {
+            $this->flashMessage('Stage byla smazána', 'success');
+
+        } else {
+            $this->flashMessage('Stage nelze smazat, dokud bude přiřazena alespoň u jednoho ročníku!', 'error');
+        }
     }
 
 
@@ -171,6 +310,19 @@ class FestivalsPresenter extends BasePresenter
     {
         $this->template->festival = $this->festivalManager->getFestivalById($this->festivalId);
         $this->template->festivalId = $this->festivalId;
+        $this->template->allStages = $this->festivalManager->getAllStages();
+    }
+
+
+    public function handleDeleteInterpretFromStage($interpretId, $stageId)
+    {
+        $this->festivalManager->deleteInterpretFromStage($interpretId, $stageId, $this->festivalId);
+    }
+
+
+    public function handleDeleteStageInYear($stageId)
+    {
+        $this->festivalManager->deleteStageInYear($stageId, $this->festivalId);
     }
 
 
