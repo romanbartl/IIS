@@ -15,6 +15,7 @@ use App\Model\InterpretsManager;
 use App\Model\PlaceManager;
 use App\Model\TicketsManager;
 use Nette\Application\UI\Form;
+use Nette\Database\UniqueConstraintViolationException;
 
 class ConcertForms
 {
@@ -126,7 +127,7 @@ class ConcertForms
     }
 
 
-    public function createAddNewTicketsForm(callable $onSuccess, $idConcert) {
+    public function createAddNewTicketsForm(callable $onSuccess, $idConcert, callable $onError) {
         $form = $this->factory->create();
 
         $type = ['VIP' => 'VIP', 'SIT' => 'Na sezení', 'STAND' => 'Na stání'];
@@ -145,8 +146,13 @@ class ConcertForms
 
         $form->addSubmit('send', 'Uložit');
 
-        $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
-            $this->ticketsManager->addTicketsToConcert($values);
+        $form->onSuccess[] = function (Form $form, $values) use ($onSuccess, $onError) {
+            try {
+                $this->ticketsManager->addTicketsToConcert($values);
+            }
+            catch (UniqueConstraintViolationException $e) {
+                $onError();
+            }
             $onSuccess();
         };
 
