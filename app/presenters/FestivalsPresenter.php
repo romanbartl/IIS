@@ -8,6 +8,7 @@ use App\Forms\PlaceForms;
 use App\Model\FestivalsManager;
 use App\Model\InterpretsManager;
 use App\Model\TicketsManager;
+use App\Model\UserManager;
 use Nette\Application\UI\Multiplier;
 use Nette\Forms\Form;
 
@@ -53,6 +54,8 @@ class FestivalsPresenter extends BasePresenter
      */
     private $festival;
 
+    private $userManager;
+
 
     /**
      * FestivalsPresenter constructor.
@@ -61,11 +64,11 @@ class FestivalsPresenter extends BasePresenter
      * @param InterpretsManager $interpretsManager
      * @param TicketsManager $ticketsManager
      * @param PlaceForms $placeForms
-     *
+     * @param UserManager $userManager
      */
     public function __construct(FestivalsManager $festivalsManager, FestivalForms $festivalForms,
                                 InterpretsManager $interpretsManager, TicketsManager $ticketsManager,
-                                PlaceForms $placeForms)
+                                PlaceForms $placeForms, UserManager $userManager)
     {
         parent::__construct();
         $this->festivalManager = $festivalsManager;
@@ -73,6 +76,7 @@ class FestivalsPresenter extends BasePresenter
         $this->interpretsManager = $interpretsManager;
         $this->ticketsManager = $ticketsManager;
         $this->placeForms = $placeForms;
+        $this->userManager = $userManager;
     }
 
 
@@ -321,6 +325,7 @@ class FestivalsPresenter extends BasePresenter
 
             } else {
                 $this->festivalManager->addStageToYear($values->stageId, $values->interpretId, $this->festivalId, $startDateTime, $endDateTime, $values->headliner);
+                $this->userManager->setIsNew($values->interpretId);
             }
 
             $this->redirect('this');

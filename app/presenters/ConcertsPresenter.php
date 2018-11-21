@@ -285,7 +285,7 @@ class ConcertsPresenter extends BasePresenter
     }
 
 
-    protected function createComponentChangeAlbumForm()
+    protected function createComponentChangeTicketsForm()
     {
         return new Multiplier(function ($idArray, $onSuccess) {
             $ticketsByType = $this->ticketManager->getTicketsConcertByType($this->concertId);
