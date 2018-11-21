@@ -20,16 +20,22 @@
 						<a class="btn btn-primary d-flex justify-content-between align-items-center" n:href="Concerts:detail $concert['info']->idConcert" role="button">Detail koncertu</a>
 					</div>
 				</div>
-				{snippet tickets}
+				{snippet ticketsEdit}
 					<div class="row">
 						<div class="jumbotron jumbotron-fluid" style="width: 100%; padding-bottom: 30px;">
 							<div class="container">
 								<h4>Editace vstupenek</h4>
-								{if count($ticketsByType) != 0}
-									{foreach $ticketsByType as $ticketsOneType}
-										{$ticketsOneType->type} - {$ticketsOneType->cnt} - (<a n:href="DeleteTickets! $concert['info']->idConcert, $ticketsOneType->type, $ticketsOneType->cnt" class="ajax">
-										Odebrat
-									</a>)<br/>
+								{if count($ticketsByType['all']) != 0}
+									{foreach $ticketsByType['all'] as $ticketsOneTypeKey => $ticketsOneType}
+										<strong>Typ vstupenky:</strong> {$ticketsOneType->type} (<a n:href="DeleteTickets! $concert['info']->idConcert, $ticketsOneType->type, $ticketsOneType->cnt" class="ajax">Odebrat</a>)<br/>
+										<strong>Ceny vstupenky:</strong> {$ticketsOneType->price} Kč<br/>
+										{if $ticketsOneTypeKey < count($ticketsByType['reserved'])}
+											(Počet obsazených vstupenek: {$ticketsByType['reserved'][$ticketsOneTypeKey]->cnt})
+										{else}
+											(Počet obsazených vstupenek: 0)
+										{/if}
+										{control changeAlbumForm-$ticketsOneTypeKey}
+										<hr>
 									{/foreach}
 								{/if}
 								<button type="button" class="btn btn-primary d-flex justify-content-between align-items-center" data-toggle="modal" data-target="#addTicketModal">

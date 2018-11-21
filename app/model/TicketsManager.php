@@ -90,6 +90,13 @@ class TicketsManager extends BaseManager
 
 
     public function addTicketsToConcert($values) {
+        $ticket = $this->database->table(self::TABLE_TICKET)
+            ->where(self::TICKET_COLUMN_ID_CONCERT, $values->idConcert)
+            ->where(self::TICKET_COLUMN_TYPE, $values->ticketType)
+            ->fetch();
+        if($ticket && $ticket->price != $values->price) {
+            throw new Nette\Database\UniqueConstraintViolationException;
+        }
         for($i = 0; $i < $values->amount; $i++) {
             $this->database->table(self::TABLE_TICKET)
                 ->insert([
@@ -102,8 +109,13 @@ class TicketsManager extends BaseManager
 
 
     public function getTicketsConcertByType($idConcert) {
-        return $this->database->query('SELECT type, count(*) AS cnt FROM `Ticket` WHERE idConcert=? GROUP BY type', $idConcert)
+        $tickets['all'] = $this->database->query('SELECT type, count(*) AS cnt, price FROM `Ticket` WHERE idConcert=? GROUP BY type', $idConcert)
             ->fetchAll();
+
+        $tickets['reserved'] = $this->database->query('SELECT type, count(*) AS cnt, price FROM `Ticket` WHERE idConcert=? AND (bought=1 OR inCart=1) GROUP BY type', $idConcert)
+            ->fetchAll();
+
+        return $tickets;
     }
 
 
@@ -114,5 +126,29 @@ class TicketsManager extends BaseManager
             ->where(self::TICKET_COLUMN_IN_CART, 0)
             ->where(self::TICKET_COLUMN_BOUGHT, 0)
             ->delete();
+    }
+
+
+    public function changeAmountOfTickets($values) {
+        $limit = abs($values->currentAmount - $values->amount);
+        if($values->currentAmount < $values->amount) {
+            for($i = 0; $i < $limit; $i++) {
+                $this->database->table(self::TABLE_TICKET)
+                    ->insert([
+                        self::TICKET_COLUMN_PRICE => $values->price,
+                        self::TICKET_COLUMN_ID_CONCERT => $values->idConcert,
+                        self::TICKET_COLUMN_TYPE => $values->type
+                    ]);
+            }
+        }
+        else {
+            return $this->database->table(self::TABLE_TICKET)
+                ->where(self::TICKET_COLUMN_ID_CONCERT, $values->idConcert)
+                ->where(self::TICKET_COLUMN_TYPE, $values->type)
+                ->where(self::TICKET_COLUMN_IN_CART, 0)
+                ->where(self::TICKET_COLUMN_BOUGHT, 0)
+                ->limit($limit)
+                ->delete();
+        }
     }
 }

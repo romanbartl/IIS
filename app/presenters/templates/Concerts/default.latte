@@ -27,6 +27,17 @@
                         </a>
                     </div>
                 {/foreach}
+                {if $user->isLoggedIn() && $user->isAllowed('concert', 'add')}
+                    <div class="col-md-4 align-self-center" align="center">
+                        <a n:href="Concerts:add">
+                            <div class="card mb-4 shadow-sm interpret-banner">
+                                <div class="card-body">
+                                    <p class="card-text"><h1><i class="fas fa-plus"></i></h1></p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {/if}
             </div>
         </div>
     </div>

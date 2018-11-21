@@ -12,8 +12,10 @@ namespace App\Forms;
 use App\Model\ConcertsManager;
 use App\Model\DuplicateNameException;
 use App\Model\InterpretsManager;
+use App\Model\PlaceManager;
 use App\Model\TicketsManager;
 use Nette\Application\UI\Form;
+use Nette\Database\UniqueConstraintViolationException;
 
 class ConcertForms
 {
@@ -25,14 +27,17 @@ class ConcertForms
 
     private $ticketsManager;
 
+    private $placeManager;
+
 
     public function __construct(FormFactory $factory, ConcertsManager $concertsManager, InterpretsManager $interpretsManager,
-                                TicketsManager $ticketsManager)
+                                TicketsManager $ticketsManager, PlaceManager $placeManager)
     {
         $this->factory = $factory;
         $this->concertsManager = $concertsManager;
         $this->interpretsManager = $interpretsManager;
         $this->ticketsManager = $ticketsManager;
+        $this->placeManager = $placeManager;
     }
 
 
@@ -122,8 +127,7 @@ class ConcertForms
     }
 
 
-
-    public function createAddNewTicketsForm(callable $onSuccess, $idConcert) {
+    public function createAddNewTicketsForm(callable $onSuccess, $idConcert, callable $onError) {
         $form = $this->factory->create();
 
         $type = ['VIP' => 'VIP', 'SIT' => 'Na sezení', 'STAND' => 'Na stání'];
@@ -142,9 +146,58 @@ class ConcertForms
 
         $form->addSubmit('send', 'Uložit');
 
-        $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
-            $this->ticketsManager->addTicketsToConcert($values);
+        $form->onSuccess[] = function (Form $form, $values) use ($onSuccess, $onError) {
+            try {
+                $this->ticketsManager->addTicketsToConcert($values);
+            }
+            catch (UniqueConstraintViolationException $e) {
+                $onError();
+            }
             $onSuccess();
+        };
+
+        return $form;
+    }
+
+
+    public function createNewConcertForm(callable $onSuccess) {
+        $form = $this->factory->create();
+
+        $places = $this->placeManager->getAllPlaces();
+        $plac = [];
+        foreach($places as $place) {
+            $plac[$place->idPlace] = $place->name;
+        }
+
+        $interprets = $this->interpretsManager->getAllInterprets();
+        $inter = [];
+        foreach($interprets as $interpret) {
+            $inter[$interpret->idInterpret] = $interpret->name;
+        }
+
+        $form->addText('name', 'Název akce:')
+            ->setRequired('Vyplňte prosím název koncertu');
+
+        $form->addText('date', 'Datum koncertu:')
+            ->setType('date')
+            ->setRequired("Vyplňte prosím datum koncertu!");
+
+        $form->addText('time', 'Začátek koncertu:')
+            ->setType('time')
+            ->setRequired("Vyplňte prosím čas začátku koncertu!");
+
+        $form->addSelect('place', 'Výběr místa konání:', $plac);
+
+        $form->addSelect('idHeadliner', 'Výběr headlinera:', $inter);
+
+        $form->addTextArea('info', 'Detail akce:')
+            ->setRequired('Vyplňte prosím info!');
+
+        $form->addSubmit('send', 'Uložit');
+
+        $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
+            $row = $this->concertsManager->addNewConcert($values);
+            $onSuccess($row->idConcert);
         };
 
         return $form;
