@@ -7,6 +7,9 @@ use App\Forms\PlaceForms;
 use App\Model\ConcertsManager;
 use App\Model\PlaceManager;
 use App\Model\TicketsManager;
+use Nette\Application\UI\BadSignalException;
+use Nette\Application\UI\Multiplier;
+use Nette\Forms\Form;
 
 
 class ConcertsPresenter extends BasePresenter
@@ -146,6 +149,9 @@ class ConcertsPresenter extends BasePresenter
 
     public function actionEdit($id) {
         $this->concertId = $id;
+        if(!$this->user->isLoggedIn() || !$this->user->isAllowed('concert', 'edit')){
+            throw new BadSignalException;
+        }
     }
 
 
@@ -271,7 +277,65 @@ class ConcertsPresenter extends BasePresenter
                 $this->flashMessage("Všech $cnt vstupenek bylo smazáno!", "success");
             }
             $this->redrawControl('flashMessages');
-            $this->redrawControl('tickets');
+            $this->redrawControl('ticketsEdit');
         }
+    }
+
+
+    protected function createComponentChangeAlbumForm()
+    {
+        return new Multiplier(function ($idArray, $onSuccess) {
+            $ticketsByType = $this->ticketManager->getTicketsConcertByType($this->concertId);
+
+            $form = new \Nette\Application\UI\Form;
+
+            $form->addHidden('idConcert', $this->concertId);
+
+            $form->addHidden('price', $ticketsByType['all'][$idArray]->price);
+
+            $form->addHidden('type', $ticketsByType['all'][$idArray]->type);
+
+            $form->addHidden('currentAmount', $ticketsByType['all'][$idArray]->cnt);
+
+            $form->addText('amount', "Počet vstupenek:")
+                ->setRequired("Vyplňte prosím počet vstupenek!")
+                ->setDefaultValue($ticketsByType['all'][$idArray]->cnt);
+            $form->addSubmit('send', 'Uložit');
+
+            $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
+                $cntRemoved = $this->ticketManager->changeAmountOfTickets($values);
+                $limit = abs($values->currentAmount - $values->amount);
+                if(($values->amount - $values->currentAmount) > 0) {
+                    $add = $values->amount - $values->currentAmount;
+                    $this->flashMessage("Bylo přidáno $add vstupenek!");
+                }
+                else if(($values->amount - $values->currentAmount) < 0) {
+                    if($limit > $cntRemoved) {
+                        $this->flashMessage("Některé vstupenky jsou v košíku nebo prodány! Smazáno $cntRemoved vstupenek místo $limit!");
+                    }
+                    else {
+                        $this->flashMessage("Všech $cntRemoved vstupenek bylo smazáno!", "success");
+                    }
+                }
+                $this->redirect('this');
+            };
+
+            return $form;
+        });
+    }
+
+
+    public function renderAdd() {
+        if(!$this->user->isLoggedIn() || !$this->user->isAllowed('concert', 'add')) {
+            throw new BadSignalException;
+        }
+    }
+
+
+    protected function createComponentAddNewConcertForm() {
+        return $this->concertForms->createNewConcertForm(function ($idConcerts) {
+            $this->redirect("Concerts:edit", $idConcerts);
+            $this->flashMessage("Koncert úspěšně vytvořen.", "success");
+        });
     }
 }
