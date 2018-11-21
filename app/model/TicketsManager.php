@@ -4,7 +4,7 @@ namespace App\Model;
 
 use Nette;
 
-class TicketsManager
+class TicketsManager extends BaseManager
 {
     /**
      * @var Nette\Database\Context
@@ -86,5 +86,33 @@ class TicketsManager
                                     LIMIT ?', $userId, $type, $concertId, intval($amount));
 
         $this->database->query('UNLOCK TABLES;');
+    }
+
+
+    public function addTicketsToConcert($values) {
+        for($i = 0; $i < $values->amount; $i++) {
+            $this->database->table(self::TABLE_TICKET)
+                ->insert([
+                    self::TICKET_COLUMN_PRICE => $values->price,
+                    self::TICKET_COLUMN_ID_CONCERT => $values->idConcert,
+                    self::TICKET_COLUMN_TYPE => $values->ticketType
+                ]);
+        }
+    }
+
+
+    public function getTicketsConcertByType($idConcert) {
+        return $this->database->query('SELECT type, count(*) AS cnt FROM `Ticket` WHERE idConcert=? GROUP BY type', $idConcert)
+            ->fetchAll();
+    }
+
+
+    public function tryRemoveTickets($idConcert, $type) {
+        return $this->database->table(self::TABLE_TICKET)
+            ->where(self::TICKET_COLUMN_ID_CONCERT, $idConcert)
+            ->where(self::TICKET_COLUMN_TYPE, $type)
+            ->where(self::TICKET_COLUMN_IN_CART, 0)
+            ->where(self::TICKET_COLUMN_BOUGHT, 0)
+            ->delete();
     }
 }

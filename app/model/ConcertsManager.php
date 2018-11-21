@@ -90,7 +90,7 @@ class ConcertsManager extends BaseManager
 
 
         $concert['info'] = $this->database->query('SELECT c.idConcert AS idConcert, c.name AS name, c.date AS date, 
-                                                        c.capacity AS capacity, c.info AS info, p.idPlace AS idPlace, p.name AS place, p.gpsLat AS lat, p.gpsLng AS lng,
+                                                        c.info AS info, p.idPlace AS idPlace, p.name AS place, p.gpsLat AS lat, p.gpsLng AS lng,
                                                         p.address AS address, p.zipCode AS zipCode, p.city AS city
                                                         FROM Concert AS c 
                                                         LEFT JOIN Place AS p ON p.idPlace = c.idPlace
@@ -231,19 +231,33 @@ class ConcertsManager extends BaseManager
             ->update([
                 self::CONCERT_COLUMN_NAME => $values->name,
                 self::CONCERT_COLUMN_DATE => $values->date . ' ' . $values->time,
-                self::CONCERT_COLUMN_CAPACITY => $values->capacity,
                 self::CONCERT_COLUMN_INFO => $values->info
             ]);
     }
 
 
     public function addHeadliner($values) {
-        $this->database->table(self::TABLE_CONCERT_INTERPRET)
+        $headliner = $this->database->table(self::TABLE_CONCERT_INTERPRET)
             ->where(self::CONCERT_INTERPRET_CONCERT_ID, $values->idConcert)
             ->where(self::CONCERT_INTERPRET_HEADLINER, 1)
-            ->update([
-                self::CONCERT_INTERPRET_INTERPRET_ID => $values->interprets
-            ]);
+            ->fetch();
+        bdump($headliner);
+        if($headliner == null) {
+            $this->database->table(self::TABLE_CONCERT_INTERPRET)
+                ->insert([
+                    self::CONCERT_INTERPRET_CONCERT_ID => $values->idConcert,
+                    self::CONCERT_INTERPRET_INTERPRET_ID => $values->interprets,
+                    self::CONCERT_INTERPRET_HEADLINER => 1
+                ]);
+        }
+        else {
+            $this->database->table(self::TABLE_CONCERT_INTERPRET)
+                ->where(self::CONCERT_INTERPRET_CONCERT_ID, $values->idConcert)
+                ->where(self::CONCERT_INTERPRET_HEADLINER, 1)
+                ->update([
+                    self::CONCERT_INTERPRET_INTERPRET_ID => $values->interprets
+                ]);
+        }
     }
 
     public function addInterpret($values) {

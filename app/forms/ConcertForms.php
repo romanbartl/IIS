@@ -12,6 +12,7 @@ namespace App\Forms;
 use App\Model\ConcertsManager;
 use App\Model\DuplicateNameException;
 use App\Model\InterpretsManager;
+use App\Model\TicketsManager;
 use Nette\Application\UI\Form;
 
 class ConcertForms
@@ -22,12 +23,16 @@ class ConcertForms
 
     private $interpretsManager;
 
+    private $ticketsManager;
 
-    public function __construct(FormFactory $factory, ConcertsManager $concertsManager, InterpretsManager $interpretsManager)
+
+    public function __construct(FormFactory $factory, ConcertsManager $concertsManager, InterpretsManager $interpretsManager,
+                                TicketsManager $ticketsManager)
     {
         $this->factory = $factory;
         $this->concertsManager = $concertsManager;
         $this->interpretsManager = $interpretsManager;
+        $this->ticketsManager = $ticketsManager;
     }
 
 
@@ -50,10 +55,6 @@ class ConcertForms
             ->setType('time')
             ->setDefaultValue($concert->date->format('H:i:s'))
             ->setRequired("Vyplňte prosím čas začátku koncertu!");
-
-        $form->addText('capacity', 'Kapacita:')
-            ->setDefaultValue($concert->capacity)
-            ->setRequired('Vyplňte prosím kapacitu!');
 
         $form->addTextArea('info', 'Detail akce:')
             ->setDefaultValue($concert->info)
@@ -114,6 +115,35 @@ class ConcertForms
             catch (DuplicateNameException $e) {
                 $onError();
             }
+            $onSuccess();
+        };
+
+        return $form;
+    }
+
+
+
+    public function createAddNewTicketsForm(callable $onSuccess, $idConcert) {
+        $form = $this->factory->create();
+
+        $type = ['VIP' => 'VIP', 'SIT' => 'Na sezení', 'STAND' => 'Na stání'];
+
+        $form->addHidden('idConcert', $idConcert);
+        $form->addText('amount', 'Počet vstupenek:')
+            ->setType('number')
+            ->setRequired('Vyplňte prosím počet vstupenek!');
+
+        $form->addSelect('ticketType', 'Typ vstupenky:', $type)
+            ->setRequired('Vyplňte prosím typ vstupenky!');
+
+        $form->addText('price', 'Cena vstupenek (v Kč):')
+            ->setType('number')
+            ->setRequired('Vyplňte prosím cenu vstupenek!');
+
+        $form->addSubmit('send', 'Uložit');
+
+        $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
+            $this->ticketsManager->addTicketsToConcert($values);
             $onSuccess();
         };
 
