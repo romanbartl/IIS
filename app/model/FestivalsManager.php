@@ -95,9 +95,9 @@ class FestivalsManager
      */
     public function getFestivalById($yearId)
     {
-        $festival['info'] = $this->database->query('SELECT idYear, F.name AS festival, F.label AS label, 
+        $festival['info'] = $this->database->query('SELECT idYear, F.idFestival AS idFest, F.name AS festival, F.label AS label, 
                                                         season, volume, start, end, info, P.name AS place, P.address AS address, 
-                                                        P.gpsLat AS lat, P.gpsLng AS lng, P.zipCode zipCode, 
+                                                        P.gpsLat AS lat, P.gpsLng AS lng, P.zipCode zipCode, Y.idPlace AS idPlace,
                                                         P.city AS city 
                                                         FROM Year AS Y 
                                                         LEFT JOIN Festival AS F ON F.idFestival = Y.idFestival 
@@ -156,7 +156,7 @@ class FestivalsManager
                                                           FROM Stage AS S 
                                                           LEFT JOIN Stage_has_Interpret_in_Year AS SHIIY ON SHIIY.idStage = S.idStage 
                                                           WHERE SHIIY.idYear = ?
-                                                          GROUP BY S.idStage', $yearId);
+                                                          GROUP BY S.idStage', $yearId)->fetchAll();
 
         $festival['firstStageId'] = $firstStageId;
 
@@ -288,13 +288,19 @@ class FestivalsManager
      * @param $festivalId
      * @return string
      */
-    public function addNewYear($volume, $season, $startDate, $startTime, $endDate, $endTime, $festivalId)
+    public function addNewYear($volume, $season, $startDate, $startTime, $endDate, $endTime, $festivalId, $placeId)
     {
+        $year = $this->database->query('SELECT idYear FROM Year WHERE volume = ? AND season = ? AND idFestival = ?',
+            $volume, $season, $festivalId)->fetchField('idYear');
+
+        if ($year != null) return false;
+
         $startDateTime = date('Y-m-d H:i:s', strtotime("$startDate $startTime"));
         $endDateTime = date('Y-m-d H:i:s', strtotime("$endDate $endTime"));
 
-        $this->database->query('INSERT INTO Year (idPlace, season, volume, start, end, idFestival) 
-                                        VALUES (NULL, ?, ?, ?, ?, ?)', $season, $volume, $startDateTime, $endDateTime, $festivalId);
+        $this->database->query('INSERT INTO Year (idPlace, season, volume, start, end, idFestival, idPlace) 
+                                        VALUES (NULL, ?, ?, ?, ?, ?, ?)',
+            $season, $volume, $startDateTime, $endDateTime, $festivalId, $placeId);
 
         return $this->database->getInsertId('Year');
     }
@@ -302,29 +308,139 @@ class FestivalsManager
 
     /**
      * @param $idYear
+     * @param $idFestival
+     * @param $volume
+     * @param $season
      * @param $info
+     * @param $startDate
+     * @param $startTime
+     * @param $endDate
+     * @param $endTime
+     * @return bool
      */
-    public function editFestivalInfo($idYear, $info)
+    public function editFestivalInfo($idYear, $idFestival, $volume, $season, $info, $startDate, $startTime, $endDate, $endTime)
     {
-        $this->database->query('UPDATE Year SET info = ? WHERE idYear = ?', $info, $idYear);
+        $year = $this->database->query('SELECT idYear FROM Year WHERE volume = ? AND season = ? AND idFestival = ?',
+            $volume, $season, $idFestival)->fetchField('idYear');
+
+        if ($year != null && $year != $idYear) {
+            return false;
+        }
+
+        $start = $this->database->query('SELECT start FROM Year WHERE idYear = ?', $idYear)->fetchField('start');
+        $end = $this->database->query('SELECT end FROM Year WHERE idYear = ?', $idYear)->fetchField('end');
+
+        $startDateTimeDb = date('Y-m-d H:i:s', strtotime("$start"));
+        $endDateTimeDb = date('Y-m-d H:i:s', strtotime("$end"));
+
+        $startDateTime = date('Y-m-d H:i:s', strtotime("$startDate $startTime"));
+        $endDateTime = date('Y-m-d H:i:s', strtotime("$endDate $endTime"));
+
+
+        if ($startDateTimeDb < $startDateTime ||  $endDateTimeDb > $endDateTime) {
+            $program = $this->database->query('SELECT * 
+                                FROM Stage_has_Interpret_in_Year WHERE idYear = ?', $idYear)->fetchAll();
+
+            foreach ($program as $part) {
+                if ($part->start < $startDateTime || $part->end > $endDateTime) {
+                    $this->database->query('DELETE FROM Stage_has_Interpret_in_Year WHERE idYear = ? AND idStage = ? AND idInterpret = ?',
+                        $idYear, $part->idStage, $part->idInterpret);
+                }
+            }
+        }
+
+        $this->database->query('UPDATE Year SET start = ?, end = ?, volume = ?, season = ?, idFestival = ?, info = ? WHERE idYear = ?',
+            $startDateTime, $endDateTime, $volume, $season, $idFestival, $info, $idYear);
+
+        return true;
     }
 
 
     /**
-     * @param $idYear
      * @return Nette\Database\ResultSet
      */
-    public function getStagesNotInYear($idYear)
+    public function getStages()
     {
         return
-            $this->database->query('SELECT S.idStage AS id, S.name AS stage 
+            $this->database->query('SELECT S.idStage AS idStage, S.name AS name 
                                     FROM Stage AS S 
-                                    WHERE S.idStage NOT IN (
-                                        SELECT S.idStage
-                                        FROM Stage AS S
-                                        LEFT JOIN Stage_has_Interpret_in_Year AS SHIIY ON SHIIY.idStage = S.idStage
-                                        WHERE SHIIY.idYear = 16
-                                    )
+                                    WHERE S.idStage
                                     ORDER BY S.name ASC');
+    }
+
+
+    public function addStageToYear($stageId, $interpretId, $yearId, $start, $end, $headliner)
+    {
+        $this->database->query('INSERT INTO Stage_has_Interpret_in_Year(idStage, idInterpret, idYear, headliner, start, end) 
+                                    VALUES (?, ?, ?, ?, ?, ?)', $stageId, $interpretId, $yearId, $headliner, $start, $end);
+    }
+
+
+    public function addStage($name)
+    {
+        $this->database->query('INSERT INTO Stage (name) VALUES (?)', $name);
+    }
+
+
+    public function deleteInterpretFromStage($interpretId, $stageId, $festivalId)
+    {
+        $this->database->query('DELETE FROM Stage_has_Interpret_in_Year WHERE idStage = ? AND idInterpret = ? AND idYear = ?',
+            $stageId, $interpretId, $festivalId);
+    }
+
+
+    public function deleteStageInYear($stageId, $yearId)
+    {
+        $this->database->query('DELETE FROM Stage_has_Interpret_in_Year WHERE idStage = ? AND idYear = ?',
+            $stageId, $yearId);
+    }
+
+
+    public function getAllStages()
+    {
+        return $this->database->query('SELECT * FROM Stage');
+    }
+
+
+    public function getStageById($stageId)
+    {
+        return $this->database->query('SELECT * FROM Stage WHERE idStage = ?', $stageId)->fetch();
+    }
+
+
+    public function editStage($stageId, $name)
+    {
+        $this->database->query('UPDATE Stage SET name = ? WHERE idStage = ?', $name, $stageId);
+    }
+
+
+    public function deleteStage($stageId)
+    {
+        $stage = $this->database->query('SELECT idStage FROM Stage_has_Interpret_in_Year WHERE idStage = ?', $stageId)->fetchField('idStage');
+
+        if ($stage == null) {
+            $this->database->query('DELETE FROM Stage WHERE idStage = ?', $stageId);
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public function getAllFestivals()
+    {
+        return $this->database->query('SELECT * FROM Festival')->fetchAll();
+    }
+
+
+    public function connectFestivalAndPlace($idYear, $idPlace)
+    {
+        $this->database->query('UPDATE Year SET idPlace = ? WHERE idYear = ?', $idPlace, $idYear);
+    }
+
+    public function getIdPlaceFromYear($idYear)
+    {
+        return
+            $this->database->query('SELECT idPlace FROM Year WHERE idYear = ?', $idYear)->fetchField('idPlace');
     }
 }

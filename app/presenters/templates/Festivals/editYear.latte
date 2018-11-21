@@ -23,7 +23,24 @@
                 <div class="row">
                     <div class="jumbotron jumbotron-fluid" style="width: 100%; padding-bottom: 30px;">
                         <div class="container">
-                            <h4>Vstupeneky</h4>
+                            <h4>Editace vstupenek</h4>
+
+                            {if count($ticketsByType['all']) != 0}
+                                {foreach $ticketsByType['all'] as $ticketsOneTypeKey => $ticketsOneType}
+                                    <strong>Typ vstupenky:</strong> {$ticketsOneType->type} (<a n:href="DeleteTickets! $festival['info']->idYear, $ticketsOneType->type, $ticketsOneType->cnt" class="ajax">Odebrat</a>)<br/>
+                                    <strong>Ceny vstupenky:</strong> {$ticketsOneType->price} Kč<br/>
+                                    {if $ticketsOneTypeKey < count($ticketsByType['reserved'])}
+                                        (Počet obsazených vstupenek: {$ticketsByType['reserved'][$ticketsOneTypeKey]->cnt})
+                                    {else}
+                                        (Počet obsazených vstupenek: 0)
+                                    {/if}
+                                {control changeTicketsForm-$ticketsOneTypeKey}
+                                    <hr>
+                                {/foreach}
+                            {/if}
+                            <button type="button" class="btn btn-primary d-flex justify-content-between align-items-center" data-toggle="modal" data-target="#addTicketModal">
+                                <i class="fas fa-plus" style="margin-right: 5px;"></i>Přidat další vstupenky
+                            </button>
 
                         </div>
                     </div>
@@ -32,43 +49,129 @@
                 <div class="row">
                     <div class="jumbotron jumbotron-fluid" style="width: 100%">
                         <div class="container">
-                            <h4>Místo a čas konání</h4>
-                            <p><strong>{$festival['info']->place}</strong><br>{$festival['info']->address}<br>
-                                {$festival['info']->city}, {$festival['info']->zipCode}<br>
-                                <strong>Zahájení: </strong>{$festival['info']->start|date:'%d. %m. %Y v %H:%M'}<br>
-                                <strong>Ukončení: </strong>{$festival['info']->end|date:'%d. %m. %Y'}
-                            </p>
-                            lat, long
+                            <h4>Upravit aktuální místo</h4>
+                            {control editPlaceForm}
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
+                        <div class="container">
+                            <h4>Vybrat místo konání</h4>
+                            {control addExistingPlaceForm}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col mb-4">
+                        <button type="button" class="btn btn-primary d-flex justify-content-between align-items-center" data-toggle="modal" data-target="#addNewPlaceModal">
+                            Přidat nové místo (pouze do DB)
+                        </button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="col-md-8 order-md-1" style="padding: 0 30px 0 30px;">
-                <div class="row">
-                    <div class="jumbotron jumbotron-fluid" style="width: 100%">
-                        <div class="container">
-                            <h4>Detail akce</h4>
-                            <p class="lead">{control editFestivalInfoForm}</p>
+                <h3>Informace o ročníku</h3>
+                {form editFestivalInfoForm}
+                    <table>
+                        <tr>
+                            <td style="text-align: right;"><strong>Festival:</strong></td>
+                            <td>{input festivalId}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><strong>Ročník:</strong></td>
+                            <td>{input volume}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><strong>Období:</strong></td>
+                            <td>{input season}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><strong>Začátek festivalu (datum):</strong></td>
+                            <td>{input startDate}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><strong>Začátek festivalu (čas):</strong></td>
+                            <td>{input startTime}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><strong>Konec festivalu (datum):</strong></td>
+                            <td>{input endDate}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><strong>Konec festivalu (čas):</strong></td>
+                            <td>{input endTime}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;">Info:</td>
+                            <td>{input info}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"></td>
+                            <td><button type="button" data-toggle="modal" data-target="#editYearModal">Upravit</button></td>
+                        </tr>
+                    </table>
+
+                    <div class="modal fade" id="editYearModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Varování</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Pokud změníte datum konání festivalu, může být program na dané dny smazán.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+                                    {input send}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {/form}
 
                 <hr class="mb-4">
 
-                <h3>Přidat stage k ročníku</h3>
+                <h3>Vytvořit novou stage</h3>
 
+                {control addNewStage}
+
+                <hr class="mb-4">
+
+                <h3>Seznam všech stage</h3>
+
+                {foreach $allStages as $stage}
+                    <div style="margin-top: 30px;">
+                        <a n:href="deleteStage! $stage->idStage">
+                            <button type="button" class="btn btn-outline-danger btn-xs" style="margin-right: 30px;">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </a>
+                        {control editStagesNames-$stage->idStage}
+                    </div>
+                {/foreach}
+
+                <hr class="mb-4">
+
+                <h3>Přidat program</h3>
+                {control addStageToYearForm}
 
                 <hr class="mb-4">
 
                 <h3>Program</h3><br>
 
-
-
-
                 <ul class="nav nav-tabs">
                     {foreach $festival['stages'] as $key => $stage}
-                        <li class="nav-item"><a class="nav-link {if $key == 0}active{/if}" data-toggle="tab" href="#tab-{$stage['id']}" role="tab">{$stage['stage']}</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link {if $key == 0}active{/if}" data-toggle="tab" href="#tab-{$stage['id']}" role="tab">{$stage['stage']}</a>
+                        </li>
                     {/foreach}
                 </ul>
 
@@ -76,6 +179,30 @@
                     <div class="card-block">
                         <div class="tab-content" style="padding: 20px;">
                             {foreach $festival['stagesProgram'] as $stageId => $stage}
+                                <button type="button" data-toggle="modal" data-target="#deleteStageFromYear-{$stageId}" class="btn btn-outline-danger btn-xs" style="float: right;">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+
+                                <div class="modal fade" id="deleteStageFromYear-{$stageId}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Jste si jisti, že chcete smazat celou stage z ročníku?</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Smazání stage z ročníku nenávratně smaže celý program dané stage.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+                                                <a n:href="deleteStageInYear! $stageId"><button type="button" class="btn btn-primary">Opravdu smazat</button></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="tab-pane {if $festival['firstStageId'] == $stageId}active{/if}" id="tab-{$stageId}">
                                     {foreach $stage as $day => $interprets}
                                         <p class="card-text">
@@ -83,6 +210,11 @@
                                         <ul class="list-group">
                                             {foreach $interprets as $interpret}
                                                 <li class="list-group-item">
+                                                    <a n:href="deleteInterpretFromStage! $interpret['id'], $stageId">
+                                                        <button type="button" class="btn btn-outline-danger btn-xs" style="margin-right: 30px;">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                        </button>
+                                                    </a>
                                                     <strong>{$interpret['start']|date:'%H:%M'} - {$interpret['end']|date:'%H:%M'}: </strong>
                                                     <span style="margin-left: 10px;"><a n:href="Interprets:detail $interpret['id']">{$interpret['interpret']}{if $interpret['headliner'] == 1} (Headliner){/if}</a></span>
                                                 </li>
@@ -99,4 +231,49 @@
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="addTicketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {control addNewTicketsForm}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="addNewPlaceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {control addNewPlaceForm}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block scripts}
+    {include parent}
+    <script src="https://use.fontawesome.com/c560c025cf.js"></script>
 {/block}
