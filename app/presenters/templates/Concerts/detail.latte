@@ -159,7 +159,7 @@
         {
             //console.log($("#inputAmount").val() + " " + handleType + " " + { $concertId});
             var handleAmount = $("#inputAmount").val();
-            $('#addToCartHref').attr('href', '/IIS/concerts/detail/'+concertId+'?concertId='+concertId+'&ticketType='+handleType+'&amount='+handleAmount+'&do=addToCart');
+            $('#addToCartHref').attr('href', '/concerts/detail/'+concertId+'?concertId='+concertId+'&ticketType='+handleType+'&amount='+handleAmount+'&do=addToCart');
         }
 
         function changeMaxAmount(newAmount)
