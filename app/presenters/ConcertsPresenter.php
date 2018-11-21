@@ -279,7 +279,7 @@ class ConcertsPresenter extends BasePresenter
                 $this->flashMessage("Všech $cnt vstupenek bylo smazáno!", "success");
             }
             $this->redrawControl('flashMessages');
-            $this->redrawControl('tickets');
+            $this->redrawControl('ticketsEdit');
         }
     }
 }
