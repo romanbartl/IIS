@@ -90,6 +90,13 @@ class TicketsManager extends BaseManager
 
 
     public function addTicketsToConcert($values) {
+        $ticket = $this->database->table(self::TABLE_TICKET)
+            ->where(self::TICKET_COLUMN_ID_CONCERT, $values->idConcert)
+            ->where(self::TICKET_COLUMN_TYPE, $values->ticketType)
+            ->fetch();
+        if($ticket && $ticket->price != $values->price) {
+            throw new Nette\Database\UniqueConstraintViolationException;
+        }
         for($i = 0; $i < $values->amount; $i++) {
             $this->database->table(self::TABLE_TICKET)
                 ->insert([

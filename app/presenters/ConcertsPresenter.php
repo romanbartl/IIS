@@ -263,7 +263,10 @@ class ConcertsPresenter extends BasePresenter
         return $this->concertForms->createAddNewTicketsForm(function () {
             $this->flashMessage('Vstupenky byly přidány.', 'success');
             $this->redirect('this');
-        }, $this->concertId);
+        }, $this->concertId, function () {
+            $this->flashMessage('Nelze přidat lístky! Lístky tohoto typu jsou již v databázi, ale s jinou cenou.', 'error');
+            $this->redirect('this');
+        });
     }
 
 
