@@ -285,4 +285,25 @@ class ConcertsManager extends BaseManager
             ->where(self::CONCERT_INTERPRET_INTERPRET_ID, $idInterpret)
             ->delete();
     }
+
+
+
+    public function addNewConcert($values) {
+        $row = $this->database->table(self::TABLE_CONCERT)
+            ->insert([
+                self::CONCERT_COLUMN_NAME => $values->name,
+                self::CONCERT_COLUMN_DATE => $values->date . ' ' . $values->time,
+                self::CONCERT_COLUMN_INFO => $values->info,
+                self::CONCERT_COLUMN_PLACE_ID => $values->place
+            ]);
+
+        $this->database->table(self::TABLE_CONCERT_INTERPRET)
+            ->insert([
+                self::CONCERT_INTERPRET_CONCERT_ID => $row->idConcert,
+                self::CONCERT_INTERPRET_INTERPRET_ID => $values->idHeadliner,
+                self::CONCERT_INTERPRET_HEADLINER => 1
+            ]);
+
+        return $row;
+    }
 }

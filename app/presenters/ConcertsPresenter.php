@@ -7,6 +7,7 @@ use App\Forms\PlaceForms;
 use App\Model\ConcertsManager;
 use App\Model\PlaceManager;
 use App\Model\TicketsManager;
+use Nette\Application\UI\BadSignalException;
 use Nette\Application\UI\Multiplier;
 use Nette\Forms\Form;
 
@@ -148,6 +149,9 @@ class ConcertsPresenter extends BasePresenter
 
     public function actionEdit($id) {
         $this->concertId = $id;
+        if(!$this->user->isLoggedIn() || !$this->user->isAllowed('concert', 'edit')){
+            throw new BadSignalException;
+        }
     }
 
 
@@ -317,6 +321,21 @@ class ConcertsPresenter extends BasePresenter
             };
 
             return $form;
+        });
+    }
+
+
+    public function renderAdd() {
+        if(!$this->user->isLoggedIn() || !$this->user->isAllowed('concert', 'add')) {
+            throw new BadSignalException;
+        }
+    }
+
+
+    protected function createComponentAddNewConcertForm() {
+        return $this->concertForms->createNewConcertForm(function ($idConcerts) {
+            $this->redirect("Concerts:edit", $idConcerts);
+            $this->flashMessage("Koncert úspěšně vytvořen.", "success");
         });
     }
 }
