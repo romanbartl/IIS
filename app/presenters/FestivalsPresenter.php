@@ -117,8 +117,19 @@ class FestivalsPresenter extends BasePresenter
         return $form;
     }
 
+
     protected function createComponentAddStageToYearForm()
     {
+        $allStages = array();
+        $stages = $this->festivalManager->getStagesNotInYear($this->festivalId);
+
+        foreach ($stages as $stage) {
+            $allStages[$stage->idStage] = $stage->name;
+        }
+
+        $form = new \Nette\Application\UI\Form;
+        $form->addSelect('stageId', 'Stage:', $allStages);
+
 
     }
 
@@ -189,8 +200,8 @@ class FestivalsPresenter extends BasePresenter
                 $count = $ticket->count;
                 $ticketsMaxAmounts[] = $count;
 
-                if (($count != 0 && $key == 0 && $firstType != "") || ($count != 0 && $key != 0 && $firstType == "")
-                    || ($count != 0 && $key == 0 && $firstType == "")) {
+                if ($count != 0 && $firstType == "")
+                {
                     $firstType = $ticket->type;
                     $firstAmount = $count;
                 }
