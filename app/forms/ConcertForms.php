@@ -14,6 +14,7 @@ use App\Model\DuplicateNameException;
 use App\Model\InterpretsManager;
 use App\Model\PlaceManager;
 use App\Model\TicketsManager;
+use App\Model\UserManager;
 use Nette\Application\UI\Form;
 use Nette\Database\UniqueConstraintViolationException;
 
@@ -29,15 +30,18 @@ class ConcertForms
 
     private $placeManager;
 
+    private $userManager;
+
 
     public function __construct(FormFactory $factory, ConcertsManager $concertsManager, InterpretsManager $interpretsManager,
-                                TicketsManager $ticketsManager, PlaceManager $placeManager)
+                                TicketsManager $ticketsManager, PlaceManager $placeManager, UserManager $userManager)
     {
         $this->factory = $factory;
         $this->concertsManager = $concertsManager;
         $this->interpretsManager = $interpretsManager;
         $this->ticketsManager = $ticketsManager;
         $this->placeManager = $placeManager;
+        $this->userManager = $userManager;
     }
 
 
@@ -92,6 +96,7 @@ class ConcertForms
 
         $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {
             $this->concertsManager->addHeadliner($values);
+            $this->userManager->setIsNew($values->interprets);
             $onSuccess();
         };
 
@@ -116,6 +121,7 @@ class ConcertForms
         $form->onSuccess[] = function (Form $form, $values) use ($onSuccess, $onError) {
             try {
                 $this->concertsManager->addInterpret($values);
+                $this->userManager->setIsNew($values->interprets);
             }
             catch (DuplicateNameException $e) {
                 $onError();
