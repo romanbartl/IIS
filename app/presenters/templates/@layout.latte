@@ -27,7 +27,9 @@
 </head>
 
 <body>
-	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+	{snippet flashMessages}
+		<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+	{/snippet}
 
 	<nav class="navbar fixed-top navbar-expand-xl navbar-dark bg-dark">
 		<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarsExample06" aria-expanded="false" aria-label="Toggle navigation">
