@@ -117,8 +117,19 @@ class FestivalsPresenter extends BasePresenter
         return $form;
     }
 
+
     protected function createComponentAddStageToYearForm()
     {
+        $allStages = array();
+        $stages = $this->festivalManager->getStagesNotInYear($this->festivalId);
+
+        foreach ($stages as $stage) {
+            $allStages[$stage->idStage] = $stage->name;
+        }
+
+        $form = new \Nette\Application\UI\Form;
+        $form->addSelect('stageId', 'Stage:', $allStages);
+
 
     }
 
