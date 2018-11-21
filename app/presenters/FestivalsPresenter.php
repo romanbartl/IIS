@@ -200,8 +200,8 @@ class FestivalsPresenter extends BasePresenter
                 $count = $ticket->count;
                 $ticketsMaxAmounts[] = $count;
 
-                if (($count != 0 && $key == 0 && $firstType != "") || ($count != 0 && $key != 0 && $firstType == "")
-                    || ($count != 0 && $key == 0 && $firstType == "")) {
+                if ($count != 0 && $firstType == "")
+                {
                     $firstType = $ticket->type;
                     $firstAmount = $count;
                 }

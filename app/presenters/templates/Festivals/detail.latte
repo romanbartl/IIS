@@ -37,7 +37,7 @@
                                         {foreach $festival['tickets'] as $key => $ticket}
                                             <div class="custom-control custom-radio" style="padding-bottom: 10px;">
                                                 <input type="radio" class="custom-control-input" id="ticket{$key}"
-                                                       name="ticketsRadio" {if $ticket->type == $firstType}checked{/if} {if isset($cart->list[$festivalId]['F'][$ticket->type]) && $cart->list[$festivalId]['F'][$ticket->type] == $ticket->count}disabled{/if}
+                                                       name="ticketsRadio" {if $ticket->type == $firstType}checked{/if}
                                                        onclick="changeMaxAmount({$ticketsMaxAmounts[$key]}); changeHandleType({$ticket->type});" >
 
                                                 <label class="custom-control-label" for="ticket{$key}">
