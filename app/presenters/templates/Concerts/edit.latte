@@ -88,8 +88,10 @@
 							{foreach $concert['interprets'] as $interpret}
 								<a n:href="Interprets:detail $interpret->idInterpret">
 									<li class="list-group-item  d-flex justify-content-between align-items-center">
-										{$interpret->name} {if $interpret->headliner == 1}(Headliner){/if}
-										<a n:href="DeleteInterpret! $concert['info']->idConcert, $interpret->idInterpret" class="ajax">Odebrat</a>
+										{$interpret->name} {if $interpret->headliner == 1}(Headliner)
+										{else}
+											<a n:href="DeleteInterpret! $concert['info']->idConcert, $interpret->idInterpret" class="ajax">Odebrat</a>
+										{/if}
 									</li>
 								</a>
 							{/foreach}
