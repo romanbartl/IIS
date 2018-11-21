@@ -75,21 +75,13 @@ class ConcertsPresenter extends BasePresenter
             $amount = $this->concertsManager->lockConcertTickets($concertId, $ticketType, $amount);
 
             if ($amount != 0) {
-                $this->cart = $this->getSession('cart');
-
-                if (isset($this->cart->list[$concertId]['C'])) {
-                    if (isset($this->cart->list[$concertId]['C'][$ticketType])) {
-                        $this->cart->list[$concertId]['C'][$ticketType] += $amount;
-                        $this->cart->count += $amount;
-                    } else {
-                        $this->cart->list[$concertId]['C'][$ticketType] = $amount;
-                        $this->cart->count += $amount;
-                    }
-
+                if (isset($this->cart->list[$concertId]['C'][$ticketType])) {
+                    $this->cart->list[$concertId]['C'][$ticketType] += $amount;
                 } else {
                     $this->cart->list[$concertId]['C'][$ticketType] = $amount;
-                    $this->cart->count += $amount;
                 }
+
+                $this->cart->count += $amount;
             }
 
             $this->redrawControl('cart');
