@@ -85,4 +85,15 @@ class BaseManager
         CONCERT_INTERPRET_CONCERT_ID = 'idConcert',
         CONCERT_INTERPRET_INTERPRET_ID = 'idInterpret',
         CONCERT_INTERPRET_HEADLINER = 'headliner';
+
+    const
+        TABLE_TICKET = 'Ticket',
+        TICKET_COLUMN_TICKET_ID = 'idTicket',
+        TICKET_COLUMN_PRICE = 'price',
+        TICKET_COLUMN_BOUGHT = 'bought',
+        TICKET_COLUMN_IN_CART = 'inCart',
+        TICKET_COLUMN_ID_YEAR = 'idYear',
+        TICKET_COLUMN_ID_CONCERT = 'idConcert',
+        TICKET_COLUMN_ID_USER = 'idUser',
+        TICKET_COLUMN_TYPE = 'type';
 }

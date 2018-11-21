@@ -6,6 +6,7 @@ use App\Forms\ConcertForms;
 use App\Forms\PlaceForms;
 use App\Model\ConcertsManager;
 use App\Model\PlaceManager;
+use App\Model\TicketsManager;
 
 
 class ConcertsPresenter extends BasePresenter
@@ -27,6 +28,8 @@ class ConcertsPresenter extends BasePresenter
 
     private $concertForms;
 
+    private $ticketManager;
+
 
     /**
      * ConcertsPresenter constructor.
@@ -34,15 +37,17 @@ class ConcertsPresenter extends BasePresenter
      * @param PlaceForms $placeForms
      * @param PlaceManager $placeManager
      * @param ConcertForms $concertForms
+     * @param TicketsManager $ticketsManager
      */
     public function __construct(ConcertsManager $concertsManager, PlaceForms $placeForms, PlaceManager $placeManager,
-                                ConcertForms $concertForms)
+                                ConcertForms $concertForms, TicketsManager $ticketsManager)
     {
         parent::__construct();
         $this->concertsManager = $concertsManager;
         $this->placeForms = $placeForms;
         $this->placeManager = $placeManager;
         $this->concertForms = $concertForms;
+        $this->ticketManager = $ticketsManager;
     }
 
 
@@ -159,7 +164,7 @@ class ConcertsPresenter extends BasePresenter
         //TODO change getConcertById by some method from TicketsManager after it's working
         $concert = $this->concertsManager->getConcertById($this->concertId);
 
-
+        if ($concert['info'] == null) $this->redirect('Notfound:default');
 
         $ticketsMaxAmounts = array();
         $firstType = "";
@@ -192,6 +197,7 @@ class ConcertsPresenter extends BasePresenter
         $this->template->ticketsMaxAmounts = $ticketsMaxAmounts;
         $this->template->firstType = $firstType;
         $this->template->firstAmount = $firstAmount;
+        $this->template->ticketsByType = $this->ticketManager->getTicketsConcertByType($this->concertId);
     }
 
 
@@ -252,5 +258,28 @@ class ConcertsPresenter extends BasePresenter
             $this->flashMessage('Interpret je již na koncertu.', 'error');
             $this->redirect('this');
         });
+    }
+
+
+    protected function createComponentAddNewTicketsForm() {
+        return $this->concertForms->createAddNewTicketsForm(function () {
+            $this->flashMessage('Vstupenky byly přidány.', 'success');
+            $this->redirect('this');
+        }, $this->concertId);
+    }
+
+
+    public function handleDeleteTickets($idConcert, $type, $cnt) {
+        if($this->isAjax()) {
+            $cntRemoved = $this->ticketManager->tryRemoveTickets($idConcert, $type);
+            if($cnt != $cntRemoved) {
+                $this->flashMessage("Některé vstupenky jsou v košíku nebo prodány! Smazáno $cntRemoved vstupenek místo $cnt!");
+            }
+            else {
+                $this->flashMessage("Všech $cnt vstupenek bylo smazáno!", "success");
+            }
+            $this->redrawControl('flashMessages');
+            $this->redrawControl('tickets');
+        }
     }
 }
