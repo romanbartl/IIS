@@ -107,6 +107,24 @@ class TicketsManager extends BaseManager
         }
     }
 
+    public function addTicketsToFestival($values) {
+        $ticket = $this->database->table(self::TABLE_TICKET)
+            ->where(self::TICKET_COLUMN_ID_YEAR, $values->idYear)
+            ->where(self::TICKET_COLUMN_TYPE, $values->ticketType)
+            ->fetch();
+        if($ticket && $ticket->price != $values->price) {
+            throw new Nette\Database\UniqueConstraintViolationException;
+        }
+        for($i = 0; $i < $values->amount; $i++) {
+            $this->database->table(self::TABLE_TICKET)
+                ->insert([
+                    self::TICKET_COLUMN_PRICE => $values->price,
+                    self::TICKET_COLUMN_ID_YEAR => $values->idYear,
+                    self::TICKET_COLUMN_TYPE => $values->ticketType
+                ]);
+        }
+    }
+
 
     public function getTicketsConcertByType($idConcert) {
         $tickets['all'] = $this->database->query('SELECT type, count(*) AS cnt, price FROM `Ticket` WHERE idConcert=? GROUP BY type', $idConcert)
@@ -119,9 +137,30 @@ class TicketsManager extends BaseManager
     }
 
 
+    public function getTicketsFestivalByType($idYear) {
+        $tickets['all'] = $this->database->query('SELECT type, count(*) AS cnt, price FROM `Ticket` WHERE idYear=? GROUP BY type', $idYear)
+            ->fetchAll();
+
+        $tickets['reserved'] = $this->database->query('SELECT type, count(*) AS cnt, price FROM `Ticket` WHERE idYear=? AND (bought=1 OR inCart=1) GROUP BY type', $idYear)
+            ->fetchAll();
+
+        return $tickets;
+    }
+
+
     public function tryRemoveTickets($idConcert, $type) {
         return $this->database->table(self::TABLE_TICKET)
             ->where(self::TICKET_COLUMN_ID_CONCERT, $idConcert)
+            ->where(self::TICKET_COLUMN_TYPE, $type)
+            ->where(self::TICKET_COLUMN_IN_CART, 0)
+            ->where(self::TICKET_COLUMN_BOUGHT, 0)
+            ->delete();
+    }
+
+
+    public function tryRemoveTicketsFestival($idYear, $type) {
+        return $this->database->table(self::TABLE_TICKET)
+            ->where(self::TICKET_COLUMN_ID_YEAR, $idYear)
             ->where(self::TICKET_COLUMN_TYPE, $type)
             ->where(self::TICKET_COLUMN_IN_CART, 0)
             ->where(self::TICKET_COLUMN_BOUGHT, 0)
@@ -144,6 +183,30 @@ class TicketsManager extends BaseManager
         else {
             return $this->database->table(self::TABLE_TICKET)
                 ->where(self::TICKET_COLUMN_ID_CONCERT, $values->idConcert)
+                ->where(self::TICKET_COLUMN_TYPE, $values->type)
+                ->where(self::TICKET_COLUMN_IN_CART, 0)
+                ->where(self::TICKET_COLUMN_BOUGHT, 0)
+                ->limit($limit)
+                ->delete();
+        }
+    }
+
+
+    public function changeAmountOfTicketsFestival($values) {
+        $limit = abs($values->currentAmount - $values->amount);
+        if($values->currentAmount < $values->amount) {
+            for($i = 0; $i < $limit; $i++) {
+                $this->database->table(self::TABLE_TICKET)
+                    ->insert([
+                        self::TICKET_COLUMN_PRICE => $values->price,
+                        self::TICKET_COLUMN_ID_YEAR => $values->idYear,
+                        self::TICKET_COLUMN_TYPE => $values->type
+                    ]);
+            }
+        }
+        else {
+            return $this->database->table(self::TABLE_TICKET)
+                ->where(self::TICKET_COLUMN_ID_YEAR, $values->idYear)
                 ->where(self::TICKET_COLUMN_TYPE, $values->type)
                 ->where(self::TICKET_COLUMN_IN_CART, 0)
                 ->where(self::TICKET_COLUMN_BOUGHT, 0)
