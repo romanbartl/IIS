@@ -115,7 +115,7 @@ class ConcertsManager extends BaseManager
                                                             WHERE chi.idConcert = ? ORDER BY chi.headliner DESC', $concertId);
 
         $concert['tickets'] = $this->database->query('SELECT price, type, COUNT(type) AS count 
-                                                          FROM Ticket WHERE bought = 0 AND inCart = 0 AND idConcert = ? GROUP BY type ORDER BY type ASC', $concertId);
+                                                          FROM Ticket WHERE bought = 0 AND inCart = 0 AND idUser IS NULL AND idConcert = ? GROUP BY type ORDER BY type ASC', $concertId);
 
         return $concert;
     }
