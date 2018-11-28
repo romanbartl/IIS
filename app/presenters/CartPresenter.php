@@ -83,6 +83,8 @@ class CartPresenter extends BasePresenter
                 }
             }
 
+            $this->sendEmail();
+
             $this->cart->list = null;
             $this->cart->count = 0;
             $this->redrawControl('cart');
@@ -91,17 +93,35 @@ class CartPresenter extends BasePresenter
             $this->flashMessage('Objednávka byla vyřízena a odeslali jsme Vám ověřovací e-mail.');
             $this->redirect('Cart:default');
 
-            //TODO uncomment when released
-            /*$mail = new Message;
 
-            $mail->setFrom('TickcetsOnline4Fan <info@ticketsonline.4fan.cz>')
-                ->addTo($this->user->getIdentity()->email)
-                ->setSubject('Potvrzení objednávky')
-                ->setBody("Dobrý den,\nvaše objednávka byla přijata.\nVaše zakoupené lístky najdete v sekci \"Zakoupené listky\" na našich webových stránkách.");
 
-            $mailer = new SendmailMailer;
-            $mailer->send($mail);*/
+
         }
+    }
+
+
+    private function sendEmail()
+    {
+        $subject = "Objednávka na ticketsonline.4fan.cz";
+        $headers = "From: noreply@ticketsonline.4fan.cz" . "\r\n";
+        $headers .= "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+
+        $message = "
+            <html>
+            <head>
+            <title>HTML email</title>
+            </head>
+            <body>
+            <p>Dobrý den, děkujeme Vám za Vaši objednávku. Doufáme, že si akci užijete!</p>
+            ";
+
+
+        $message .= "
+            </body>
+            </html>";
+
+        mail($this->user->getIdentity()->email, $subject, $message, $headers);
     }
 
 
