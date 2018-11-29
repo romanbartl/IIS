@@ -1,7 +1,12 @@
 {block content}
-<h1 n:block=title>Access Denied</h1>
+<div class="jumbotron header-of-page" style="max-height: 300px">
+    <h1 style="margin-top: 180px;" class="display-4 header" n:block=title>Přístup odepřen! (Error 403)</h1>
+</div>
 
-<p>You do not have permission to view this page. Please try contact the web
-site administrator if you believe you should be able to view this page.</p>
+<div class="wrapper" style="text-align: center; padding-top: 100px;">
+    <p>Nemáte právo pro zobrazení této stránky. Prosím kontaktujt webového administrátora pokud si myslíte, že byste měl mít přístup na tuto stránku.</p>
 
-<p><small>error 403</small></p>
+    <a n:href="News:default">
+        <button type="button" class="btn btn-warning btn-xs" style="font-size: 25px;">Zpátky na hlavní stránku</button>
+    </a>
+</div>
