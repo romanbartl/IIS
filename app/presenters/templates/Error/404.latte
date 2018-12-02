@@ -1,8 +1,12 @@
 {block content}
-<h1 n:block=title>Page Not Found</h1>
+<div class="jumbotron header-of-page" style="max-height: 300px">
+    <h1 style="margin-top: 180px;" class="display-4 header" n:block=title>Stránka nenalezena! (Error 404)</h1>
+</div>
 
-<p>The page you requested could not be found. It is possible that the address is
-incorrect, or that the page no longer exists. Please use a search engine to find
-what you are looking for.</p>
+<div class="wrapper" style="text-align: center; padding-top: 100px;">
+    <p>Stránka, kterou hledáte, nebyla nalezena. Je možné, že URL adresa je nesprávná, nebo že stránka již neexistuje.</p>
 
-<p><small>error 404</small></p>
+    <a n:href="News:default">
+        <button type="button" class="btn btn-warning btn-xs" style="font-size: 25px;">Zpátky na hlavní stránku</button>
+    </a>
+</div>

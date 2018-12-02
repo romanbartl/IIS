@@ -107,7 +107,7 @@ class FestivalsManager
 
         // TODO should be request from TicketsManager!!!!
         $festival['tickets'] = $this->database->query('SELECT price, type, COUNT(type) AS count 
-                                                          FROM Ticket WHERE bought = 0 AND inCart = 0 AND idYear = ? GROUP BY type ORDER BY type ASC', $yearId);
+                                                          FROM Ticket WHERE idUser IS NULL AND bought = 0 AND inCart = 0 AND idYear = ? GROUP BY type ORDER BY type ASC', $yearId);
 
 
         $stages = $this->database->query('SELECT S.idStage AS id, S.name AS stage 
