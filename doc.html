@@ -22,11 +22,11 @@
     <dt>Autoøi</dt>
     <dd>Roman Bártl <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
         <a href="mailto:xbartl06@stud.fit.vutbr.cz">xbartl06@stud.fit.vutbr.cz</a> -
-        správa u¾ivatelù a u¾ivatelské rozhraní
+        u¾ivatelské rozhraní, festivaly, ko¹ík
     </dd>
     <dd>Tomá¹ Odehnal <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
         <a href="mailto:xodehn08@stud.fit.vutbr.cz">xodehn08@stud.fit.vutbr.cz</a> -
-        databázový subsystém
+        databázový subsystém, správa u¾ivatelù, interpreti, concerty
     </dd>
     <dt>URL aplikace</dt>
     <dd><a href="http://ticketsonline.4fan.cz">http://ticketsonline.4fan.cz</a></dd>
@@ -41,7 +41,74 @@
 </table>
 
 <h2>Implementace</h2>
-<p>Struèná dokumentace k implementaci, která popisuje, které PHP skripty implementují jednotlivé pøípady pou¾ití uvedené v use-case diagramu z IDS. V pøípadì, ¾e bylo nutno pøi implementaci uèinit zmìny v návrhu, musí být v dokumentaci zdùvodnìny.</p>
+<p>K implementaci jsme vyu¾ili èeský framework Nette a Bootstrap. Implementovali jsme v¹echny pøípady u¾ití kromì mazání.
+    Mazání se ukázalo být pomìrnì problematické z dùvodu propojenosti v¹ech prvkù v informaèním systému (napø. smazání koncertu nebo festivalu, na který jsou u¾ prodány nìjaké vstupenky).</p>
+
+<table>
+    <tbody>
+    <tr>
+        <th>Soubor(y)</th>
+        <th>Popis</th>
+    </tr>
+    <tr>
+        <td>AuthorizatorFactory.php</td>
+        <td>Definice a inicializace rolí u¾ivatelù</td>
+    </tr>
+    <tr>
+        <td>CartPresenter.php<br/>CartManager.php</td>
+        <td>Správa ko¹íku.</td>
+    </tr>
+    <tr>
+        <td>ConcertsPresenter.php<br/>ConcertsManagager.php</td>
+        <td>Správa koncertù.</td>
+    </tr>
+    <tr>
+        <td>ErrorPresenter.php<br/>Error4xxPresenter.php</td>
+        <td>Obsahuje obsluhu chyby a zobrazení pøíslu¹né chybové stránky (napø. stránka nenalezena, u¾ivatel nemá práva na pøístup na stránku, atd.).</td>
+    </tr>
+    <tr>
+        <td>FestivalPresenter.php<br/>FestivalManger.php</td>
+        <td>Správa festivalù.</td>
+    </tr>
+    <tr>
+        <td>InterpretsPresenter.php<br/>InterpretsManager.php</td>
+        <td>Správa interpretù.</td>
+    </tr>
+    <tr>
+        <td>NewsPresenter.php</td>
+        <td>Novinky.</td>
+    </tr>
+    <tr>
+        <td>SignPresenter.php</td>
+        <td>Registrace a pøihlá¹ení u¾ivatelù.</td>
+    </tr>
+    <tr>
+        <td>UserPresenter.php<br/>UserManager.php</td>
+        <td>Správa u¾ivatelù.</td>
+    </tr>
+    <tr>
+        <td>TicketManager.php</td>
+        <td>Obsahuje metody pro správu lístkù na koncerty a festivaly.</td>
+    </tr>
+    <tr>
+        <td>PlaceManager.php</td>
+        <td>Obsahuje metody pro správu míst, které se zobrazují u koncertù a festivalù.</td>
+    </tr>
+    <tr>
+        <td>GenreManager.php</td>
+        <td>Obsahuje metody pro správu ¾ánrù alb.</td>
+    </tr>
+    <tr>
+        <td>AlbumsManager.php</td>
+        <td>Obsahuje metody pro správu alb interpretù.</td>
+    </tr>
+    <tr>
+        <td>MembersManager.php</td>
+        <td>Obsahuje metody pro správu èlenù.</td>
+    </tr>
+    </tbody>
+</table>
+<br/>
 
 <img src="IIS_Use_Case.png" />
 
