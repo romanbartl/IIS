@@ -177,13 +177,16 @@ class InterpretsPresenter extends BasePresenter
             $form->addHidden('idAlbum', $idAlbum);
             $form->addHidden('currentRelease', $album->release->format('Y-m-d'));
             $form->addText('name', "Název:")
-                ->setDefaultValue($album->name);
+                ->setDefaultValue($album->name)
+                ->setAttribute('style', 'width: 155px;');
             $form->addText('label', "Obrázek:")
                 ->setRequired("Vyplňte prosím URL obrázku!")
-                ->setDefaultValue($album->label);
+                ->setDefaultValue($album->label)
+                ->setAttribute('style', 'width: 155px;');
             $form->addText('release', 'Datum vydání:')
                 ->setType('date')
-                ->setDefaultValue($album->release->format('Y-m-d'));
+                ->setDefaultValue($album->release->format('Y-m-d'))
+                ->setAttribute('style', 'width: 155px;');
             $form->addSubmit('send', 'Uložit');
 
             $form->onSuccess[] = function (Form $form, $values) use ($onSuccess) {

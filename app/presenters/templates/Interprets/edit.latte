@@ -84,13 +84,23 @@
 								<li class="list-group-item d-flex justify-content-between align-items-center">
 									<img style="max-height: 200px; max-width: 220px;" src="{$album->label}">
 
-									{control changeAlbumForm-$album->idAlbum}
-									<b>Žánry</b>
-									{foreach $album->genres as $genre}
-										{$genre->name}(<a n:href="DeleteGenreFromAlbum! $album->idAlbum, $genre->idGenre" class="ajax">Odebrat</a>)<br/>
-									{/foreach}
+									<div style="max-width: 260px; white-space: nowrap;overflow:hidden;position:absolute;top:0; left:0; margin-top: 50px; margin-left: 230px;">
+										{control changeAlbumForm-$album->idAlbum}
+									</div>
 
-									<a n:href="DeleteAlbum! $album->idAlbum" class="ajax">Odebrat</a>
+									<div style="white-space: nowrap;overflow:hidden;position:absolute;top:0; left:0; margin-top: 40px; margin-left: 530px;">
+										<div><b>Žánry</b></div>
+
+										<div>
+											{foreach $album->genres as $genre}
+												{$genre->name} (<a n:href="DeleteGenreFromAlbum! $album->idAlbum, $genre->idGenre" class="ajax">Odebrat</a>)<br/>
+											{/foreach}
+										</div>
+									</div>
+
+									<div style="white-space: nowrap;overflow:hidden;position:absolute;top:0; right:0; margin-top: 10px; margin-right: 20px;">
+										<a n:href="DeleteAlbum! $album->idAlbum" class="ajax">Odebrat album</a>
+									</div>
 								</li>
 							{/foreach}
 								<li class="list-group-item">
